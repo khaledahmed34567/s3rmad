@@ -40,7 +40,7 @@
   <!-- ============ AUTH ============ -->
   <section class="screen" id="screen-auth">
     <div style="text-align:center; margin:26px 0 20px;">
-      <img src="https://i.ibb.co/Z6RvKsNd/Picsart-26-08-21-02-56-13-099.png" class="protected" style="height:64px;margin:0 auto;" alt="سرمد" />
+      <img src="https://i.ibb.co/Z6RvKsNd/Picsart-26-08-21-02-56-13-099.png" class="protected" style="height:96px;margin:0 auto;" alt="سرمد" />
     </div>
 
     <div class="auth-tabs">
@@ -110,7 +110,8 @@
   <section class="screen" id="screen-track">
     <div class="back-row">
       <button class="icon-btn" data-back="home"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <h2 class="section-title" id="trackTitle" style="margin:0;"></h2>
+      <h2 class="section-title" id="trackTitle" style="margin:0;flex:1;"></h2>
+      <button class="icon-btn" id="btnCopyTrackLink"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></button>
     </div>
     <p class="article-text" id="trackDesc" style="margin-bottom:16px;"></p>
     <div class="grid-2" id="coursesList"></div>
@@ -120,13 +121,16 @@
   <section class="screen" id="screen-course">
     <div class="back-row">
       <button class="icon-btn" data-back="track"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <h2 class="section-title" id="courseTitle" style="margin:0;"></h2>
+      <h2 class="section-title" id="courseTitle" style="margin:0;flex:1;"></h2>
+      <button class="icon-btn" id="btnCopyCourseLink"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></button>
     </div>
     <div class="card" style="padding:14px;margin-bottom:16px;">
       <p class="article-text" id="courseDesc"></p>
       <p class="sub" style="margin-top:10px;" id="courseInstructor"></p>
       <div id="courseEnrollBox" style="margin-top:12px;"></div>
     </div>
+    <div id="courseLeaderboard" style="margin-bottom:16px;"></div>
+    <button class="btn btn-ghost" id="btnCourseSurvey" style="margin-bottom:16px;">استبيان الدورة</button>
     <h3 style="margin-bottom:10px;">المحاضرات</h3>
     <div id="lecturesList"></div>
   </section>
@@ -135,9 +139,11 @@
   <section class="screen" id="screen-lecture">
     <div class="back-row">
       <button class="icon-btn" data-back="course"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <h2 class="section-title" id="lectureTitle" style="margin:0;"></h2>
+      <h2 class="section-title" id="lectureTitle" style="margin:0;flex:1;"></h2>
+      <button class="icon-btn" id="btnCopyLectureLink"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></button>
     </div>
     <p class="article-text" id="lectureDesc" style="margin-bottom:16px;"></p>
+    <button class="btn btn-ghost" id="btnLectureSurvey" style="margin-bottom:16px;">استبيان المحاضرة</button>
     <div id="tasksList"></div>
   </section>
 
@@ -145,7 +151,8 @@
   <section class="screen" id="screen-task">
     <div class="back-row">
       <button class="icon-btn" data-back="lecture"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <h2 class="section-title" id="taskTitle" style="margin:0;"></h2>
+      <h2 class="section-title" id="taskTitle" style="margin:0;flex:1;"></h2>
+      <button class="icon-btn" id="btnCopyTaskLink"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg></button>
     </div>
     <div id="taskBody"></div>
   </section>
