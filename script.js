@@ -9,7 +9,7 @@
    tracks/{trackId}/courses/{courseId}
        title, titleEn (اسم الكورس بالإنجليزية — يُستخدم في الشهادة),
        description, image, instructor, price (0 = مجاني),
-       skills (نص، المهارات بالإنجليزية مفصولة بفواصل — تُكتب في الشهادة كما هي),
+       skills (Array من نصوص — كل عنصر مهارة، تُرسم على الشهادتين العربي/الإنجليزي بألوان متغيرة),
        startDate (Timestamp), order
 
    courses/{courseId}/lectures/{lectureId}      <-- نفس courseId أعلاه
@@ -99,17 +99,25 @@ const PISTON_API = "https://emkc.org/api/v2/piston/execute"; // تنفيذ أك�
 
 /* ---------- إعداد الشهادة ---------- */
 const CERT_W = 1200, CERT_H = 850;
-const CERT_TEMPLATE_URL = "https://i.ibb.co/WNX3fkZ9/Picsart-26-09-13-03-27-26-643.jpg";
+const CERT_TEMPLATE_URL_EN = "https://i.ibb.co/WNX3fkZ9/Picsart-26-09-13-03-27-26-643.jpg";
+const CERT_TEMPLATE_URL_AR = "https://i.ibb.co/wF3xbD6z/Picsart-26-09-13-19-12-22-034.png";
+const SKILL_COLORS = ["#2455e8", "#1b9e6b", "#b5790a", "#a3339c", "#0e8f9e", "#d1483f"];
 const QR_API = (data) => `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data)}`;
 // رابط التحقق العام لأي شهادة: يفتح نفس التطبيق مع باراميتر verify
 function verifyUrlFor(code) {
   return `${location.origin}${location.pathname}?verify=${code}`;
 }
-function genVerificationCode() {
+function genVerificationCode(lang) {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let s = "SRM-";
+  let s = lang === "ar" ? "SRM-AR-" : "SRM-EN-";
   for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
   return s;
+}
+function gradeLabel(score, lang) {
+  const levels = lang === "ar"
+    ? [[90, "ممتاز"], [80, "جيد جدًا"], [70, "جيد"], [60, "مقبول"], [0, "ضعيف"]]
+    : [[90, "Excellent"], [80, "Very Good"], [70, "Good"], [60, "Pass"], [0, "Needs Improvement"]];
+  return levels.find(([min]) => score >= min)[1];
 }
 
 /* ========================================================================
@@ -117,7 +125,7 @@ function genVerificationCode() {
    ======================================================================== */
 const screens = {};
 document.querySelectorAll(".screen").forEach((el) => (screens[el.id.replace("screen-", "")] = el));
-const navStack = ["home"];
+const navStack = ["auth"];
 
 function showScreen(name, { push = true } = {}) {
   Object.values(screens).forEach((s) => s.classList.remove("active"));
@@ -140,7 +148,7 @@ document.querySelectorAll("[data-back]").forEach((btn) => {
 });
 document.querySelectorAll(".nav-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    if (btn.dataset.nav !== "home" && !currentUser) return openAuthGate();
+    if (!currentUser) return openAuthGate();
     navStack.length = 0;
     navStack.push(btn.dataset.nav);
     showScreen(btn.dataset.nav, { push: false });
@@ -177,22 +185,27 @@ document.getElementById("btnAccount").addEventListener("click", () => {
 document.getElementById("btnMenu").addEventListener("click", openDrawer);
 
 function openDrawer() {
+  const greeting = currentUser ? `مرحبًا، ${escapeHtml(currentUser.firstName || "")}` : "الصفحات";
   openModal(`
-    <h3 style="margin-bottom:14px;">الصفحات</h3>
+    <div class="drawer-header">
+      <img src="https://i.ibb.co/Z6RvKsNd/Picsart-26-08-21-02-56-13-099.png" class="protected" alt="" />
+      <h3>${greeting}</h3>
+    </div>
     <div class="drawer-list">
-      <button class="drawer-item" data-goto="home">المسارات</button>
-      <button class="drawer-item" data-goto="forum">المنتدى</button>
-      <button class="drawer-item" data-goto="dashboard">لوحتي</button>
-      <button class="drawer-item" data-goto="profile">حسابي</button>
-      <button class="drawer-item" id="drawerInstall">تثبيت التطبيق</button>
-      <button class="drawer-item" id="drawerContact">تواصل معنا</button>
+      <button class="drawer-item" data-goto="home">${drawerIcon("home")}<span>المسارات</span></button>
+      <button class="drawer-item" data-goto="forum">${drawerIcon("forum")}<span>المنتدى</span></button>
+      <button class="drawer-item" data-goto="dashboard">${drawerIcon("dashboard")}<span>لوحتي</span></button>
+      <button class="drawer-item" data-goto="profile">${drawerIcon("profile")}<span>حسابي</span></button>
+      <div class="drawer-sep"></div>
+      <button class="drawer-item" id="drawerInstall">${drawerIcon("install")}<span>تثبيت التطبيق</span></button>
+      <button class="drawer-item" id="drawerContact">${drawerIcon("contact")}<span>تواصل معنا</span></button>
     </div>
   `);
   document.querySelectorAll(".drawer-item[data-goto]").forEach((b) => {
     b.addEventListener("click", () => {
       closeModal();
       const name = b.dataset.goto;
-      if (name !== "home" && !currentUser) return openAuthGate();
+      if (!currentUser) return openAuthGate();
       navStack.length = 0; navStack.push(name);
       showScreen(name, { push: false });
       if (name === "forum") loadForum();
@@ -220,7 +233,9 @@ async function triggerInstall() {
     openModal(`<h3 style="margin-bottom:10px;">تثبيت التطبيق على آيفون</h3>
       <p class="article-text">اضغط زر المشاركة في المتصفح، ثم اختر "إضافة إلى الشاشة الرئيسية".</p>`);
   } else {
-    toast("التطبيق مثبت بالفعل أو سيظهر خيار التثبيت من قائمة المتصفح.");
+    openModal(`<h3 style="margin-bottom:10px;">تثبيت التطبيق</h3>
+      <p class="article-text">لو التطبيق مش مثبت، جرّب من قائمة المتصفح (⋮) اختيار "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية".
+      لو الخيار مش ظاهر، الغالب إن الموقع لسه مش شغال على HTTPS بالكامل أو إن ملف manifest.json مش بيوصل بصيغة صحيحة من الاستضافة.</p>`);
   }
 }
 
@@ -238,11 +253,16 @@ document.addEventListener("dragstart", (e) => e.preventDefault());
 document.addEventListener("copy", (e) => {
   if (!e.target.closest(".selectable, input, textarea")) e.preventDefault();
 });
+document.addEventListener("cut", (e) => {
+  if (!e.target.closest(".selectable, input, textarea")) e.preventDefault();
+});
 document.addEventListener("keydown", (e) => {
+  const inField = e.target.closest("input, textarea");
   const blocked =
     e.key === "F12" ||
     (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key.toUpperCase())) ||
-    (e.ctrlKey && ["u", "s", "p"].includes(e.key.toLowerCase()) && !e.target.closest("input,textarea"));
+    (e.ctrlKey && ["u", "s", "p"].includes(e.key.toLowerCase()) && !inField) ||
+    (e.ctrlKey && ["c", "x", "a"].includes(e.key.toLowerCase()) && !inField && !e.target.closest(".selectable"));
   if (blocked) e.preventDefault();
 });
 
@@ -304,6 +324,8 @@ document.getElementById("btnForgot").addEventListener("click", async () => {
   }
 });
 
+const ENGLISH_NAME_RE = /^[A-Za-z](?:[A-Za-z' -]*[A-Za-z])?$/;
+
 document.getElementById("formSignup").addEventListener("submit", async (e) => {
   e.preventDefault();
   const errBox = document.getElementById("signupError");
@@ -320,6 +342,10 @@ document.getElementById("formSignup").addEventListener("submit", async (e) => {
   const pass1 = document.getElementById("suPassword").value;
   const pass2 = document.getElementById("suPassword2").value;
 
+  // الاسم لازم يتكتب بالإنجليزية فقط لأنه بيظهر حرفيًا على شهادة الإتمام
+  for (const [label, val] of [["الاسم الأول", data.firstName], ["الاسم الثاني", data.middleName], ["الاسم الثالث", data.lastName]]) {
+    if (!ENGLISH_NAME_RE.test(val)) return (errBox.textContent = `${label} لازم يُكتب بحروف إنجليزية فقط (بيظهر كما هو على الشهادة).`);
+  }
   if (!/^[a-z0-9_]+$/.test(data.username)) return (errBox.textContent = "اسم المستخدم يجب أن يكون بحروف إنجليزية صغيرة وأرقام فقط بدون مسافات.");
   if (pass1 !== pass2) return (errBox.textContent = "كلمتا المرور غير متطابقتين.");
 
@@ -329,8 +355,8 @@ document.getElementById("formSignup").addEventListener("submit", async (e) => {
 
     const cred = await createUserWithEmailAndPassword(auth, data.email, pass1);
     await finishAccountCreation(cred.user.uid, data);
-    try { await sendEmailVerification(cred.user); } catch (e) {}
-    toast("تم إنشاء الحساب، تحقق من بريدك لتفعيله");
+    try { await sendEmailVerification(cred.user); toast("تم إنشاء الحساب، تحقق من بريدك لتفعيله"); }
+    catch (veErr) { toast("تم إنشاء الحساب، لكن تعذّر إرسال بريد التفعيل الآن: " + (veErr.code || veErr.message)); }
   } catch (err) {
     errBox.textContent = friendlyAuthError(err);
   }
@@ -379,6 +405,9 @@ function openCompleteProfileModal(fbUser) {
       email: fbUser.email || "",
     };
     const errBox = document.getElementById("gpError");
+    for (const [label, val] of [["الاسم الأول", data.firstName], ["الاسم الثاني", data.middleName], ["الاسم الثالث", data.lastName]]) {
+      if (!ENGLISH_NAME_RE.test(val)) return (errBox.textContent = `${label} لازم يُكتب بحروف إنجليزية فقط (بيظهر كما هو على الشهادة).`);
+    }
     if (!/^[a-z0-9_]+$/.test(data.username)) return (errBox.textContent = "صيغة اسم المستخدم غير صحيحة.");
     const existingUsername = await getDoc(doc(db, "usernames", data.username));
     if (existingUsername.exists()) return (errBox.textContent = "اسم المستخدم مستخدم بالفعل.");
@@ -417,8 +446,10 @@ onAuthStateChanged(auth, async (fbUser) => {
       if (pendingDeepLink) {
         const pdl = pendingDeepLink; pendingDeepLink = null;
         resolveDeepLink(pdl);
-      } else if (screens.auth.classList.contains("active")) {
+      } else if (!screens.verify.classList.contains("active")) {
         navStack.length = 0; navStack.push("home"); showScreen("home", { push: false });
+        loadTracks();
+        checkDeepLinks();
       }
     }
   } else {
@@ -426,8 +457,10 @@ onAuthStateChanged(auth, async (fbUser) => {
     currentUser = null;
     userProgress = {}; userSubs = {};
     if (forumUnsub) { forumUnsub(); forumUnsub = null; }
-    navStack.length = 0; navStack.push("home");
-    showScreen("home", { push: false });
+    if (!screens.verify.classList.contains("active")) {
+      navStack.length = 0; navStack.push("auth");
+      showScreen("auth", { push: false });
+    }
     if (wasLoggedIn) toast("تم تسجيل الخروج");
   }
 });
@@ -691,7 +724,7 @@ async function checkDeepLinks() {
   const taskId = params.get("task");
   if (!trackId && !courseId && !lectureId && !taskId) return false;
 
-  if ((courseId || lectureId || taskId) && !currentUser) {
+  if ((trackId || courseId || lectureId || taskId) && !currentUser) {
     pendingDeepLink = { trackId, courseId, lectureId, taskId };
     openAuthGate();
     return true;
@@ -787,6 +820,17 @@ function taskTypeLabel(type) {
   return { json: "محتوى", pdf: "ملف PDF", video: "فيديو", mcq: "اختبار", code: "مهمة برمجية", survey: "استبيان" }[type] || type;
 }
 function checkIcon() { return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2"><path d="M4 12l5 5L20 6"/></svg>`; }
+function drawerIcon(name) {
+  const icons = {
+    home: `<path d="M4 11.5L12 4l8 7.5M6 10v9h12v-9"/>`,
+    forum: `<path d="M4 5h16v11H8l-4 4V5z"/>`,
+    dashboard: `<path d="M4 19V9m6 10V4m6 15v-7"/>`,
+    profile: `<path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 20c1.8-3.2 4.8-5 8-5s6.2 1.8 8 5"/>`,
+    install: `<path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"/>`,
+    contact: `<path d="M4 5h16v11H8l-4 4V5z"/><path d="M8 9h8M8 12h5"/>`,
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${icons[name] || ""}</svg>`;
+}
 function emptyState(msg) { return `<div class="empty-state"><p>${escapeHtml(msg)}</p></div>`; }
 function escapeHtml(s) { return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
@@ -946,8 +990,12 @@ function renderVideoTask(t, body) {
     else { video.pause(); document.getElementById("btnPlayPause").innerHTML = playIcon(); }
   });
   document.getElementById("btnMute").addEventListener("click", () => { video.muted = !video.muted; });
-  // منع التقديم للأمام أكثر مما شوهد فعليًا
-  video.addEventListener("seeking", () => { if (video.currentTime > maxWatched + 1) video.currentTime = maxWatched; });
+  // منع التقديم للأمام أكثر مما شوهد فعليًا فعلًا (بالماوس أو لوحة المفاتيح أو مفاتيح الميديا)
+  video.addEventListener("seeking", () => { if (video.currentTime > maxWatched + 0.75) video.currentTime = maxWatched; });
+  video.setAttribute("tabindex", "-1");
+  video.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "ArrowLeft", "MediaTrackNext", "MediaFastForward"].includes(e.key)) e.preventDefault();
+  });
   doneBtn.addEventListener("click", () => completeAndBack(t.id));
 }
 function extractYoutubeId(url) {
@@ -995,10 +1043,9 @@ function renderMcqTask(t, body) {
     const area = document.getElementById("quizArea");
     area.innerHTML = `
       <div class="quiz-q">
-        <div class="quiz-ai-watermark" aria-hidden="true">${escapeHtml((q.aiGuard || DEFAULT_AI_GUARD).repeat(3))}</div>
         <span class="sub">سؤال ${current + 1} من ${questions.length}</span>
         <p class="q-text" style="margin-top:6px;">${escapeHtml(q.text)}</p>
-        <span class="quiz-hidden-ai-guard" aria-hidden="true">${escapeHtml(q.aiGuard || DEFAULT_AI_GUARD)}</span>
+        <p class="quiz-ai-guard-note">${escapeHtml(q.aiGuard || DEFAULT_AI_GUARD)}</p>
         <div id="optionsWrap"></div>
       </div>
       <button class="btn btn-primary" id="btnQuizNext">${current === questions.length - 1 ? "تسليم الاختبار" : "التالي"}</button>`;
@@ -1145,7 +1192,29 @@ async function openStandaloneSurvey(kind, id) {
    المنتدى
    ======================================================================== */
 let forumUnsub = null;
+function hasActiveSubscription() {
+  return Object.values(userSubs).some((s) => s && s.active);
+}
+function renderForumGate() {
+  const notice = document.getElementById("forumGateNotice");
+  const compose = document.getElementById("forumComposeCard");
+  if (hasActiveSubscription()) {
+    notice.innerHTML = "";
+    compose.style.display = "block";
+  } else {
+    compose.style.display = "none";
+    notice.innerHTML = `
+      <div class="card" style="padding:16px;margin-bottom:16px;">
+        <p class="article-text">المشاركة بالنشر أو الرد في المنتدى متاحة فقط للمشتركين في كورس. تصفح الكورسات واشترك في أحدها للمشاركة.</p>
+        <button class="btn btn-secondary btn-sm" id="btnGoBrowseCourses" style="margin-top:10px;">تصفح الكورسات</button>
+      </div>`;
+    document.getElementById("btnGoBrowseCourses").addEventListener("click", () => {
+      navStack.length = 0; navStack.push("home"); showScreen("home", { push: false });
+    });
+  }
+}
 function loadForum() {
+  renderForumGate();
   const list = document.getElementById("forumList");
   list.innerHTML = `<div class="sub">جارٍ التحميل...</div>`;
   if (forumUnsub) forumUnsub();
@@ -1185,6 +1254,7 @@ async function loadReplies(postId) {
 }
 async function postReply(postId) {
   if (!currentUser) return openAuthGate();
+  if (!hasActiveSubscription()) return toast("الرد في المنتدى متاح فقط للمشتركين في كورس.");
   const input = document.getElementById(`replyInput-${postId}`);
   const text = input.value.trim();
   if (!text) return;
@@ -1201,6 +1271,7 @@ document.getElementById("forumImage").addEventListener("change", (e) => {
 });
 document.getElementById("btnPostForum").addEventListener("click", async () => {
   if (!currentUser) return openAuthGate();
+  if (!hasActiveSubscription()) return toast("النشر في المنتدى متاح فقط للمشتركين في كورس.");
   const text = document.getElementById("forumText").value.trim();
   if (!text) return toast("اكتب سؤالك أولًا");
   const file = document.getElementById("forumImage").files[0];
@@ -1253,23 +1324,32 @@ async function loadDashboard() {
       certBox.innerHTML = "";
       for (const d of certSnap.docs) {
         const idx = d.data();
-        const certSnapDoc = await getDoc(doc(db, "certificates", idx.code));
-        const c = certSnapDoc.data();
-        const row = document.createElement("div");
-        row.className = "lecture-row";
-        row.style.cursor = "default";
-        row.innerHTML = `<div class="info"><h4>${escapeHtml(idx.courseTitle)}</h4><span class="sub">Verification No: ${escapeHtml(idx.code)}</span></div>
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <button class="btn-sm btn-primary" data-dlpdf="${idx.code}">تحميل PDF</button>
-            <button class="btn-sm btn-secondary" data-dlpng="${idx.code}">تحميل صورة</button>
-            <button class="btn-sm btn-ghost" data-linkedin="${idx.code}">إضافة إلى LinkedIn</button>
-            <button class="btn-sm btn-ghost" data-verify="${idx.code}">نسخ رابط التحقق</button>
-          </div>`;
-        certBox.appendChild(row);
-        row.querySelector("[data-dlpdf]").addEventListener("click", () => downloadCertificateFile({ ...c, code: idx.code }, "pdf"));
-        row.querySelector("[data-dlpng]").addEventListener("click", () => downloadCertificateFile({ ...c, code: idx.code }, "png"));
-        row.querySelector("[data-linkedin]").addEventListener("click", () => window.open(linkedInAddUrl({ ...c, code: idx.code }), "_blank"));
-        row.querySelector("[data-verify]").addEventListener("click", () => copyLink(verifyUrlFor(idx.code)));
+        const [arSnap, enSnap] = await Promise.all([
+          getDoc(doc(db, "certificates", idx.codeAr)),
+          getDoc(doc(db, "certificates", idx.codeEn)),
+        ]);
+        certBox.insertAdjacentHTML("beforeend", `<h4 style="margin:14px 0 8px;">${escapeHtml(idx.courseTitleAr)}</h4>`);
+        [{ snap: arSnap, code: idx.codeAr, label: "الشهادة العربية" }, { snap: enSnap, code: idx.codeEn, label: "English Certificate" }]
+          .forEach(({ snap, code, label }) => {
+            if (!snap.exists()) return;
+            const c = { ...snap.data(), code };
+            const row = document.createElement("div");
+            row.className = "lecture-row";
+            row.style.cursor = "default";
+            row.innerHTML = `<div class="info"><h4>${label}</h4><span class="sub">${escapeHtml(code)}</span></div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <button class="btn-sm btn-primary" data-dlpdf>PDF</button>
+                <button class="btn-sm btn-secondary" data-dlpng>PNG</button>
+                ${c.lang === "en" ? `<button class="btn-sm btn-ghost" data-linkedin>LinkedIn</button>` : ""}
+                <button class="btn-sm btn-ghost" data-verify>نسخ الرابط</button>
+              </div>`;
+            certBox.appendChild(row);
+            row.querySelector("[data-dlpdf]").addEventListener("click", () => downloadCertificateFile(c, "pdf"));
+            row.querySelector("[data-dlpng]").addEventListener("click", () => downloadCertificateFile(c, "png"));
+            const li = row.querySelector("[data-linkedin]");
+            if (li) li.addEventListener("click", () => window.open(linkedInAddUrl(c), "_blank"));
+            row.querySelector("[data-verify]").addEventListener("click", () => copyLink(verifyUrlFor(code)));
+          });
       }
     }
   } catch (e) { certBox.innerHTML = emptyState("تعذّر تحميل الشهادات."); }
@@ -1286,6 +1366,7 @@ async function loadDashboard() {
 
 async function loadProfile() {
   if (!currentUser) return;
+  try { await auth.currentUser.reload(); } catch (e) {}
   const verified = auth.currentUser && auth.currentUser.emailVerified;
   document.getElementById("profileInfo").innerHTML = `
     <p><b>${escapeHtml(currentUser.firstName)} ${escapeHtml(currentUser.middleName || "")} ${escapeHtml(currentUser.lastName)}</b></p>
@@ -1293,14 +1374,24 @@ async function loadProfile() {
     <p class="sub" style="margin-top:6px;">${escapeHtml(currentUser.email || "")} ${verified ? "(مفعّل)" : "(غير مفعّل)"}</p>
     <p class="sub" style="margin-top:6px;">${escapeHtml(currentUser.phone || "")}</p>`;
   document.getElementById("btnResendVerify").style.display = verified ? "none" : "block";
+  document.getElementById("btnCheckVerify").style.display = verified ? "none" : "block";
   const userSnap = await getDoc(doc(db, "users", currentUser.uid));
   document.getElementById("walletBalance").textContent = (userSnap.exists() && userSnap.data().walletBalance) || 0;
 }
+// لو المستخدم فتح بريده في تبويب/تطبيق تاني وضغط على رابط التفعيل ثم رجع للتطبيق،
+// نحدّث حالة التفعيل تلقائيًا بدل ما يفضل يشوف "غير مفعّل" رغم إنه فعّله فعلًا
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && currentUser && screens.profile.classList.contains("active")) loadProfile();
+});
 
 /* ---- أمان الحساب: تفعيل البريد / تغيير كلمة المرور / تغيير البريد ---- */
 document.getElementById("btnResendVerify").addEventListener("click", async () => {
   try { await sendEmailVerification(auth.currentUser); toast("تم إرسال رابط التفعيل إلى بريدك."); }
-  catch (e) { toast("تعذّر إرسال رابط التفعيل الآن."); }
+  catch (e) { toast("تعذّر إرسال رابط التفعيل: " + (e.code === "auth/too-many-requests" ? "تم إرسال محاولات كثيرة، حاول بعد قليل." : (e.code || e.message))); }
+});
+document.getElementById("btnCheckVerify").addEventListener("click", async () => {
+  await loadProfile();
+  toast(auth.currentUser?.emailVerified ? "تم تفعيل بريدك بنجاح." : "لسه البريد مش مفعّل، تأكد إنك ضغطت على رابط التفعيل في رسالتك.");
 });
 document.getElementById("btnChangePassword").addEventListener("click", async () => {
   if (!currentUser?.email) return toast("لا يوجد بريد إلكتروني مرتبط بالحساب.");
@@ -1379,29 +1470,34 @@ async function checkVerifyParam() {
   showScreen("verify", { push: false });
   document.getElementById("btnContact").style.display = "none";
   const box = document.getElementById("verifyResult");
-  box.innerHTML = `<div class="sub" style="text-align:center;">جارٍ التحقق...</div>`;
+  box.innerHTML = `<div class="sub" style="text-align:center;">جارٍ التحقق... / Verifying...</div>`;
   try {
     const snap = await getDoc(doc(db, "certificates", code));
     if (!snap.exists()) {
-      box.innerHTML = `<div class="empty-state"><h3 style="color:var(--danger);">رمز الشهادة غير صحيح</h3><p class="sub">لم يتم العثور على شهادة بهذا الرقم.</p></div>`;
+      box.innerHTML = `<div class="empty-state"><h3 style="color:var(--danger);">رمز الشهادة غير صحيح / Invalid certificate code</h3></div>`;
       return true;
     }
     const c = snap.data();
+    const isAr = c.lang === "ar";
+    const skillsText = Array.isArray(c.skills) ? c.skills.join(isAr ? "، " : ", ") : (c.skills || "");
+    const L = isAr
+      ? { valid: "شهادة صحيحة ومعتمدة", name: "اسم المتدرب", course: "الكورس", skills: "المهارات", score: "النتيجة", date: "التاريخ", verifyNo: "رقم التحقق", grade: "التقدير" }
+      : { valid: "Valid & Verified Certificate", name: "Trainee Name", course: "Course", skills: "Skills", score: "Score", date: "Date", verifyNo: "Verification No.", grade: "Grade" };
     box.innerHTML = `
-      <div class="card" style="padding:20px;text-align:center;">
+      <div class="card" style="padding:20px;text-align:center;" dir="${isAr ? "rtl" : "ltr"}">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" style="margin:0 auto 10px;"><path d="M4 12l5 5L20 6"/></svg>
-        <h3 style="color:var(--success);">شهادة صحيحة ومعتمدة</h3>
-        <div style="text-align:right;margin-top:18px;">
-          <p><b>اسم المتدرب:</b> ${escapeHtml(c.name)}</p>
-          <p style="margin-top:8px;"><b>الكورس:</b> ${escapeHtml(c.courseTitle)}</p>
-          <p style="margin-top:8px;"><b>المهارات:</b> ${escapeHtml(c.skills || "")}</p>
-          <p style="margin-top:8px;"><b>النتيجة:</b> ${c.score}%</p>
-          <p style="margin-top:8px;"><b>التاريخ:</b> ${escapeHtml(c.dateLabel || "")}</p>
-          <p style="margin-top:8px;"><b>رقم التحقق:</b> ${escapeHtml(code)}</p>
+        <h3 style="color:var(--success);">${L.valid}</h3>
+        <div style="text-align:${isAr ? "right" : "left"};margin-top:18px;">
+          <p><b>${L.name}:</b> ${escapeHtml(c.name)}</p>
+          <p style="margin-top:8px;"><b>${L.course}:</b> ${escapeHtml(c.courseTitle)}</p>
+          ${skillsText ? `<p style="margin-top:8px;"><b>${L.skills}:</b> ${escapeHtml(skillsText)}</p>` : ""}
+          <p style="margin-top:8px;"><b>${L.score}:</b> ${c.score}%${c.grade ? ` (${escapeHtml(c.grade)})` : ""}</p>
+          <p style="margin-top:8px;"><b>${L.date}:</b> ${escapeHtml(c.dateLabel || "")}</p>
+          <p style="margin-top:8px;"><b>${L.verifyNo}:</b> ${escapeHtml(code)}</p>
         </div>
       </div>`;
   } catch (e) {
-    box.innerHTML = `<div class="empty-state"><p>تعذّر الوصول لبيانات التحقق حاليًا.</p></div>`;
+    box.innerHTML = `<div class="empty-state"><p>تعذّر الوصول لبيانات التحقق حاليًا. / Verification data unavailable.</p></div>`;
   }
   return true;
 }
@@ -1419,50 +1515,132 @@ function loadImage(src) {
   });
 }
 
-async function drawCertificateCanvas({ name, courseTitle, skills, score, dateLabel, code }) {
+async function drawCertificateCanvas(certData) {
+  const { name, courseTitle, skills, score, dateLabel, code, lang, grade } = certData;
   const canvas = document.createElement("canvas");
   canvas.width = CERT_W; canvas.height = CERT_H;
   const ctx = canvas.getContext("2d");
 
-  const bg = await loadImage(CERT_TEMPLATE_URL);
+  const bg = await loadImage(lang === "ar" ? CERT_TEMPLATE_URL_AR : CERT_TEMPLATE_URL_EN);
   ctx.drawImage(bg, 0, 0, CERT_W, CERT_H);
 
+  // خطوط الشهادة هي نفس فونتات الموقع، لازم تتأكد أنها اتحمّلت فعليًا
+  // قبل الرسم لأن الـ canvas ميستناش الخط زي باقي الصفحة
+  try {
+    await Promise.all([
+      document.fonts.load('bold 46px "SarmadHeading"'),
+      document.fonts.load('bold 42px "SarmadHeading"'),
+      document.fonts.load('36px "SarmadHeading"'),
+      document.fonts.load('28px "SarmadBody"'),
+      document.fonts.load('24px "SarmadBody"'),
+      document.fonts.load('22px "SarmadSub"'),
+      document.fonts.load('20px "SarmadBody"'),
+      document.fonts.load('16px "SarmadSub"'),
+      document.fonts.load('13px "SarmadSub"'),
+    ]);
+  } catch (e) { /* لو فشل تحميل الخط نكمل بالخط الاحتياطي بدل ما نوقف الشهادة */ }
+
+  const skillList = Array.isArray(skills) ? skills : (skills ? String(skills).split(",").map((s) => s.trim()).filter(Boolean) : []);
+
+  if (lang === "ar") await drawArabicCertificate(ctx, { name, courseTitle, skills: skillList, score, dateLabel, code, grade });
+  else await drawEnglishCertificate(ctx, { name, courseTitle, skills: skillList, score, dateLabel, code, grade });
+
+  // حقوق الملكية
+  ctx.direction = "ltr";
+  ctx.font = '13px "SarmadSub", sans-serif';
+  ctx.fillStyle = "#8a8fa0";
+  ctx.textAlign = "center";
+  ctx.fillText("All rights reserved to Sarmad · جميع الحقوق محفوظة لدى سرمد", CERT_W / 2, CERT_H - 22);
+
+  return canvas;
+}
+
+async function drawEnglishCertificate(ctx, { name, courseTitle, skills, score, dateLabel, code, grade }) {
   ctx.direction = "ltr";
   ctx.textAlign = "left";
 
   // 1. Trainee name — right under "Sarmad congratulates"
   ctx.fillStyle = "#0c1330";
-  ctx.font = "bold 46px Georgia, serif";
+  ctx.font = 'bold 46px "SarmadHeading", Georgia, serif';
   ctx.fillText(name, 100, 240);
 
   // 2. Course details & skills — right under "For completing the course"
   ctx.fillStyle = "#1c2340";
-  ctx.font = "28px Georgia, serif";
+  ctx.font = '28px "SarmadBody", Georgia, serif';
   wrapFillText(ctx, courseTitle, 100, 430, 950, 34);
-  if (skills) {
-    ctx.font = "20px Georgia, serif";
-    ctx.fillStyle = "#3a3f57";
-    wrapFillText(ctx, "Skills: " + skills, 100, 480, 950, 26);
+  if (skills.length) {
+    ctx.font = '20px "SarmadBody", Georgia, serif';
+    let sy = 480;
+    ctx.fillText("Skills:", 100, sy);
+    skills.forEach((s, i) => {
+      ctx.fillStyle = SKILL_COLORS[i % SKILL_COLORS.length];
+      ctx.fillText(s, 175 + (i > 0 ? 0 : 0), sy);
+      sy += 26;
+    });
   }
 
-  // 3. Score & date
-  ctx.font = "24px Georgia, serif";
+  // 3. Score, grade & date
+  ctx.font = '24px "SarmadHeading", Georgia, serif';
   ctx.fillStyle = "#0c1330";
-  ctx.fillText(`Score: ${score}%`, 100, 570);
+  ctx.fillText(`Score: ${score}% (${grade})`, 100, 570);
   ctx.fillText(`Date: ${dateLabel}`, 500, 570);
 
   // 4. Verification QR (100x100 at 80,670)
-  try {
-    const qr = await loadImage(QR_API(verifyUrlFor(code)));
-    ctx.drawImage(qr, 80, 670, 100, 100);
-  } catch (e) { /* keep the rest of the certificate if the QR fails to load */ }
+  await drawQrSafely(ctx, code, 80, 670, 100);
 
   // 5. Verification number
-  ctx.font = "16px monospace";
+  ctx.font = '16px "SarmadSub", monospace';
   ctx.fillStyle = "#3a3f57";
   ctx.fillText(code, 200, 720);
+}
 
-  return canvas;
+async function drawArabicCertificate(ctx, { name, courseTitle, skills, score, dateLabel, code, grade }) {
+  ctx.direction = "rtl";
+
+  // اسم المتدرب — منتصف الشهادة أفقيًا
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#0c1330";
+  ctx.font = 'bold 42px "SarmadHeading", Tahoma, sans-serif';
+  ctx.fillText(name, 600, 600);
+
+  // اسم الدورة التدريبية
+  ctx.font = '36px "SarmadHeading", Tahoma, sans-serif';
+  ctx.fillStyle = "#1c2340";
+  ctx.fillText(courseTitle, 600, 510);
+
+  // عنوان المهارات + قائمة المهارات (كل مهارة بلون مميز)
+  ctx.textAlign = "left";
+  ctx.font = '24px "SarmadBody", Tahoma, sans-serif';
+  ctx.fillStyle = "#1c2340";
+  ctx.fillText("المهارات المكتسبة:", 100, 650);
+  let sy = 680;
+  skills.forEach((s, i) => {
+    ctx.fillStyle = SKILL_COLORS[i % SKILL_COLORS.length];
+    ctx.fillText(`• ${s}`, 100, sy);
+    sy += 30;
+  });
+
+  // رمز QR للتحقق (85×85 عند 1030,640)
+  await drawQrSafely(ctx, code, 1030, 640, 85);
+
+  // العمود الأيمن: جملة التحقق، رقم التحقق، التاريخ، التقدير العام
+  ctx.textAlign = "right";
+  ctx.font = '20px "SarmadBody", Tahoma, sans-serif';
+  ctx.fillStyle = "#3a3f57";
+  ctx.fillText("للتحقق من الشهادة", 970, 625);
+
+  ctx.font = '22px "SarmadSub", monospace';
+  ctx.fillText(code, 950, 690);
+
+  ctx.font = '24px "SarmadBody", Tahoma, sans-serif';
+  ctx.fillStyle = "#1c2340";
+  ctx.fillText(dateLabel, 950, 740);
+  ctx.fillText(`${grade} (${score}%)`, 950, 770);
+}
+
+function drawQrSafely(ctx, code, x, y, size) {
+  // يُستدعى بشكل متزامن قدر الإمكان؛ لو فشل تحميل QR نكمل رسم باقي الشهادة بدون توقف
+  return loadImage(QR_API(verifyUrlFor(code))).then((qr) => ctx.drawImage(qr, x, y, size, size)).catch(() => {});
 }
 function wrapFillText(ctx, text, x, y, maxWidth, lineHeight) {
   const words = text.split(" ");
@@ -1476,16 +1654,19 @@ function wrapFillText(ctx, text, x, y, maxWidth, lineHeight) {
   if (line) ctx.fillText(line, x, cy);
 }
 
-async function issueCertificateIfNeeded(courseId, courseTitle) {
+async function issueCertificateIfNeeded(courseId, courseTitleFallback) {
   if (!currentUser) return null;
   const indexRef = doc(db, "certIndex", `${currentUser.uid}_${courseId}`);
   const existing = await getDoc(indexRef);
-  if (existing.exists()) return existing.data().code;
+  if (existing.exists()) return existing.data();
 
-  // اجلب اسم الكورس بالإنجليزية والمهارات المُدخلة يدويًا مع الكورس
   const courseData = (await findCourseDoc(courseId)) || {};
-  const courseTitleEn = courseData.titleEn || courseTitle;
-  const skills = courseData.skills || "";
+  const courseTitleAr = courseData.title || courseTitleFallback;
+  const courseTitleEn = courseData.titleEn || courseTitleFallback;
+  // المهارات: قائمة (Array) من لوحة الأدمن؛ نحافظ على التوافق مع نص قديم مفصول بفواصل لو وُجد
+  const skills = Array.isArray(courseData.skills)
+    ? courseData.skills
+    : (courseData.skills ? String(courseData.skills).split(",").map((s) => s.trim()).filter(Boolean) : []);
 
   // احسب متوسط نتائج الاختبارات (إن وجدت) داخل هذا الكورس
   const lecturesSnap = await getDocs(collection(db, "courses", courseId, "lectures"));
@@ -1498,16 +1679,22 @@ async function issueCertificateIfNeeded(courseId, courseTitle) {
     });
   }
   const score = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 100;
-  const code = genVerificationCode();
   const name = `${currentUser.firstName} ${currentUser.lastName}`;
   const dateLabel = new Date().toLocaleDateString("en-GB");
+  const codeAr = genVerificationCode("ar");
+  const codeEn = genVerificationCode("en");
 
-  await setDoc(doc(db, "certificates", code), {
-    uid: currentUser.uid, name, courseId, courseTitle: courseTitleEn,
-    skills, score, dateLabel, issuedAt: serverTimestamp(),
+  await setDoc(doc(db, "certificates", codeAr), {
+    lang: "ar", uid: currentUser.uid, name, courseId, courseTitle: courseTitleAr,
+    skills, score, dateLabel, grade: gradeLabel(score, "ar"), issuedAt: serverTimestamp(),
   });
-  await setDoc(indexRef, { code, courseTitle: courseTitleEn, uid: currentUser.uid, courseId });
-  return code;
+  await setDoc(doc(db, "certificates", codeEn), {
+    lang: "en", uid: currentUser.uid, name, courseId, courseTitle: courseTitleEn,
+    skills, score, dateLabel, grade: gradeLabel(score, "en"), issuedAt: serverTimestamp(),
+  });
+  const indexData = { uid: currentUser.uid, courseId, courseTitleAr, courseTitleEn, codeAr, codeEn };
+  await setDoc(indexRef, indexData);
+  return indexData;
 }
 
 async function checkCourseCompletionAndCertificate(courseId, courseTitle) {
@@ -1523,8 +1710,8 @@ async function checkCourseCompletionAndCertificate(courseId, courseTitle) {
     if (!allTasks.length) return;
     const allDone = allTasks.every((id) => userProgress[id] && userProgress[id].completed);
     if (allDone) {
-      const code = await issueCertificateIfNeeded(courseId, courseTitle);
-      if (code) toast("مبروك، حصلت على شهادة إتمام الكورس");
+      const result = await issueCertificateIfNeeded(courseId, courseTitle);
+      if (result) toast("مبروك، حصلت على شهادتي إتمام الكورس (عربي وإنجليزي)");
     }
   } catch (e) { /* لا نوقف تجربة المستخدم لو فشل فحص الشهادة */ }
 }
@@ -1533,16 +1720,17 @@ async function downloadCertificateFile(certData, format) {
   toast("جارٍ تجهيز الشهادة...");
   const canvas = await drawCertificateCanvas(certData);
   const dataUrl = canvas.toDataURL("image/png");
+  const fileLabel = certData.lang === "ar" ? "شهادة سرمد" : "Sarmad Certificate";
   if (format === "pdf" && window.jspdf) {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: [CERT_W, CERT_H] });
     pdf.addImage(dataUrl, "PNG", 0, 0, CERT_W, CERT_H);
-    pdf.save(`Sarmad Certificate - ${certData.courseTitle}.pdf`);
+    pdf.save(`${fileLabel} - ${certData.courseTitle}.pdf`);
   } else {
     // PNG: يُحفظ مباشرة كصورة على الهاتف (متوافق مع خاصية "حفظ الصورة" في المتصفح)
     const a = document.createElement("a");
     a.href = dataUrl;
-    a.download = `Sarmad Certificate - ${certData.courseTitle}.png`;
+    a.download = `${fileLabel} - ${certData.courseTitle}.png`;
     document.body.appendChild(a); a.click(); a.remove();
   }
 }
@@ -1570,6 +1758,7 @@ if ("serviceWorker" in navigator) {
 
 checkVerifyParam().then(async (isVerify) => {
   if (isVerify) return;
-  loadTracks();
-  await checkDeepLinks();
+  // لو فيه رابط مباشر لمسار/كورس/محاضرة/مهمة ولسه مسجّلاش دخول، هيتفتح تلقائيًا
+  // بعد تسجيل الدخول (عبر pendingDeepLink) — راجع onAuthStateChanged.
+  if (!currentUser) await checkDeepLinks();
 });

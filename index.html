@@ -38,7 +38,7 @@
   </header>
 
   <!-- ============ AUTH ============ -->
-  <section class="screen" id="screen-auth">
+  <section class="screen active" id="screen-auth">
     <div style="text-align:center; margin:26px 0 20px;">
       <img src="https://i.ibb.co/Z6RvKsNd/Picsart-26-08-21-02-56-13-099.png" class="protected" style="height:96px;margin:0 auto;" alt="سرمد" />
     </div>
@@ -101,7 +101,7 @@
   </section>
 
   <!-- ============ الرئيسية: المسارات ============ -->
-  <section class="screen active" id="screen-home">
+  <section class="screen" id="screen-home">
     <h2 class="section-title">المسارات</h2>
     <div id="tracksList"></div>
   </section>
@@ -160,7 +160,8 @@
   <!-- ============ المنتدى ============ -->
   <section class="screen" id="screen-forum">
     <h2 class="section-title">منتدى الأسئلة</h2>
-    <div class="card" style="padding:14px;margin-bottom:16px;">
+    <div id="forumGateNotice"></div>
+    <div class="card" id="forumComposeCard" style="padding:14px;margin-bottom:16px;">
       <div class="field"><textarea id="forumText" rows="3" placeholder="اكتب سؤالك هنا..."></textarea></div>
       <div style="display:flex; gap:10px; align-items:center;">
         <label class="btn-sm btn-ghost" style="cursor:pointer;">
@@ -209,11 +210,13 @@
     <div class="card" style="padding:16px;margin-bottom:16px;">
       <h4 style="margin-bottom:12px;">أمان الحساب</h4>
       <button class="btn btn-ghost" id="btnResendVerify" style="margin-bottom:10px;">إعادة إرسال تفعيل البريد</button>
+      <button class="btn btn-ghost" id="btnCheckVerify" style="margin-bottom:10px;">تحقق من حالة التفعيل الآن</button>
       <button class="btn btn-ghost" id="btnChangePassword" style="margin-bottom:10px;">تغيير كلمة المرور</button>
       <button class="btn btn-ghost" id="btnChangeEmail">تغيير البريد الإلكتروني</button>
     </div>
 
     <button class="btn btn-ghost" id="btnLogout">تسجيل الخروج</button>
+    <p class="sub" style="text-align:center;margin-top:22px;">جميع الحقوق محفوظة لدى سرمد</p>
   </section>
 
   <!-- ============ Bottom Nav ============ -->

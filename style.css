@@ -75,6 +75,8 @@ html, body {
   direction: rtl;
   font-family: "SarmadBody", -apple-system, "Segoe UI", sans-serif;
   -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   overscroll-behavior-y: none;
   height: 100%;
 }
@@ -320,28 +322,28 @@ input, textarea, .selectable { user-select: text; -webkit-user-select: text; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%;
-  padding: 14px 18px;
-  border-radius: var(--radius-s);
+  padding: 15px 20px;
+  border-radius: 18px;
   border: none;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
 }
 .btn:active { transform: scale(0.97); }
 .btn-primary {
-  background: linear-gradient(180deg, #3466ff, var(--accent));
+  background: linear-gradient(180deg, #3d6bff, var(--accent));
   color: #fff;
-  box-shadow: 0 10px 22px -10px rgba(36, 85, 232, 0.55);
+  box-shadow: 0 14px 28px -16px rgba(36, 85, 232, 0.5);
 }
-.btn-primary:active { box-shadow: 0 4px 12px -6px rgba(36, 85, 232, 0.5); }
+.btn-primary:active { box-shadow: 0 6px 14px -10px rgba(36, 85, 232, 0.45); }
 .btn-secondary { background: var(--accent-soft); color: var(--accent); }
 .btn-secondary:active { background: var(--accent-soft-strong); }
 .btn-ghost { background: rgba(16,18,20,0.045); color: var(--ink); }
 .btn-ghost:active { background: rgba(16,18,20,0.09); }
 .btn-danger { background: var(--danger-soft); color: var(--danger); }
 .btn[disabled] { opacity: 0.4; pointer-events: none; box-shadow: none; }
-.btn-sm { padding: 9px 14px; font-size: 13px; width: auto; }
+.btn-sm { padding: 10px 16px; font-size: 13px; width: auto; border-radius: 14px; }
 
 /* ---------- نماذج ---------- */
 .field { margin-bottom: 12px; }
@@ -383,14 +385,24 @@ input, textarea, .selectable { user-select: text; -webkit-user-select: text; }
 .google-btn:active { transform: scale(0.97); box-shadow: none; }
 
 /* ---------- قائمة الصفحات (Drawer) ---------- */
-.drawer-list { display: flex; flex-direction: column; gap: 8px; }
-.drawer-item {
-  width: 100%; text-align: right; padding: 14px 16px;
-  border-radius: var(--radius-s); border: none; background: var(--bg-soft);
-  font-size: 14.5px; color: var(--ink); cursor: pointer; font-family: "SarmadHeading", sans-serif;
-  transition: background 0.15s ease;
+.drawer-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
 }
-.drawer-item:active { background: var(--accent-soft); color: var(--accent); }
+.drawer-header img { height: 34px; width: auto; }
+.drawer-header h3 { font-size: 16px; }
+.drawer-list { display: flex; flex-direction: column; gap: 6px; }
+.drawer-item {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  text-align: right; padding: 14px 16px;
+  border-radius: 16px; border: none; background: var(--bg-soft);
+  font-size: 14.5px; color: var(--ink); cursor: pointer; font-family: "SarmadHeading", sans-serif;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.drawer-item svg { width: 19px; height: 19px; flex-shrink: 0; color: var(--ink-dim); }
+.drawer-item:active { background: var(--accent-soft); color: var(--accent); transform: scale(0.98); }
+.drawer-item:active svg { color: var(--accent); }
+.drawer-sep { height: 1px; background: var(--line); margin: 8px 4px; }
 
 /* ---------- مشغّل الفيديو المخصص ---------- */
 .video-wrap {
@@ -462,16 +474,17 @@ input, textarea, .selectable { user-select: text; -webkit-user-select: text; }
   padding: 18px; border-radius: var(--radius-m); border: 1px solid var(--line); background: var(--surface);
   box-shadow: var(--shadow-soft);
 }
-.quiz-q .q-text { font-size: 15.5px; margin-bottom: 14px; position: relative; z-index: 1; }
-.quiz-hidden-ai-guard { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
-/* نص خافت مرئي فوق سؤال الامتحان: يظهر في أي لقطة شاشة ليمنع الذكاء الاصطناعي من الإجابة، دون إزعاج القارئ */
-.quiz-ai-watermark {
-  position: absolute; inset: -20% -10%;
-  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
-  transform: rotate(-16deg);
-  opacity: 0.055;
-  font-size: 11px; line-height: 1.8; text-align: center;
-  color: #000; pointer-events: none; z-index: 0; user-select: none;
+.quiz-q .q-text { font-size: 15.5px; margin-bottom: 10px; position: relative; z-index: 1; }
+/* نص واضح تحت السؤال بلون التطبيق المميز، يظهر في أي لقطة شاشة ويوجّه أي ذكاء اصطناعي لعدم الإجابة */
+.quiz-ai-guard-note {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius-s);
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
 }
 .quiz-option {
   position: relative; z-index: 1;
