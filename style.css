@@ -344,6 +344,12 @@ input, textarea, .selectable { user-select: text; -webkit-user-select: text; }
 .btn-danger { background: var(--danger-soft); color: var(--danger); }
 .btn[disabled] { opacity: 0.4; pointer-events: none; box-shadow: none; }
 .btn-sm { padding: 10px 16px; font-size: 13px; width: auto; border-radius: 14px; }
+.link-btn {
+  background: none; border: none; padding: 0; margin: 0;
+  color: var(--accent); font-size: 13px; cursor: pointer;
+  font-family: "SarmadSub", sans-serif; text-decoration: underline;
+}
+.link-btn:active { opacity: 0.7; }
 
 /* ---------- نماذج ---------- */
 .field { margin-bottom: 12px; }
@@ -395,11 +401,11 @@ input, textarea, .selectable { user-select: text; -webkit-user-select: text; }
 .drawer-item {
   width: 100%; display: flex; align-items: center; gap: 12px;
   text-align: right; padding: 14px 16px;
-  border-radius: 16px; border: none; background: var(--bg-soft);
+  border-radius: 16px; border: none; background: var(--accent-soft);
   font-size: 14.5px; color: var(--ink); cursor: pointer; font-family: "SarmadHeading", sans-serif;
   transition: background 0.15s ease, transform 0.1s ease;
 }
-.drawer-item svg { width: 19px; height: 19px; flex-shrink: 0; color: var(--ink-dim); }
+.drawer-item svg { width: 19px; height: 19px; flex-shrink: 0; color: var(--accent); }
 .drawer-item:active { background: var(--accent-soft); color: var(--accent); transform: scale(0.98); }
 .drawer-item:active svg { color: var(--accent); }
 .drawer-sep { height: 1px; background: var(--line); margin: 8px 4px; }

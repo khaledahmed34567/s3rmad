@@ -583,25 +583,19 @@ async function openCourse(id, data) {
   if (snap.empty) return (list.innerHTML = emptyState("لا توجد محاضرات بعد."));
   list.innerHTML = "";
   const enrolled = isEnrolled(id, data);
-  let prevLectureDone = true; // المحاضرة الأولى دايمًا متاحة
-  for (const d of snap.docs) {
+  snap.forEach((d) => {
     const l = d.data();
-    const lectureUnlocked = enrolled && prevLectureDone;
     const el = document.createElement("div");
-    el.className = "lecture-row protected" + (!lectureUnlocked ? " locked" : "");
+    el.className = "lecture-row protected" + (!enrolled ? " locked" : "");
     el.innerHTML = `<div class="thumb"><img src="${l.image || ""}" class="protected" alt=""/></div>
       <div class="info"><h4>${escapeHtml(l.title)}</h4>
       <div class="meta"><span class="sub">المدة: ${escapeHtml(l.duration || "")}</span></div></div>`;
     el.addEventListener("click", () => {
       if (!enrolled) return toast("يجب الاشتراك في الكورس أولًا");
-      if (!prevLectureDone) return toast("أكمل المحاضرة السابقة أولًا");
       openLecture(id, d.id, l);
     });
     list.appendChild(el);
-    // احسب هل كل مهام المحاضرة دي خلصت، عشان يبني عليها فتح المحاضرة اللي بعدها
-    const tasksSnap = await getDocs(collection(db, "lectures", d.id, "tasks"));
-    prevLectureDone = tasksSnap.empty ? prevLectureDone : tasksSnap.docs.every((t) => userProgress[t.id] && userProgress[t.id].completed);
-  }
+  });
 }
 
 function isEnrolled(courseId, courseData) {
@@ -848,6 +842,36 @@ async function openLecture(courseId, lectureId, data) {
     });
     list.appendChild(el);
   });
+
+  const nextBox = document.getElementById("nextLectureBox");
+  nextBox.innerHTML = "";
+  const allTasksDone = activeLectureTasks.every((t) => userProgress[t.id] && userProgress[t.id].completed);
+  if (allTasksDone) {
+    const allLecturesSnap = await getDocs(query(collection(db, "courses", courseId, "lectures"), orderBy("order", "asc")));
+    const lectures = allLecturesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const curIdx = lectures.findIndex((l) => l.id === lectureId);
+    const nextLecture = curIdx >= 0 ? lectures[curIdx + 1] : null;
+    if (nextLecture) {
+      const btn = document.createElement("button");
+      btn.className = "btn btn-primary";
+      btn.textContent = "المتابعة إلى المحاضرة التالية";
+      btn.addEventListener("click", async () => {
+        const nextTasksSnap = await getDocs(query(collection(db, "lectures", nextLecture.id, "tasks"), orderBy("order", "asc")));
+        activeLectureId = nextLecture.id;
+        document.getElementById("lectureTitle").textContent = nextLecture.title;
+        document.getElementById("lectureDesc").textContent = nextLecture.description || "";
+        document.getElementById("btnCopyLectureLink").onclick = () => copyLink(lectureUrl(nextLecture.id));
+        document.getElementById("btnLectureSurvey").onclick = () => openStandaloneSurvey("lecture", nextLecture.id);
+        if (!nextTasksSnap.empty) {
+          const firstTask = { id: nextTasksSnap.docs[0].id, ...nextTasksSnap.docs[0].data() };
+          openTask(firstTask);
+        } else {
+          openLecture(courseId, nextLecture.id, nextLecture);
+        }
+      });
+      nextBox.appendChild(btn);
+    }
+  }
 }
 
 function taskIcon(type) {
@@ -1683,87 +1707,72 @@ async function drawEnglishCertificate(ctx, { name, courseTitle, skills, score, d
   ctx.direction = "ltr";
   ctx.textAlign = "left";
 
-  // 1. Recipient name — just above the first underline
+  // 1. Recipient name — just above the first underline ("...grants this certificate to:")
   ctx.fillStyle = "#111111";
-  fitFillText(ctx, name, 70, 282, 1060, (px) => `bold ${px}px "SarmadHeading", Georgia, serif`, 32, 22);
+  fitFillText(ctx, name, 60, 355, 850, (px) => `bold ${px}px "SarmadHeading", Georgia, serif`, 34, 22);
 
-  // 2. Course name — just above the second underline
+  // 2. Course name — just above the second underline ("To complete the course:")
   ctx.fillStyle = "#1F2937";
-  fitFillText(ctx, courseTitle, 70, 390, 1060, (px) => `600 ${px}px "SarmadHeading", Georgia, serif`, 28, 20);
+  fitFillText(ctx, courseTitle, 60, 482, 850, (px) => `600 ${px}px "SarmadHeading", Georgia, serif`, 26, 18);
 
-  // 3. Skills acquired — below the "Skills acquired" heading in the template
-  if (skills.length) {
-    let sy = 492;
-    const maxSkillLines = 5;
-    skills.slice(0, maxSkillLines).forEach((s, i) => {
-      ctx.fillStyle = SKILL_COLORS[i % SKILL_COLORS.length];
-      fitFillText(ctx, `• ${s}`, 70, sy, 1060, (px) => `${px}px "SarmadBody", Georgia, serif`, 18, 13);
-      sy += 26;
-    });
-    if (skills.length > maxSkillLines) {
-      ctx.fillStyle = "#4B5563";
-      ctx.font = '14px "SarmadSub", sans-serif';
-      ctx.fillText(`+${skills.length - maxSkillLines} more`, 70, sy);
-    }
+  // 3. Skills — listed under the "Skills acquired" heading already printed on the template
+  let sy = 610;
+  const maxSkillLines = 5;
+  skills.slice(0, maxSkillLines).forEach((s, i) => {
+    ctx.fillStyle = SKILL_COLORS[i % SKILL_COLORS.length];
+    fitFillText(ctx, `• ${s}`, 60, sy, 900, (px) => `${px}px "SarmadBody", Georgia, serif`, 20, 14);
+    sy += 28;
+  });
+  if (skills.length > maxSkillLines) {
+    ctx.fillStyle = "#4B5563";
+    ctx.font = '14px "SarmadSub", sans-serif';
+    ctx.fillText(`+${skills.length - maxSkillLines} more`, 60, sy);
   }
 
-  // 4. Score / grade
-  ctx.font = '20px "SarmadHeading", Georgia, serif';
-  ctx.fillStyle = "#1F2937";
-  ctx.fillText(`Score: ${score}% (${grade})`, 70, 700);
+  // 4. Verification QR — inside the placeholder box, top-right area
+  await drawQrSafely(ctx, code, 1058, 708, 85);
 
-  // 5. Verification QR — bottom-right area
-  await drawQrSafely(ctx, code, 1000, 690, 100);
-
-  // 6. Issue date / certificate number — left of the QR box
-  ctx.font = '15px "SarmadSub", monospace';
+  // 5. Small print (date, grade, verification code) — tucked in the empty middle-bottom margin
+  ctx.textAlign = "center";
+  ctx.font = '14px "SarmadSub", sans-serif';
   ctx.fillStyle = "#6B7280";
-  ctx.fillText(`Date: ${dateLabel}  ·  ${code}`, 70, 760);
+  ctx.fillText(`Issued: ${dateLabel}  ·  Grade: ${grade} (${score}%)  ·  Verification: ${code}`, 600, 805);
 }
 
 async function drawArabicCertificate(ctx, { name, courseTitle, skills, score, dateLabel, code, grade }) {
   ctx.direction = "rtl";
+  ctx.textAlign = "right";
 
-  // اسم المتدرب — منتصف الشهادة أفقيًا (يصغّر تلقائيًا لو الاسم طويل)
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#0c1330";
-  fitFillText(ctx, name, 600, 600, 900, (px) => `bold ${px}px "SarmadHeading", Tahoma, sans-serif`, 42, 26);
+  // 1. اسم المتدرب — فوق الخط الأول مباشرة (تحت "تمنح منصة سرمد هذه الشهادة إلى:")
+  ctx.fillStyle = "#111111";
+  fitFillText(ctx, name, 1092, 440, 580, (px) => `bold ${px}px "SarmadHeading", Tahoma, sans-serif`, 34, 22);
 
-  // اسم الدورة التدريبية
-  ctx.fillStyle = "#1c2340";
-  fitFillText(ctx, courseTitle, 600, 510, 900, (px) => `${px}px "SarmadHeading", Tahoma, sans-serif`, 36, 22);
+  // 2. اسم الدورة — فوق الخط الثاني مباشرة (تحت "لإتمامه دورة:")
+  ctx.fillStyle = "#1F2937";
+  fitFillText(ctx, courseTitle, 1092, 580, 580, (px) => `600 ${px}px "SarmadHeading", Tahoma, sans-serif`, 28, 18);
 
-  // عنوان المهارات + قائمة المهارات (كل مهارة بلون مميز، حد أقصى 5 أسطر عشان ميلخبطش مع باقي الشهادة)
-  ctx.textAlign = "left";
-  ctx.font = '24px "SarmadBody", Tahoma, sans-serif';
-  ctx.fillStyle = "#1c2340";
-  ctx.fillText("المهارات المكتسبة:", 100, 650);
-  let sy = 680;
+  // 3. المهارات — تحت عنوان "المهارات التي تعلمها" المطبوع بالفعل على القالب، في العمود الأيسر
+  let sy = 405;
   const maxSkillLines = 5;
   skills.slice(0, maxSkillLines).forEach((s, i) => {
     ctx.fillStyle = SKILL_COLORS[i % SKILL_COLORS.length];
-    fitFillText(ctx, `• ${s}`, 100, sy, 480, (px) => `${px}px "SarmadBody", Tahoma, sans-serif`, 24, 16);
-    sy += 30;
+    fitFillText(ctx, `• ${s}`, 432, sy, 380, (px) => `${px}px "SarmadBody", Tahoma, sans-serif`, 22, 14);
+    sy += 32;
   });
   if (skills.length > maxSkillLines) {
     ctx.fillStyle = "#6d7278";
-    ctx.font = '20px "SarmadSub", sans-serif';
-    ctx.fillText(`+${skills.length - maxSkillLines} أخرى`, 100, sy);
+    ctx.font = '18px "SarmadSub", sans-serif';
+    ctx.fillText(`+${skills.length - maxSkillLines} أخرى`, 432, sy);
   }
 
-  // رمز QR للتحقق (85×85 عند 1030,640)
-  await drawQrSafely(ctx, code, 1030, 640, 85);
+  // 4. رمز QR — داخل المربع الفاتح الجاهز أسفل يسار الشهادة
+  await drawQrSafely(ctx, code, 35, 710, 85);
 
-  // العمود الأيمن: جملة التحقق، رقم التحقق، التاريخ، التقدير العام (يصغّر تلقائيًا لو النص طويل)
-  ctx.textAlign = "right";
-  ctx.fillStyle = "#3a3f57";
-  fitFillText(ctx, "للتحقق من الشهادة", 970, 625, 260, (px) => `${px}px "SarmadBody", Tahoma, sans-serif`, 20, 14);
-
-  fitFillText(ctx, code, 950, 690, 260, (px) => `${px}px "SarmadSub", monospace`, 22, 14);
-
-  ctx.fillStyle = "#1c2340";
-  fitFillText(ctx, dateLabel, 950, 740, 260, (px) => `${px}px "SarmadBody", Tahoma, sans-serif`, 24, 16);
-  fitFillText(ctx, `${grade} (${score}%)`, 950, 770, 260, (px) => `${px}px "SarmadBody", Tahoma, sans-serif`, 24, 16);
+  // 5. سطر صغير (التاريخ/التقدير/رقم التحقق) في الهامش السفلي الفاضي
+  ctx.textAlign = "center";
+  ctx.font = '14px "SarmadSub", sans-serif';
+  ctx.fillStyle = "#6d7278";
+  ctx.fillText(`التاريخ: ${dateLabel}  ·  التقدير: ${grade} (${score}%)  ·  رقم التحقق: ${code}`, 600, 805);
 }
 
 // يرسم نصًا مع تصغير حجم الخط تلقائيًا خطوة بخطوة لحد ما يدخل في العرض المتاح — يمنع تداخل
