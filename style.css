@@ -170,39 +170,6 @@ img{max-width:100%; display:block;}
 .section-head .see-all{font-size:13.5px; color:var(--emerald); flex-shrink:0; display:flex; align-items:center; gap:4px;}
 
 .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px;}
-/* ---- SARMAD AI floating widget ---- */
-.sarmad-fab{position:fixed; bottom:22px; inset-inline-end:22px; width:56px; height:56px; border-radius:50%; border:none; background:#0E1116; box-shadow:0 6px 18px rgba(0,0,0,.28); cursor:pointer; z-index:9500; display:flex; align-items:center; justify-content:center; padding:8px;}
-.sarmad-fab img{width:100%; height:100%; object-fit:contain; border-radius:50%;}
-.sarmad-panel{position:fixed; bottom:88px; inset-inline-end:22px; width:min(360px,90vw); height:min(480px,70vh); background:var(--canvas); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-lift); z-index:9500; display:none; flex-direction:column; overflow:hidden;}
-.sarmad-panel.open{display:flex;}
-.sarmad-panel-head{display:flex; align-items:center; gap:10px; padding:14px 16px; background:#0E1116; color:#fff;}
-.sarmad-panel-head img{height:22px; width:auto;}
-.sarmad-panel-head span{font-family:'AppTitles'; font-weight:700; flex:1;}
-.sarmad-panel-head button{background:none; border:none; color:#fff; cursor:pointer; font-size:16px;}
-.sarmad-messages{flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:8px;}
-.sarmad-msg{max-width:85%; padding:9px 13px; border-radius:14px; font-size:13.5px; line-height:1.6;}
-.sarmad-msg.ai{align-self:flex-start; background:var(--surface-2); border-bottom-left-radius:4px;}
-.sarmad-msg.me{align-self:flex-end; background:var(--emerald); color:#fff; border-bottom-right-radius:4px;}
-.sarmad-input-row{display:flex; gap:8px; padding:10px; border-top:1px solid var(--line);}
-.sarmad-input-row input{flex:1; padding:10px 14px; border-radius:100px; border:1px solid var(--line); background:var(--canvas); color:var(--ink); font-family:inherit;}
-.sarmad-input-row button{width:38px; height:38px; border-radius:50%; background:var(--emerald); color:#fff; border:none; cursor:pointer; flex-shrink:0; transform:rotate(180deg);}
-@media(max-width:480px){ .sarmad-panel{width:94vw; inset-inline-end:3vw; height:65vh;} }
-
-/* Export clone: downloads are rendered from an off-screen copy fixed at A4
-   width (794px), so a phone-sized on-screen card still exports a full-size,
-   full-resolution A4 page instead of a shrunken one. */
-.accred-card.accred-export{width:794px; max-width:794px; padding:6% 8%; margin:0;}
-.accred-card.accred-export .accred-heading-img{height:56px; margin-bottom:28px;}
-.accred-card.accred-export .accred-title{font-size:22px; margin-bottom:24px;}
-.accred-card.accred-export .accred-body{font-size:15px; line-height:1.9;}
-.accred-card.accred-export .accred-name-line{font-size:20px;}
-.accred-card.accred-export .accred-terms{font-size:11px;}
-.accred-card.accred-export .cert-card-mark{width:84px; height:84px;}
-.accred-card.accred-export .cert-card-sig{min-width:130px;}
-.accred-card.accred-export .cert-card-sig-img{width:110px; margin-bottom:-6px;}
-.accred-card.accred-export .cert-card-sig-line{width:120px; padding-top:6px;}
-.accred-card.accred-export .cert-card-qr-box img{width:72px; height:72px;}
-.accred-card.accred-export .cert-card-qr-box span{font-size:10.5px;}
 
 /* ---- Course badge (image + overlaid student name) ---- */
 .badge-card{position:relative; width:100%; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lift); margin-bottom:20px; background:#fff;}
@@ -599,4 +566,43 @@ img{max-width:100%; display:block;}
 }
 @media(min-width:1400px){
   .wrap{max-width:1320px;}
+}
+
+/* ---- Links inside user/admin text content (forum, lesson text, accreditation
+   terms): a distinct color so they read as clickable, and always wrapped so
+   a long URL can never push the page wider than the screen. ---- */
+.ulink{color:var(--emerald); text-decoration:underline; text-underline-offset:2px; overflow-wrap:anywhere; word-break:break-word;}
+.ulink:hover{text-decoration-thickness:2px;}
+:root[data-theme="dark"] .ulink, :root:not([data-theme="light"]) .ulink{color:#7fb0ff;}
+.forum-text, .accred-body, .accred-terms, .articles{overflow-wrap:anywhere; word-break:break-word;}
+
+/* ---- Forum: replies, nesting, likes ---- */
+.forum-text{white-space:pre-wrap; line-height:1.8;}
+.forum-meta{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap;}
+.forum-actions{display:flex; align-items:center; gap:12px;}
+.forum-act{background:none; border:none; color:var(--emerald); font-size:12px; cursor:pointer; padding:0; font-family:inherit;}
+.forum-act.danger{color:var(--danger);}
+.forum-like{display:flex; align-items:center; gap:4px; background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:12px; padding:0;}
+.forum-like .icon{width:15px; height:15px;}
+.forum-like.on{color:var(--danger);}
+.forum-reply{border-inline-start:2px solid var(--line); padding:12px 0 12px 14px; margin-top:12px;}
+.forum-replying{display:flex; align-items:center; justify-content:space-between; background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:100px; padding:6px 14px; font-size:12px; margin-bottom:8px;}
+
+/* ---- Task page: time-spent / flag-for-review / rate-and-difficulty ---- */
+.task-extras-row{display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;}
+.task-extras-row:last-child{margin-bottom:0;}
+.star-rate{display:inline-flex; gap:2px;}
+.star-rate button{background:none; border:none; font-size:18px; line-height:1; color:var(--line); cursor:pointer; padding:0;}
+.star-rate button.on{color:var(--gold);}
+
+/* ---- A4 accreditation: uniformly scaled to fit the viewport so what's on
+   screen matches print/export 1:1, never overflowing horizontally. ---- */
+.accred-fit{width:100%; overflow:hidden; margin-bottom:20px;}
+.accred-scale{width:794px; transform-origin:top center;}
+.accred-scale .accred-card{margin-bottom:0;}
+body.printing-accred > *:not(#printHost){display:none !important;}
+body.printing-accred #printHost{display:block !important;}
+body.printing-accred #printHost .accred-card{width:210mm; aspect-ratio:auto; height:297mm; margin:0; box-shadow:none; border:none;}
+@media print{
+  body.printing-accred #printHost .accred-card{padding:16mm 14mm;}
 }
