@@ -31,6 +31,8 @@ const CONFIG = {
   IMGBB_KEY: '36b0e2658ed6fad2ca48081442f1539b',
   PAYPAL_CLIENT_ID: 'AW_M1acPABnrPp2AJklYALUDZ1OUA2NS6CPGp3D3ZB9fVIfmfD87le9WZmHF3fOCqINDO3RAtQGWLteZ',
   VODAFONE_CASH_NUMBER: '01023311470',
+  CERT_FEE_AMOUNT: 150,
+  CERT_FEE_VODAFONE_LINK: 'http://vf.eg/vfcash?id=mt&qrId=jYdtV2&qrString=a65ac8ba9b635f0074633e7f904589adf66061553c5a79aa087133bd1ac38b99&parameters=4m0OzyyKSYqWHovWdWhCtmIGGF/6P6I+w/DZD3ttVEWZiH79qa1xYmLPGVeCmAPy',
   INSTAPAY_LINKS: [
     { url: 'https://ipn.eg/S/khaled.abdelra736361/instapay/4HMUhq', handle: 'khaled.abdelra736361@instapay' },
     { url: 'https://ipn.eg/S/khaled.abdelra4205/instapay/2rY50v', handle: 'khaled.abdelra4205@instapay' },
@@ -1306,9 +1308,67 @@ async function loadTrackCertRequestBox(trackId, courses){
       return;
     }
     host.innerHTML = `<div class="list-item" style="cursor:default; border-color:var(--gold);"><div class="num">${icon('badge')}</div><div class="info"><h4>أكملت المسار بالكامل!</h4><span>اطلب شهادة إتمام المسار الآن</span></div><button class="btn btn-gold btn-sm" id="requestTrackCertBtn">${icon('badge')} طلب شهادة</button></div>`;
-    document.getElementById('requestTrackCertBtn').addEventListener('click', () => openTrackCertRequestModal(trackId));
+    document.getElementById('requestTrackCertBtn').addEventListener('click', () => ensureCertFeePaid(() => openTrackCertRequestModal(trackId)));
   } catch(e){ console.error(e); }
 }
+/* =====================================================================
+   New feature: paid certificate/track-certificate requests — 150 ج.م via a
+   specific Vodafone Cash link, with photo-proof upload, reviewed by the
+   admin in the same Payments tab as course payments (fee_type:'cert_fee').
+   Additive only: nothing about the existing free excellence-accreditation
+   flow (>=97%) is touched by this — that one still issues automatically.
+   ===================================================================== */
+async function ensureCertFeePaid(onPaid){
+  if (!session.user) { openAuth('login'); return; }
+  try {
+    const payments = await DB.listAll('Payments', 'user_id', session.user.uid);
+    const paid = payments.some(p => p.fee_type==='cert_fee' && p.status==='approved');
+    if (paid) { onPaid(); return; }
+    const pending = payments.some(p => p.fee_type==='cert_fee' && p.status==='pending');
+    openCertFeeModal(pending, onPaid);
+  } catch(e){ toast(dbFriendlyError(e)); }
+}
+function openCertFeeModal(alreadyPending, onPaid){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  if (alreadyPending) {
+    overlay.innerHTML = `<div class="modal">
+      <div class="modal-head"><h2>${icon('badge')} رسوم الشهادة</h2><button class="modal-close" id="certFeeClose">✕</button></div>
+      <p style="line-height:1.9;">طلب دفع الرسوم عندك قيد المراجعة من الإدارة. هتقدر تطلب شهادتك أول ما يتم اعتماد الدفع.</p>
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => { if (e.target===overlay) overlay.remove(); });
+    overlay.querySelector('#certFeeClose').addEventListener('click', () => overlay.remove());
+    return;
+  }
+  overlay.innerHTML = `<div class="modal">
+    <div class="modal-head"><h2>${icon('badge')} رسوم إصدار الشهادة</h2><button class="modal-close" id="certFeeClose">✕</button></div>
+    <p style="line-height:1.9;">إصدار الشهادة برسوم قدرها <strong>${CONFIG.CERT_FEE_AMOUNT} جنيه</strong>، تُدفع عن طريق فودافون كاش من الرابط التالي فقط:</p>
+    <div class="share-row" style="margin-bottom:16px;"><a class="btn btn-primary btn-sm" href="${CONFIG.CERT_FEE_VODAFONE_LINK}" target="_blank" rel="noopener">${icon('doc')} فتح رابط الدفع (فودافون كاش)</a></div>
+    <div class="field"><label>ارفع صورة إثبات الدفع *</label><input type="file" accept="image/*" id="certFeeProof"></div>
+    <button class="btn btn-primary btn-block" id="certFeeSubmitBtn">إرسال إثبات الدفع</button>
+    <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">هتقدر تطلب شهادتك بعد ما الإدارة تراجع وتعتمد الدفع.</p>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target===overlay) overlay.remove(); });
+  overlay.querySelector('#certFeeClose').addEventListener('click', () => overlay.remove());
+  overlay.querySelector('#certFeeSubmitBtn').addEventListener('click', async () => {
+    const file = overlay.querySelector('#certFeeProof').files[0];
+    if (!file) { toast('ارفع صورة إثبات الدفع أولًا'); return; }
+    const btn = overlay.querySelector('#certFeeSubmitBtn');
+    btn.disabled = true; btn.textContent = '...جارٍ الإرسال';
+    try {
+      const proofUrl = await ImgBB.upload(file);
+      await DB.create('Payments', {
+        user_id: session.user.uid, user_email: session.user.email, method:'vodafone', fee_type:'cert_fee',
+        amount: CONFIG.CERT_FEE_AMOUNT, proof_url: proofUrl, status:'pending', created_at: new Date().toISOString(),
+      });
+      toast('تم إرسال إثبات الدفع، بانتظار اعتماد الإدارة');
+      overlay.remove();
+    } catch(e){ toast(dbFriendlyError(e)); btn.disabled=false; btn.textContent='إرسال إثبات الدفع'; }
+  });
+}
+
 function openTrackCertRequestModal(trackId){
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay open';
@@ -1378,6 +1438,7 @@ async function renderCourse(id){
   const course = courses.find(c=>String(c.id)===String(id));
   document.getElementById('courseTitle').textContent = course ? course.title_ar : 'دورة غير موجودة';
   document.getElementById('courseDesc').textContent = course ? course.description_ar||'' : '';
+  if (course && course.notice) checkCourseNotice(course, id);
   const price = Number(course?.price) || 0;
   // a course flagged non-standalone (part of a paid track) can't be bought on
   // its own — point the student at the track subscription instead
@@ -1527,7 +1588,7 @@ async function loadCertRequestBox(courseId, course, eligible, reason){
       return;
     }
     box.innerHTML = `<div class="list-item" style="cursor:default; margin-top:16px; border-color:var(--gold);"><div class="num">${icon('badge')}</div><div class="info"><h4>أكملت الدورة!</h4><span>اطلب شهادتك الآن</span></div><button class="btn btn-gold btn-sm" id="requestCertBtn">${icon('badge')} طلب شهادة</button></div>`;
-    document.getElementById('requestCertBtn').addEventListener('click', () => openCertRequestModal(courseId));
+    document.getElementById('requestCertBtn').addEventListener('click', () => ensureCertFeePaid(() => openCertRequestModal(courseId)));
   } catch(e){ console.error(e); }
 }
 function openCertRequestModal(courseId){
@@ -1754,8 +1815,19 @@ function loadLectureQA(lectureId){
 /* ---- Paywall: a paid course's lectures/tasks must not be reachable (not
    even by a direct link) unless the student has an admin-approved payment
    for that course, or for the track it belongs to. ---- */
+// A course-specific ban always wins, even over a paid/free course that
+// would otherwise be open to everyone — checked first, before any of the
+// existing price/payment logic below.
+async function isBannedFromCourse(courseId){
+  if (!session.user || !courseId) return null;
+  try {
+    const bans = await DB.listAll('CourseBans', 'user_id', session.user.uid);
+    return bans.find(b => String(b.course_id)===String(courseId)) || null;
+  } catch(e){ console.error(e); return null; }
+}
 async function hasApprovedAccessToCourse(course){
   if (!course) return true;
+  if (session.user && await isBannedFromCourse(course.id)) return false;
   const price = Number(course.price)||0;
   if (price<=0) return true;
   if (!session.user) return false;
@@ -1777,7 +1849,14 @@ async function hasApprovedAccessToTrack(track){
     return payments.some(p=>p.status==='approved' && String(p.track_id)===String(track.id));
   } catch(e){ console.error(e); return false; }
 }
-function renderPaywall(course){
+async function renderPaywall(course){
+  const ban = course ? await isBannedFromCourse(course.id) : null;
+  if (ban) {
+    appRoot.innerHTML = `<div class="wrap section" style="max-width:520px; margin:0 auto; text-align:center;">
+      ${emptyState('محظور من هذه الدورة', ban.reason ? `السبب: ${ban.reason}` : 'تواصل مع الإدارة لمزيد من التفاصيل')}
+    </div>`;
+    return;
+  }
   appRoot.innerHTML = `<div class="wrap section" style="max-width:520px; margin:0 auto; text-align:center;">
     ${emptyState('محتوى مدفوع', session.user ? 'لازم تشترك في هذه الدورة الأول عشان تقدر تفتح المحتوى' : 'سجّل الدخول واشترك في الدورة عشان تقدر تفتح المحتوى')}
     <button class="btn btn-primary btn-sm" style="margin-top:-8px;" onclick="${session.user ? `navigate('payment/${course?.id||''}')` : `openAuth('login')`}">${icon('wallet')} ${session.user?'الاشتراك الآن':'تسجيل الدخول'}</button>
@@ -2049,14 +2128,24 @@ async function renderTask(id){
     </div>`;
     initCustomAudioPlayer(task, audioId);
   }
-  else if (task.type==='pdf') body.innerHTML = `
-    <div class="pdf-viewer">
-      <div class="pdf-viewer-bar">
-        <span class="pdf-viewer-title">${icon('doc')} ${escapeHtml(task.title_ar||'ملف PDF')}</span>
-        <a href="${escapeHtml(src)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">${icon('upload')} فتح في نافذة جديدة</a>
-      </div>
-      <iframe class="pdf-frame" src="https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(src)}" loading="lazy"></iframe>
-    </div>`;
+  else if (task.type==='pdf') {
+    // Direct src (native browser PDF viewer) instead of loading Mozilla's
+    // full pdf.js web app as a wrapper — that extra app + its own fetch of
+    // the file was the main reason this used to feel slow to open.
+    body.innerHTML = `
+      <div class="pdf-viewer">
+        <div class="pdf-viewer-bar">
+          <span class="pdf-viewer-title">${icon('doc')} ${escapeHtml(task.title_ar||'ملف PDF')}</span>
+          <a href="${escapeHtml(src)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">${icon('upload')} فتح في نافذة جديدة</a>
+        </div>
+        <div class="pdf-frame-wrap">
+          <div class="pdf-frame-loading" id="pdfFrameLoading"><span class="hint">...جارٍ تحميل الملف</span></div>
+          <iframe class="pdf-frame" id="pdfFrameEl" src="${escapeHtml(src)}"></iframe>
+        </div>
+      </div>`;
+    const pdfIframe = document.getElementById('pdfFrameEl');
+    pdfIframe.addEventListener('load', () => { const l = document.getElementById('pdfFrameLoading'); if (l) l.remove(); });
+  }
   else if (task.type==='assignment') {
     body.innerHTML = `<div class="panel">
       <h3 style="margin-bottom:10px;">${icon('doc')} المطلوب منك</h3>
@@ -2065,8 +2154,41 @@ async function renderTask(id){
     </div>`;
     loadAssignmentSubmitBox(id);
   }
-  else if (task.type==='ai_discussion') {
-    body.innerHTML = `<div class="panel">${emptyState('هذا النوع من المهام لم يعد متاحًا','تواصل مع الإدارة إن احتجت مساعدة')}</div>`;
+  else if (task.type==='essay') {
+    body.innerHTML = `<div class="panel">
+      <h3 style="margin-bottom:10px;">${icon('doc')} سؤال المقال</h3>
+      <p style="color:var(--ink-soft); margin-bottom:18px; white-space:pre-wrap;">${escapeHtml(task.instructions||'')}</p>
+      <div id="essaySubmitBox">${skeletonCards(1)}</div>
+    </div>`;
+    loadEssaySubmitBox(task, id, already);
+  }
+  else if (task.type==='audio_response') {
+    body.innerHTML = `<div class="panel">
+      <h3 style="margin-bottom:10px;">${icon('headphones')} المطلوب تسجيله</h3>
+      <p style="color:var(--ink-soft); margin-bottom:18px; white-space:pre-wrap;">${escapeHtml(task.instructions||'')}</p>
+      <div id="audioRecordBox"></div>
+    </div>`;
+    initAudioResponseTask(id, already);
+  }
+  else if (task.type==='matching') {
+    body.innerHTML = `<div class="panel"><h3 style="margin-bottom:14px;">${icon('check')} وصّل كل عنصر بما يقابله</h3><div id="matchingGame"></div></div>`;
+    initMatchingTask(task, id, already);
+  }
+  else if (task.type==='ordering') {
+    body.innerHTML = `<div class="panel"><h3 style="margin-bottom:14px;">${icon('check')} رتّب الخطوات بالترتيب الصحيح</h3><div id="orderingGame"></div></div>`;
+    initOrderingTask(task, id, already);
+  }
+  else if (task.type==='fillblank') {
+    body.innerHTML = `<div class="panel"><h3 style="margin-bottom:14px;">${icon('pencil')} املأ الفراغ</h3><div id="fillblankGame"></div></div>`;
+    initFillblankTask(task, id, already);
+  }
+  else if (task.type==='flashcards') {
+    body.innerHTML = `<div class="panel"><h3 style="margin-bottom:14px;">${icon('star')} بطاقات المراجعة</h3><div id="flashcardsGame"></div></div>`;
+    initFlashcardsTask(task, id, already);
+  }
+  else if (task.type==='truefalse') {
+    body.innerHTML = `<div class="panel"><h3 style="margin-bottom:14px;">${icon('check')} صح أم خطأ؟</h3><div id="truefalseGame"></div></div>`;
+    initTruefalseTask(task, id, already);
   }
   else if (Array.isArray(task.content_json) && task.content_json.length){
     // rich colored/animated text built in the admin panel — array of {text,color,animation}
@@ -2102,9 +2224,11 @@ async function renderTask(id){
   }
   const tracker = await startTaskTimeTracker(id);
   const minMinutes = Number(task.min_minutes)||0;
-  if (task.type==='assignment') {
-    // assignment: completion is driven by the submission form (see
-    // loadAssignmentSubmitBox), not a standalone "mark complete" button.
+  const SELF_DRIVEN_TYPES = ['assignment','essay','matching','ordering','fillblank','flashcards','audio_response','truefalse'];
+  if (SELF_DRIVEN_TYPES.includes(task.type)) {
+    // these types drive their own completion from inside their own UI
+    // (submission form, matching all pairs, finishing the recording, etc.)
+    // instead of a standalone "mark complete" button.
     document.getElementById('taskActions').innerHTML = already ? `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span> ${nextButtonHtml()}` : '';
   } else if (already) {
     document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span> ${nextButtonHtml()}`;
@@ -2137,6 +2261,304 @@ async function renderTask(id){
 
 /* ---- New feature: assignment/project submissions (Submissions collection),
    reviewed and graded by the admin from a dedicated tab. ---- */
+/* ---- New feature: course notice — a blocking modal the student must
+   acknowledge once per course (stored in NoticeAcks so it never repeats),
+   for things the admin needs every student to actually read first. ---- */
+async function checkCourseNotice(course, courseId){
+  if (!session.user) return; // guests are already gated by the login-required screen elsewhere
+  const ackId = `${session.user.uid}_${courseId}`;
+  try {
+    const ack = await DB.get('NoticeAcks', ackId);
+    if (ack) return;
+  } catch(e){ console.error(e); return; }
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.innerHTML = `<div class="modal">
+    <div class="modal-head"><h2>${icon('badge')} تنبيه مهم عن هذه الدورة</h2></div>
+    <p style="white-space:pre-wrap; line-height:1.9; margin-bottom:20px;">${linkifyEscaped(course.notice)}</p>
+    <button class="btn btn-primary btn-block" id="courseNoticeAckBtn">فهمت</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('courseNoticeAckBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('courseNoticeAckBtn');
+    btn.disabled = true; btn.textContent = '...';
+    try { await DB.create('NoticeAcks', { user_id: session.user.uid, course_id: courseId, acked_at: new Date().toISOString() }, ackId); }
+    catch(e){ console.error(e); }
+    overlay.remove();
+  });
+}
+
+/* ---- Essay: a written response, stored like an assignment submission but
+   as plain text (EssayResponses), with an optional minimum word count. ---- */
+async function loadEssaySubmitBox(task, taskId, already){
+  const box = document.getElementById('essaySubmitBox');
+  if (!session.user) { box.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAuth('login')">سجّل الدخول للإجابة</button>`; return; }
+  let existing = null;
+  try { existing = await DB.get('EssayResponses', `${session.user.uid}_${taskId}`); } catch(e){ console.error(e); }
+  if (existing) {
+    box.innerHTML = `<div class="list-item" style="cursor:default;"><div class="info"><h4>إجابتك المُرسلة</h4><p style="white-space:pre-wrap; margin-top:6px;">${escapeHtml(existing.body||'')}</p>
+      ${existing.admin_feedback ? `<p style="margin-top:8px; font-size:12.5px; color:var(--ink-soft);">ملاحظة الأدمن: ${escapeHtml(existing.admin_feedback)}</p>` : ''}</div></div>`;
+    return;
+  }
+  const minWords = Number(task.min_words)||0;
+  box.innerHTML = `
+    <div class="field"><label>إجابتك${minWords?` (${minWords} كلمة على الأقل)`:''}</label><textarea id="essayBody" rows="8"></textarea></div>
+    <button class="btn btn-primary" id="submitEssayBtn">${icon('upload')} إرسال الإجابة</button>`;
+  document.getElementById('submitEssayBtn').addEventListener('click', async () => {
+    const body = document.getElementById('essayBody').value.trim();
+    const wordCount = body ? body.split(/\s+/).filter(Boolean).length : 0;
+    if (!body) { toast('اكتب إجابتك أولًا'); return; }
+    if (minWords && wordCount < minWords) { toast(`محتاج ${minWords} كلمة على الأقل — عندك ${wordCount}`); return; }
+    const btn = document.getElementById('submitEssayBtn');
+    btn.disabled = true; btn.textContent = '...جارٍ الإرسال';
+    try {
+      await DB.create('EssayResponses', { user_id:session.user.uid, user_email:session.user.email, task_id:taskId, body, word_count:wordCount, created_at:new Date().toISOString() }, `${session.user.uid}_${taskId}`);
+      await markTaskCompleteInline(taskId);
+      toast('تم إرسال إجابتك');
+      loadEssaySubmitBox(task, taskId, true);
+      document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+    } catch(e){ toast(dbFriendlyError(e)); btn.disabled=false; btn.innerHTML=`${icon('upload')} إرسال الإجابة`; }
+  });
+}
+
+/* ---- Audio response: recorded entirely client-side (MediaRecorder). The
+   platform has no audio hosting, so the file itself is never uploaded —
+   only a lightweight record (duration + timestamp) is saved so the admin
+   can see it happened. The student keeps/hears the recording locally. ---- */
+async function initAudioResponseTask(taskId, already){
+  const box = document.getElementById('audioRecordBox');
+  if (already) { box.innerHTML = `<p class="hint">${icon('check')} سجّلت لهذه المهمة من قبل.</p>`; return; }
+  if (!session.user) { box.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAuth('login')">سجّل الدخول للتسجيل</button>`; return; }
+  if (!(navigator.mediaDevices && window.MediaRecorder)) { box.innerHTML = emptyState('التسجيل غير مدعوم', 'متصفحك لا يدعم تسجيل الصوت'); return; }
+  box.innerHTML = `
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <button class="btn btn-primary" id="audioRecBtn">${icon('headphones')} بدء التسجيل</button>
+      <span class="hint" id="audioRecStatus"></span>
+    </div>
+    <audio id="audioRecPreview" controls style="display:none; margin-top:14px; width:100%;"></audio>
+    <button class="btn btn-primary" id="audioRecDoneBtn" style="display:none; margin-top:14px;">${icon('check')} إتمام المهمة</button>`;
+  let recorder = null, chunks = [], startedAt = 0;
+  const recBtn = document.getElementById('audioRecBtn');
+  const status = document.getElementById('audioRecStatus');
+  const preview = document.getElementById('audioRecPreview');
+  const doneBtn = document.getElementById('audioRecDoneBtn');
+  recBtn.addEventListener('click', async () => {
+    if (recorder && recorder.state === 'recording') {
+      recorder.stop();
+      recBtn.textContent = `${icon('headphones')} بدء التسجيل من جديد`;
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      chunks = []; recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        stream.getTracks().forEach(t=>t.stop());
+        const blob = new Blob(chunks, { type:'audio/webm' });
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = 'block';
+        doneBtn.style.display = 'inline-flex';
+        doneBtn.dataset.duration = Math.round((Date.now()-startedAt)/1000);
+        status.textContent = 'تم التسجيل — استمع له قبل الإتمام';
+      };
+      recorder.start(); startedAt = Date.now();
+      recBtn.textContent = `${icon('headphones')} إيقاف التسجيل`;
+      status.textContent = '...جارٍ التسجيل';
+    } catch(e){ toast('تعذّر الوصول للميكروفون'); }
+  });
+  doneBtn.addEventListener('click', async () => {
+    doneBtn.disabled = true; doneBtn.textContent = '...';
+    try {
+      await DB.create('AudioResponses', { user_id:session.user.uid, user_email:session.user.email, task_id:taskId, duration_seconds:Number(doneBtn.dataset.duration)||0, created_at:new Date().toISOString() });
+      await markTaskCompleteInline(taskId);
+      toast('تم تسجيل إتمام المهمة');
+      document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+      box.innerHTML = `<p class="hint">${icon('check')} تم التسجيل والإتمام.</p>`;
+    } catch(e){ toast(dbFriendlyError(e)); doneBtn.disabled=false; doneBtn.innerHTML=`${icon('check')} إتمام المهمة`; }
+  });
+}
+
+/* ---- Matching: click one item on each side to pair them; wrong pairs
+   bounce back. Completes the task once every pair is matched correctly. ---- */
+function initMatchingTask(task, taskId, already){
+  const host = document.getElementById('matchingGame');
+  const pairs = task.content_json?.pairs || [];
+  if (already) { host.innerHTML = `<p class="hint">${icon('check')} خلّصت هذه المطابقة من قبل.</p>`; return; }
+  const lefts = pairs.map((p,i)=>({i, text:p.left})).sort(()=>Math.random()-0.5);
+  const rights = pairs.map((p,i)=>({i, text:p.right})).sort(()=>Math.random()-0.5);
+  const matched = new Set();
+  let selLeft = null, selRight = null;
+  host.innerHTML = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+    <div id="matchLeftCol"></div><div id="matchRightCol"></div>
+  </div><p class="hint" style="margin-top:14px;" id="matchStatus"></p>`;
+  function draw(){
+    document.getElementById('matchLeftCol').innerHTML = lefts.map(l => `<button type="button" class="match-item ${matched.has(l.i)?'done':selLeft===l.i?'sel':''}" data-i="${l.i}" ${matched.has(l.i)?'disabled':''}>${escapeHtml(l.text)}</button>`).join('');
+    document.getElementById('matchRightCol').innerHTML = rights.map(r => `<button type="button" class="match-item ${matched.has(r.i)?'done':selRight===r.i?'sel':''}" data-i="${r.i}" ${matched.has(r.i)?'disabled':''}>${escapeHtml(r.text)}</button>`).join('');
+    document.querySelectorAll('#matchLeftCol .match-item').forEach(b => b.onclick = () => { selLeft = Number(b.dataset.i); tryMatch(); draw(); });
+    document.querySelectorAll('#matchRightCol .match-item').forEach(b => b.onclick = () => { selRight = Number(b.dataset.i); tryMatch(); draw(); });
+  }
+  async function tryMatch(){
+    if (selLeft===null || selRight===null) return;
+    if (selLeft === selRight) {
+      matched.add(selLeft);
+      selLeft = null; selRight = null;
+      if (matched.size === pairs.length) {
+        document.getElementById('matchStatus').textContent = 'أحسنت! تم إنجاز المطابقة بالكامل.';
+        await markTaskCompleteInline(taskId);
+        document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+      }
+    } else {
+      document.getElementById('matchStatus').textContent = 'مش متطابقين، جرّب تاني';
+      setTimeout(() => { selLeft = null; selRight = null; draw(); }, 500);
+    }
+  }
+  draw();
+}
+
+/* ---- Ordering: up/down buttons move a step within the shuffled list;
+   submit checks the order against how the admin originally entered it. ---- */
+function initOrderingTask(task, taskId, already){
+  const host = document.getElementById('orderingGame');
+  const steps = task.content_json?.steps || [];
+  if (already) { host.innerHTML = `<p class="hint">${icon('check')} رتّبت هذه المهمة من قبل.</p>`; return; }
+  let order = steps.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  host.innerHTML = `<div id="orderList"></div>
+    <button class="btn btn-primary" id="orderSubmitBtn" style="margin-top:16px;">${icon('check')} تحقّق من الترتيب</button>
+    <p class="hint" style="margin-top:10px;" id="orderStatus"></p>`;
+  function draw(){
+    document.getElementById('orderList').innerHTML = order.map((si,pos) => `
+      <div class="order-row">
+        <span class="order-num">${pos+1}</span>
+        <span class="order-text">${escapeHtml(steps[si])}</span>
+        <span class="order-arrows">
+          <button type="button" data-pos="${pos}" data-dir="-1" ${pos===0?'disabled':''}>▲</button>
+          <button type="button" data-pos="${pos}" data-dir="1" ${pos===order.length-1?'disabled':''}>▼</button>
+        </span>
+      </div>`).join('');
+    document.querySelectorAll('#orderList button').forEach(b => b.onclick = () => {
+      const pos = Number(b.dataset.pos), dir = Number(b.dataset.dir), j = pos+dir;
+      [order[pos], order[j]] = [order[j], order[pos]];
+      draw();
+    });
+  }
+  document.getElementById('orderSubmitBtn').addEventListener('click', async () => {
+    const correct = order.every((si,pos) => si===pos);
+    const statusEl = document.getElementById('orderStatus');
+    if (correct) {
+      statusEl.textContent = 'الترتيب صحيح!';
+      await markTaskCompleteInline(taskId);
+      document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+    } else { statusEl.textContent = 'الترتيب مش صح لسه، جرّب تعدّل.'; }
+  });
+  draw();
+}
+
+/* ---- Fill in the blank: ___ markers in the admin's text become inline
+   inputs; all answers must match (case/diacritic-insensitive) to complete. ---- */
+function initFillblankTask(task, taskId, already){
+  const host = document.getElementById('fillblankGame');
+  const text = task.content_json?.text || '';
+  const answers = task.content_json?.answers || [];
+  if (already) { host.innerHTML = `<p class="hint">${icon('check')} خلّصت هذه المهمة من قبل.</p>`; return; }
+  let idx = 0;
+  const html = text.split('___').map((chunk,i) => i < answers.length
+    ? `${escapeHtml(chunk)}<input type="text" class="fillblank-input" data-i="${i}" style="width:120px;">`
+    : escapeHtml(chunk)
+  ).join('');
+  host.innerHTML = `<div class="articles" style="font-size:16px; line-height:2.4;">${html}</div>
+    <button class="btn btn-primary" id="fillblankSubmitBtn" style="margin-top:16px;">${icon('check')} تحقّق</button>
+    <p class="hint" style="margin-top:10px;" id="fillblankStatus"></p>`;
+  document.getElementById('fillblankSubmitBtn').addEventListener('click', async () => {
+    const norm = v => (v||'').trim().toLowerCase();
+    let correctCount = 0;
+    document.querySelectorAll('.fillblank-input').forEach(inp => {
+      const i = Number(inp.dataset.i);
+      const ok = norm(inp.value) === norm(answers[i]);
+      inp.style.borderColor = ok ? 'var(--emerald)' : 'var(--danger)';
+      if (ok) correctCount++;
+    });
+    const statusEl = document.getElementById('fillblankStatus');
+    if (correctCount === answers.length) {
+      statusEl.textContent = 'كل الإجابات صحيحة!';
+      await markTaskCompleteInline(taskId);
+      document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+    } else { statusEl.textContent = `${correctCount} من ${answers.length} صح — عدّل الملوّن بالأحمر وجرّب تاني`; }
+  });
+}
+
+/* ---- Flashcards: self-paced review, no right/wrong. Completes once every
+   card has been flipped to its back at least once. ---- */
+function initFlashcardsTask(task, taskId, already){
+  const host = document.getElementById('flashcardsGame');
+  const cards = task.content_json?.cards || [];
+  if (already) { host.innerHTML = `<p class="hint">${icon('check')} راجعت هذه البطاقات من قبل.</p>`; return; }
+  let i = 0, flipped = false;
+  const seen = new Set();
+  host.innerHTML = `
+    <div class="flashcard" id="flashcardBox"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+      <button class="btn btn-ghost btn-sm" id="flashPrevBtn">${icon('chevron')} السابق</button>
+      <span class="hint" id="flashProgress"></span>
+      <button class="btn btn-ghost btn-sm" id="flashNextBtn">التالي</button>
+    </div>
+    <button class="btn btn-primary" id="flashDoneBtn" style="margin-top:16px; display:none;">${icon('check')} إتمام المراجعة</button>`;
+  function draw(){
+    const c = cards[i];
+    document.getElementById('flashcardBox').innerHTML = `<div class="flashcard-inner" onclick="this.closest('.flashcard').dispatchEvent(new Event('flip'))">${escapeHtml(flipped ? c.back : c.front)}</div>`;
+    document.getElementById('flashProgress').textContent = `${i+1} / ${cards.length}`;
+    document.getElementById('flashDoneBtn').style.display = seen.size === cards.length ? 'inline-flex' : 'none';
+  }
+  document.getElementById('flashcardBox').addEventListener('flip', () => { flipped = !flipped; if (flipped) seen.add(i); draw(); });
+  document.getElementById('flashPrevBtn').addEventListener('click', () => { i = (i-1+cards.length)%cards.length; flipped=false; draw(); });
+  document.getElementById('flashNextBtn').addEventListener('click', () => { i = (i+1)%cards.length; flipped=false; draw(); });
+  document.getElementById('flashDoneBtn').addEventListener('click', async () => {
+    await markTaskCompleteInline(taskId);
+    document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+    toast('تم إتمام المراجعة');
+  });
+  draw();
+}
+
+/* ---- True/False: quick sequential questions, all must be answered
+   correctly to complete (wrong ones are flagged so the student can retry). ---- */
+function initTruefalseTask(task, taskId, already){
+  const host = document.getElementById('truefalseGame');
+  const items = task.content_json?.statements || [];
+  if (already) { host.innerHTML = `<p class="hint">${icon('check')} أجبت على هذه العبارات من قبل.</p>`; return; }
+  const answers = new Array(items.length).fill(null);
+  host.innerHTML = items.map((it,i) => `
+    <div class="tf-row">
+      <p>${escapeHtml(it.text)}</p>
+      <div class="tf-btns">
+        <button type="button" data-i="${i}" data-v="true">صح</button>
+        <button type="button" data-i="${i}" data-v="false">خطأ</button>
+      </div>
+    </div>`).join('') + `
+    <button class="btn btn-primary" id="tfSubmitBtn" style="margin-top:16px;">${icon('check')} تحقّق</button>
+    <p class="hint" style="margin-top:10px;" id="tfStatus"></p>`;
+  host.querySelectorAll('.tf-btns button').forEach(b => b.addEventListener('click', () => {
+    const i = Number(b.dataset.i);
+    answers[i] = b.dataset.v === 'true';
+    b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');
+  }));
+  document.getElementById('tfSubmitBtn').addEventListener('click', async () => {
+    if (answers.some(a=>a===null)) { toast('جاوب على كل العبارات أولًا'); return; }
+    let correct = 0;
+    host.querySelectorAll('.tf-row').forEach((row,i) => {
+      const ok = answers[i] === items[i].answer;
+      row.style.borderInlineStartColor = ok ? 'var(--emerald)' : 'var(--danger)';
+      if (ok) correct++;
+    });
+    const statusEl = document.getElementById('tfStatus');
+    if (correct === items.length) {
+      statusEl.textContent = 'كل الإجابات صحيحة!';
+      await markTaskCompleteInline(taskId);
+      document.getElementById('taskActions').innerHTML = `${icon('check')} <span style="color:var(--emerald); font-weight:600;">مكتملة</span>`;
+    } else { statusEl.textContent = `${correct} من ${items.length} صح — راجع الملوّن بالأحمر`; }
+  });
+}
+
 async function loadAssignmentSubmitBox(taskId){
   const box = document.getElementById('assignmentSubmitBox');
   if (!box) return;
@@ -3074,6 +3496,16 @@ async function renderCertificate(code){
   try {
     const [certs, courses, tracks] = await Promise.all([DB.listAll('Certificates'), DB.listAll('Courses'), DB.listAll('Tracks')]);
     const cert = certs.find(c=>c.verify_code===code);
+    if (cert && cert.status==='revoked'){
+      appRoot.innerHTML = `<div class="wrap section" style="max-width:520px; margin:0 auto;">
+        <div class="cert-box" style="border-color:var(--danger);">
+          <div class="valid-badge" style="background:#B23A3414; color:var(--danger);">${icon('badge')} Revoked / تم الإلغاء</div>
+          <h2>This document has been revoked — تم إلغاء هذا المستند</h2>
+          ${cert.revoke_reason ? `<p style="color:var(--ink-soft); font-size:13.5px;">السبب / Reason: ${escapeHtml(cert.revoke_reason)}</p>` : ''}
+          <p style="color:var(--ink-soft); font-size:13.5px;">تواصل مع الإدارة لمزيد من التفاصيل — Contact the platform for details.</p>
+        </div></div>`;
+      return;
+    }
     if (!cert || cert.status!=='issued'){
       appRoot.innerHTML = `<div class="wrap section" style="max-width:520px; margin:0 auto;">
         <div class="cert-box" style="border-color:var(--danger);">
@@ -3349,8 +3781,8 @@ async function loadDashPanel(tab){
     panel.innerHTML = certs.length ? certs.map(c=>`
       <div class="list-item" ${c.status==='issued'?`onclick="navigate('certificate/${c.verify_code}')"`:''}>
         <div class="num">${icon('badge')}</div>
-        <div class="info"><h4>${escapeHtml((courses.find(x=>x.id===c.course_id)||{}).title_ar||'دورة')}</h4><span>${c.status==='issued'?'صادرة':'قيد المراجعة'} · ${c.language==='both'?'عربي وإنجليزي':c.language==='en'?'إنجليزي':'عربي'}</span></div>
-        <div class="status-icon">${c.status==='issued'?icon('chevron'):icon('hourglass')}</div></div>`).join('') : emptyState('لا توجد شهادات بعد','أكمل دورة كاملة لطلب شهادتك من صفحتها');
+        <div class="info"><h4>${escapeHtml((courses.find(x=>x.id===c.course_id)||{}).title_ar||'دورة')}</h4><span>${c.status==='issued'?'صادرة':c.status==='revoked'?'مُلغاة':'قيد المراجعة'} · ${c.language==='both'?'عربي وإنجليزي':c.language==='en'?'إنجليزي':'عربي'}</span></div>
+        <div class="status-icon">${c.status==='issued'?icon('chevron'):c.status==='revoked'?icon('trash'):icon('hourglass')}</div></div>`).join('') : emptyState('لا توجد شهادات بعد','أكمل دورة كاملة لطلب شهادتك من صفحتها');
   } else if (tab==='review'){
     panel.innerHTML = emptyState('جارٍ التحميل...','');
     const flags = (await DB.listAll('TaskFlags', 'user_id', session.user.uid)).filter(f=>f.flagged)

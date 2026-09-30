@@ -72,7 +72,7 @@ img, video{ -webkit-user-drag:none; }
 ::-webkit-scrollbar-thumb:hover{background:var(--gold);}
 *{scrollbar-width:thin; scrollbar-color:var(--line) transparent;}
 h1,h2,h3,.title{font-family:'AppTitles','AppBody',sans-serif; font-weight:700; margin:0; letter-spacing:-.01em;}
-.articles{font-family:'AppArticles','AppBody',serif; line-height:1.9;}
+.articles{font-family:'AppBody','SF Pro Arabic','Segoe UI',sans-serif; line-height:1.9;}
 .eyebrow,.caption,label,.sub{font-family:'AppSub','AppBody',sans-serif;}
 a{color:inherit; text-decoration:none;}
 button{font-family:inherit;}
@@ -315,6 +315,8 @@ img{max-width:100%; display:block;}
 .player-frame video, .player-frame iframe{width:100%; display:block; aspect-ratio:16/9; border:none;}
 .player-frame audio{width:100%; padding:24px;}
 .pdf-frame{width:100%; height:76vh; border:none; display:block;}
+.pdf-frame-wrap{position:relative;}
+.pdf-frame-loading{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--canvas); z-index:1;}
 .pdf-viewer{border-radius:var(--radius-lg); border:1px solid var(--line); overflow:hidden; margin-bottom:24px; background:var(--surface);}
 .pdf-viewer-bar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 16px; border-bottom:1px solid var(--line); background:var(--surface-2);}
 .pdf-viewer-title{display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -606,3 +608,26 @@ body.printing-accred #printHost .accred-card{width:210mm; aspect-ratio:auto; hei
 @media print{
   body.printing-accred #printHost .accred-card{padding:16mm 14mm;}
 }
+
+/* ---- New task types: matching / ordering / fill-blank / flashcards / true-false ---- */
+.match-item{display:block; width:100%; text-align:start; padding:12px 16px; margin-bottom:8px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--glass-bg); cursor:pointer; font-family:inherit; font-size:14px;}
+.match-item.sel{border-color:var(--emerald); background:var(--emerald-soft);}
+.match-item.done{border-color:var(--emerald); opacity:.5; cursor:default;}
+.order-row{display:flex; align-items:center; gap:12px; padding:10px 14px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--glass-bg); margin-bottom:8px;}
+.order-num{width:26px; height:26px; border-radius:50%; background:var(--emerald); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;}
+.order-text{flex:1;}
+.order-arrows{display:flex; gap:4px;}
+.order-arrows button{width:28px; height:28px; border-radius:8px; border:1px solid var(--line); background:var(--canvas); cursor:pointer;}
+.order-arrows button:disabled{opacity:.3; cursor:default;}
+.fillblank-input{border:none; border-bottom:2px solid var(--emerald); background:transparent; font-family:inherit; font-size:15px; padding:2px 6px; margin:0 4px; color:var(--ink); min-width:80px;}
+.flashcard{perspective:1000px; height:200px;}
+.flashcard-inner{height:100%; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px; border-radius:var(--radius-lg); background:linear-gradient(135deg,#0E1116,#1a1f29); color:#fff; font-size:18px; cursor:pointer; box-shadow:var(--shadow-lift);}
+.tf-row{border-inline-start:4px solid var(--line); padding:12px 16px; margin-bottom:10px; background:var(--glass-bg); border-radius:var(--radius-md);}
+.tf-btns{display:flex; gap:8px; margin-top:8px;}
+.tf-btns button{padding:8px 20px; border-radius:100px; border:1px solid var(--line); background:var(--canvas); cursor:pointer; font-family:inherit;}
+.tf-btns button.sel{background:var(--emerald); color:#fff; border-color:var(--emerald);}
+
+/* ---- Preserve line breaks in any plain text content site-wide (course
+   descriptions, FAQ answers, notices, task instructions, etc.) — additive
+   only, doesn't change layout of single-line text. ---- */
+p, .hint, li, .info span, .info h4, .info p, .kicker, blockquote{ white-space: pre-wrap; }
