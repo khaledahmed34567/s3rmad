@@ -2107,6 +2107,10 @@ async function renderTask(id){
   document.getElementById('taskTitle').textContent = task.title_ar || 'مهمة';
   const body = document.getElementById('taskBody');
   const src = task.content_url || '';
+  // must be computed BEFORE the type branches below: essay / matching / ordering /
+  // fillblank / flashcards / truefalse / audio_response all read `already`
+  const doneIds = new Set((await getUserProgress()).filter(p=>String(p.completed).toUpperCase()==='TRUE').map(p=>String(p.task_id)));
+  const already = doneIds.has(String(id));
   if (task.type==='video') {
     const ytEmbed = getYouTubeEmbedUrl(src);
     body.innerHTML = ytEmbed
@@ -2198,8 +2202,6 @@ async function renderTask(id){
   }
   else body.innerHTML = `<div class="articles" style="font-size:16px;">${linkifyEscaped(task.content_url||'')}</div>`;
 
-  const doneIds = new Set((await getUserProgress()).filter(p=>String(p.completed).toUpperCase()==='TRUE').map(p=>String(p.task_id)));
-  const already = doneIds.has(String(id));
 
   // figure out the next task in this lecture so we can offer a "next" button
   // right after this one is completed, instead of dropping the student back
