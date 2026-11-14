@@ -1,227 +1,318 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>سرمد | Sarmad</title>
-<meta name="theme-color" content="#F7F3EA">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAMFBMVEX//vf8+O/69u349Ov38+r28ur28un28uj18ejx7eTk4NjU0cm6t7CPjYdwbmlWVVFC3R67AAAAt0lEQVR42mN0YUAFTAxDU8CBgYFZiYFB6aMjs4Ch/BM7ll5FBgYXFzehRkYBRUbmBGaBHSYuLAwMMsmFJz++V/iXsvWL4QcBFgYGvtCvoqzCiv82yX9gV2BgYmCZcy9e/73D/oNMlx6zPmBgYmAQZLr4kOHCf4Z/Cnq/FBiYlf55Mvjaxunun3f874X99xkYXRj+3U+a4L9RX+H+w//CAgyMLgwMSvcUH8o9YGJgULjHwMA4dAMZAAykNVfM5GZAAAAAAElFTkSuQmCC">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0BAMAAADP4xsBAAAAMFBMVEX///r//vX79+738+v38+r28+r28un18ejz8OfX1MySj4pBQDwaGhgNDQsFBQMAAABa9yrvAAAFQ0lEQVR42u3ZW2wUVRgH8P/MrlgD3TkLCVDszl66FUShS+1DubnslvBg0JjYkopopCiQGrl4AwFbMGloGwJVrJcQTbSIUBFNDIKw0FKSVk27bAtII93tmeFilXb3zNYglHbGh9LUUuz6YB9Mzj6d7Jz5zbfnO993JllhIUbrI4LTnOY0pznNaU5zmtOc5jSnOc1pTnOa05zmNKc5zWlOc5rTnB6QFnqGfmH+z+jUMpNndGixobTv0OgsiKiszIyPVhp1Nmo7RBjFzUcS7pAs0kYBAG67Zqn199ZmEQD6SdGv13mFzpDJx5JrBq/rJwG3XSN1w37FsH9JxV/oAzIAmFsVqbu4yORrZADEAv0T05oKabL8UIVkfj4EmDuapfjWIrGAmjuapRvjL/+0xjJy1Km5pKOFAuJk/ywjurxaLy8nAPRisVp/5Zjxc/f71dJvr80Apvk3k67l1XqRPM2/WYoW3AkNp+3pnlNxCtiOrM3QkuN5v7+Z7iFAzzoxr2eSV3DMOOJDb/RSyFV9OENLFvN61rqqD3vQF0csQRrF/ZZoyl5APPO5rBHVF6ECYrFIhMKItniF6D17vdAvZ3+LsZX91xnGVsoMqo8lilpUPEyOzqNCx6PqRc0tGUBftEskBCATumrSLZmxoMmTqjg/2qFe1NwAhP6RxKwJou51stDlchfmlNBbK/MCdsDcGDihCd8/CRjfLTnoEJoWLWbKpjm76a19eccloGc3vfVGXsCecK3n27SId6llnuYQ6vNJZZYMfIkONfyCH7CtKn2nABdKb7RkSDGXeDqpdF/6TEjjxdPZ+ZVZ9kQlYziTi1qufJjzhWxb3RkoaCLAI4+/p9YXATBI4GnF8kFAiAnkB8u4jb2BnDDBn/Zx23sDBeFE/dp0QJZuBi1Lt2kOnVDUFxNAOTDz/tW1AJgBQwADM4Bmh8QozhcRaJKkUNQXOxLQguIITnyLXioHqATAACCojqA8rNZIbKCw+0exRFFPeVttXbaqWfx7CFO2qa3P3aVTGAMPGRiNnEY5TdfYufLuHgDMdruIxhvaXW613m51BrMK/+ZsrJfk7SFDok7AqQGwgsCwGmC4YyklCna7k1IwwHAmKBlznbcTnhYCGCE5dUFd9pL+JihY3ceGzlyqSJtMp2bn0XEpmrpJrJsts5Gj1p3ajylVfsVhJMX/2LKrt8wDQIiJlkNHNwxZFONj7VLGTluJEySimTJ22co8CdZ67gwtWnh967vsojMiP3OjosrOAGWsPqdDzBzMlWYYKRvbnni4pKIyA/EySX+spKLKro1MK/OT1fmp09PirUte7lZz3T4Ghqv716s5ZlLRP4UBV3Ytl3zSU1quO1NXyUKHVcl1+7SR02g+6rWUek05SC1p3PCNHJ+lNjkJ9Ow6S5rdNrj5hGiciRtOzoxnal3NEiGH5Him2jhyyRhCe1D+ShAs+6ysYVmN03otFGHQnS+F0HVwXTsFiE6B3vyD7MyYLV9bSefRzSEp8GyNk1xbF7mjaEyuIfTs62eTix6MNBUuYvqywonhhqpJ56PonnZcD69Ycb31SpJy39VwEro+nd6+Z8V6e/jC9vzP7l39euHEcMPZSW2/jnQ26tQsL9jBJqyvBUxzd2pT59aIDsB8MyS+eqJdcAIRuAD494yZr87bqU1dfO5m84uhwZn/TIsOnSKLRIMAIPrRRl06BWDyRYNw6RRwIQIAaX0UYiZpozBlBCH60aY6dJrgROev7pzmNKc5zWlOc5rTnOY0pznNaU5zmtOc5jSnOc1pTnOa05z+f9N/ASfEF2KbrP9LAAAAAElFTkSuQmCC">
-<link rel="manifest" href="manifest.webmanifest?v=9">
-<meta name="apple-mobile-web-app-title" content="سرمد">
-<meta name="mobile-web-app-capable" content="yes">
-
-<!-- speed: warm up connections to every external origin this page actually
-     fetches from, so the real requests skip DNS/TLS negotiation later -->
-<link rel="preconnect" href="https://files.catbox.moe" crossorigin>
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://api.imgbb.com" crossorigin>
-<link rel="dns-prefetch" href="https://i.ibb.co">
-<link rel="preload" href="https://files.catbox.moe/uqr0yx.otf" as="font" type="font/otf" crossorigin>
-<link rel="preload" href="https://files.catbox.moe/2k6107.otf" as="font" type="font/otf" crossorigin>
-
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sarmad: JSON, JWT, Hash and Regex tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#000;--panel:#0a0a0a;--ink:#f5f5f5;--muted:#8f8f8f;--line:#242424;--accent:#fff;--on-accent:#000;--ok:#3ddc84;--bad:#ff5a5f;--warn:#f5a524;--mark:#f5d90a;--mark2:#7dd3fc;--code:#050505;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:44px 16px 48px}
+h1{font-size:2.6rem;line-height:1.05;margin:0 0 10px;font-weight:700;letter-spacing:-.035em}
+.lede{margin:0 0 22px;color:var(--muted);max-width:60ch}
+nav{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px}
+nav a{padding:9px 14px;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-1px;font-weight:500;border-radius:8px 6px 0 0}
+nav a:hover{color:var(--ink)}
+nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-size:1.2rem;margin:0 0 4px}
+.sub{margin:0 0 14px;color:var(--muted)}
+label,.lbl{display:block;font-weight:600;font-size:.88rem;margin:0 0 5px}
+textarea,input[type=text],select{width:100%;font:13.5px/1.5 "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;background:var(--code);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+textarea{min-height:230px;resize:vertical}
+textarea.short{min-height:130px}
+select{width:auto;font-family:inherit;font-size:.9rem;padding:6px 8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+button{font:inherit;font-size:.9rem;padding:7px 13px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+button:hover{border-color:#fff}button.primary:hover{background:#d9d9d9}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
+.chk{display:inline-flex;align-items:center;gap:5px;font-size:.9rem;font-weight:400;margin:0}
+.status{min-height:1.6em;margin:6px 0 0;font-weight:500}
+.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.status.warn{color:var(--warn)}.status.muted{color:var(--muted)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;white-space:nowrap}
+td code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.85rem;word-break:break-all}
+.hashrow{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:10px}
+.hashrow b{min-width:5.5em}
+.view{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+.hl{white-space:pre-wrap;word-break:break-word;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px;font:13.5px/1.6 "JetBrains Mono",ui-monospace,monospace;min-height:90px}
+mark{background:var(--mark);color:#000;border-radius:3px;padding:0 1px}mark.b{background:var(--mark2);color:#000}
+.mlist{margin:10px 0 0;padding:0;list-style:none}
+.mlist li{padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+details{margin-top:16px;color:var(--muted)}summary{cursor:pointer;font-weight:500;color:var(--ink)}
+footer{margin-top:22px;color:var(--muted);font-size:.88rem}
+.slash{display:flex;align-items:center;gap:6px}.slash span{font:1.1rem "JetBrains Mono",monospace;color:var(--muted)}
+</style>
 </head>
 <body>
-
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <button class="icon-btn menu-toggle" id="menuToggle" aria-label="القائمة">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-    </button>
-    <div class="brand" data-route="" aria-label="سرمد">
-      <span class="logo-mark"><img src="data:image/png;base64,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" alt="سرمد" draggable="false" oncontextmenu="return false" style="-webkit-user-select:none; user-select:none; -webkit-touch-callout:none;"></span>
-    </div>
-    <button class="icon-btn" id="notifBtn" style="display:none; position:relative;">
-      <span id="notifBadge" class="notif-badge" style="display:none;"></span>
-    </button>
-  </div>
-  <div class="notif-panel" id="notifPanel"></div>
-  <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-search">
-      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></span>
-      <input type="text" id="navSearchInput" placeholder="ابحث عن مسار أو دورة...">
-      <div class="nav-search-results" id="navSearchResults"></div>
-    </div>
-    <a href="#/" data-close-menu>الرئيسية</a>
-    <a href="#/tracks" data-close-menu>المسارات</a>
-    <a href="#/leaderboard" data-close-menu>المتصدرون</a>
-    <a href="#/articles" data-close-menu>المقالات</a>
-    <a href="#/forum" data-close-menu>المجتمع</a>
-    <a href="#/dashboard" data-close-menu>لوحتي</a>
-    <a href="#/payment" data-close-menu>مدفوعاتي</a>
-    <div class="mobile-menu-auth" id="navActions">
-      <button class="btn btn-ghost btn-sm" id="loginBtn">تسجيل الدخول</button>
-      <button class="btn btn-primary btn-sm" id="signupBtn">إنشاء حساب</button>
-    </div>
-  </div>
+<div class="wrap">
+<h1>Sarmad</h1>
+<p class="lede">Everyday developer tools that run entirely in your browser. Nothing you paste or type is ever sent anywhere.</p>
+<nav aria-label="Tools">
+<a href="#json">JSON</a><a href="#jwt">JWT decoder</a><a href="#hash">Hash generator</a><a href="#regex">Regex tester</a>
 </nav>
 
-<div id="topLoader"></div>
-<main id="appRoot"></main>
-<div id="watermarkOverlay" aria-hidden="true"></div>
+<section class="view" id="v-json" hidden>
+<h2>JSON formatter and validator</h2>
+<p class="sub">Paste JSON to validate it, pretty-print it, or minify it. Errors show the line and column.</p>
+<div class="grid2">
+<div><label for="j-in">Input</label><textarea id="j-in" spellcheck="false" placeholder="Paste JSON here"></textarea></div>
+<div><label for="j-out">Output</label><textarea id="j-out" spellcheck="false" readonly></textarea></div>
+</div>
+<div class="row">
+<button class="primary" id="j-fmt">Format</button><button id="j-min">Minify</button>
+<label class="chk" for="j-ind">Indent
+<select id="j-ind"><option value="2">2 spaces</option><option value="4">4 spaces</option><option value="tab">Tab</option></select></label>
+<label class="chk"><input type="checkbox" id="j-sort"> Sort keys</label>
+<button id="j-copy">Copy output</button><button id="j-sample">Load sample</button><button id="j-clear">Clear</button>
+</div>
+<p class="status muted" id="j-st" role="status">Paste JSON to get started.</p>
+</section>
 
-<footer class="footer">
-  <div class="wrap">
-    <p>سرمد — تعلّم البرمجة بلا حدود</p>
-    <p id="footYear"></p>
-    <div class="footer-links" id="footerLinks">
-      <a href="mailto:contact@sarmad.qd.je">contact@sarmad.qd.je</a>
-      <a href="https://www.linkedin.com/in/khaled-ahmed-241002386?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://sarmadprivacy.oneapp.dev/" target="_blank" rel="noopener">الشروط والخصوصية</a>
-      <span id="footerAccredLinks"></span>
-    </div>
-  </div>
-</footer>
+<section class="view" id="v-jwt" hidden>
+<h2>JWT decoder</h2>
+<p class="sub">Reads the header, payload and signature of a JSON Web Token. The signature is not verified.</p>
+<label for="t-in">Token</label>
+<textarea id="t-in" class="short" spellcheck="false" placeholder="eyJhbGciOi..."></textarea>
+<div class="row"><button id="t-sample">Load sample</button><button id="t-clear">Clear</button></div>
+<p class="status muted" id="t-st" role="status">Paste a token to decode it.</p>
+<div class="grid2" style="margin-top:12px">
+<div><label for="t-h">Header</label><textarea id="t-h" class="short" readonly spellcheck="false"></textarea></div>
+<div><label for="t-p">Payload</label><textarea id="t-p" class="short" readonly spellcheck="false"></textarea></div>
+</div>
+<div style="margin-top:12px"><label for="t-s">Signature (base64url)</label><textarea id="t-s" class="short" style="min-height:60px" readonly spellcheck="false"></textarea></div>
+<div class="scroll" id="t-claims" style="margin-top:14px"></div>
+</section>
 
-<!-- ============ AUTH MODAL ============ -->
-<div class="modal-overlay" id="authOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h2 id="authTitle">تسجيل الدخول</h2>
-      <button class="modal-close" id="authClose">✕</button>
-    </div>
-    <div class="tabs">
-      <button class="active" data-tab="login">تسجيل الدخول</button>
-      <button data-tab="signup">إنشاء حساب</button>
-    </div>
-    <button class="google-btn" id="googleBtn">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.6z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.19l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.69A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.16.28-1.69V4.98H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.02l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.98l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-      المتابعة عبر جوجل
-    </button>
-    <div class="divider">أو</div>
-    <div id="loginPanel">
-      <div class="seg" style="margin-bottom:18px;">
-        <button class="active" data-login="email">البريد الإلكتروني</button>
-        <button data-login="phone">الهاتف</button>
-      </div>
-      <div class="field" id="loginEmailField">
-        <label>البريد الإلكتروني</label>
-        <input type="email" placeholder="name@example.com" id="loginEmail">
-      </div>
-      <div class="field" id="loginPhoneField" style="display:none;">
-        <label>رقم الهاتف</label>
-        <input type="tel" placeholder="01xxxxxxxxx" id="loginPhone">
-      </div>
-      <div class="field">
-        <label>كلمة المرور</label>
-        <input type="password" id="loginPassword">
-        <span class="err-msg" id="loginErr">بيانات الدخول غير صحيحة</span>
-      </div>
-      <div class="remember-row">
-        <span>تذكّر هذا الجهاز</span>
-        <label class="switch"><input type="checkbox" id="rememberDevice" checked><span class="track"><span class="thumb"></span></span></label>
-      </div>
-      <button class="btn btn-primary btn-block" id="loginSubmit">دخول</button>
-      <button class="forgot" id="forgotBtn">نسيت كلمة المرور؟</button>
-    </div>
-    <div id="signupPanel" style="display:none;">
-      <div class="field"><label>الاسم الكامل (ثلاثي) *</label><input type="text" placeholder="الاسم الأول والأب والجد" id="suName"></div>
-      <div class="field"><label>Name in English (for the English certificate)</label><input type="text" placeholder="Your full name in English" id="suNameEn"></div>
-      <div class="field"><label>البريد الإلكتروني *</label><input type="email" id="suEmail"></div>
-      <div class="field-row">
-        <div class="field"><label>كلمة المرور *</label><input type="password" id="suPass"></div>
-        <div class="field"><label>تأكيد كلمة المرور *</label><input type="password" id="suPass2"></div>
-      </div>
-      <span class="err-msg" id="suPassErr">٨ خانات على الأقل، بها أرقام وأحرف</span>
-      <div class="field"><label>رقم الهاتف / الواتساب (اختياري)</label><input type="tel" id="suPhone"></div>
-      <div class="field">
-        <label>الجنس</label>
-        <div class="seg"><button class="active" data-gender="male">ذكر</button><button data-gender="female">أنثى</button></div>
-      </div>
-      <div class="field">
-        <label>المستوى العلمي الحالي</label>
-        <div class="cselect" id="suLevel" data-value="beginner">
-          <button type="button" class="cselect-trigger"><span class="cselect-label">مبتدئ</span><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></button>
-          <div class="cselect-menu">
-            <div class="cselect-opt active" data-value="beginner">مبتدئ</div>
-            <div class="cselect-opt" data-value="intermediate">متوسط</div>
-            <div class="cselect-opt" data-value="advanced">متقدم</div>
-          </div>
-        </div>
-      </div>
-      <div class="field"><label>الصورة الشخصية (اختياري)</label><input type="file" accept="image/*" id="suAvatar"></div>
-      <div class="field"><label>كود دعوة (اختياري)</label><input type="text" id="suReferral" placeholder="مثال: RQM-AB12CD" style="text-transform:uppercase;"></div>
-      <label style="display:flex; gap:8px; align-items:flex-start; font-size:12.5px; margin:10px 0 14px; cursor:pointer;">
-        <input type="checkbox" id="suAgree" style="margin-top:3px;">
-        <span>أوافق على <a href="https://sarmadprivacy.oneapp.dev/" target="_blank" rel="noopener">الشروط والخصوصية</a> الخاصة بمنصة سرمد</span>
-      </label>
-      <button class="btn btn-primary btn-block" id="signupSubmit">إنشاء الحساب</button>
-    </div>
-  </div>
+<section class="view" id="v-hash" hidden>
+<h2>Hash generator</h2>
+<p class="sub">Computes SHA-256 and SHA-512 with your browser’s built-in Web Crypto. Hash text as you type, or choose a file.</p>
+<label for="h-in">Text</label>
+<textarea id="h-in" class="short" spellcheck="false" placeholder="Type or paste text to hash"></textarea>
+<div class="row">
+<label class="chk" for="h-file">Or hash a file <input type="file" id="h-file"></label>
+<label class="chk" for="h-fmt">Output
+<select id="h-fmt"><option value="hex">Hex (lowercase)</option><option value="HEX">Hex (uppercase)</option><option value="b64">Base64</option></select></label>
+</div>
+<p class="status muted" id="h-src" role="status"></p>
+<div class="hashrow"><b>SHA-256</b><input type="text" id="h-256" readonly aria-label="SHA-256 hash"><button data-copy="h-256">Copy</button></div>
+<div class="hashrow"><b>SHA-512</b><input type="text" id="h-512" readonly aria-label="SHA-512 hash"><button data-copy="h-512">Copy</button></div>
+<label for="h-cmp" style="margin-top:16px">Compare with an expected hash</label>
+<input type="text" id="h-cmp" spellcheck="false" placeholder="Paste a hash to check it against the results">
+<p class="status muted" id="h-cmp-st" role="status"></p>
+</section>
+
+<section class="view" id="v-regex" hidden>
+<h2>Regex tester</h2>
+<p class="sub">Uses your browser’s JavaScript regular expression engine. Matches update as you type.</p>
+<label for="r-pat">Pattern</label>
+<div class="slash"><span>/</span><input type="text" id="r-pat" spellcheck="false" placeholder="(\d{4})-(\d{2})-(\d{2})"><span>/</span></div>
+<div class="row" id="r-flags">
+<label class="chk"><input type="checkbox" value="g" checked> g global</label>
+<label class="chk"><input type="checkbox" value="i"> i ignore case</label>
+<label class="chk"><input type="checkbox" value="m"> m multiline</label>
+<label class="chk"><input type="checkbox" value="s"> s dot matches newline</label>
+<label class="chk"><input type="checkbox" value="u"> u unicode</label>
+<button id="r-sample">Load sample</button>
+</div>
+<label for="r-txt">Test string</label>
+<textarea id="r-txt" class="short" spellcheck="false" placeholder="Text to search"></textarea>
+<p class="status muted" id="r-st" role="status">Enter a pattern to see matches.</p>
+<div class="lbl" style="margin-top:10px">Highlighted matches</div>
+<div class="hl" id="r-hl" aria-live="polite"></div>
+<ul class="mlist" id="r-list"></ul>
+<label for="r-rep" style="margin-top:14px">Replace with (optional, supports $1, $&amp; and $&lt;name&gt;)</label>
+<input type="text" id="r-rep" spellcheck="false">
+<textarea id="r-res" class="short" readonly spellcheck="false" style="margin-top:8px;min-height:80px" aria-label="Replacement result"></textarea>
+<details><summary>Quick reference</summary>
+<div class="scroll"><table>
+<tr><th>.</th><td>Any character except a line break</td><th>\d \w \s</th><td>Digit, word character, whitespace</td></tr>
+<tr><th>^ $</th><td>Start and end of input (or line with m)</td><th>\b</th><td>Word boundary</td></tr>
+<tr><th>a|b</th><td>Either a or b</td><th>[abc] [^abc]</th><td>Any of, or none of, these characters</td></tr>
+<tr><th>* + ?</th><td>Zero or more, one or more, optional</td><th>{n,m}</th><td>Between n and m repeats</td></tr>
+<tr><th>(…)</th><td>Capture group</td><th>(?&lt;n&gt;…)</th><td>Named capture group</td></tr>
+<tr><th>(?=…)</th><td>Lookahead</td><th>(?&lt;=…)</th><td>Lookbehind</td></tr>
+</table></div></details>
+</section>
+
+<footer>Runs entirely in your browser. No network requests, no cookies, no storage. Close the tab and everything is gone.</footer>
 </div>
 
-<!-- ============ COMPLETE PROFILE MODAL ============ -->
-<div class="modal-overlay" id="completeOverlay">
-  <div class="modal">
-    <div class="modal-head"><h2>أكمل بياناتك للمتابعة</h2></div>
-    <p style="color:var(--ink-soft); font-size:13.5px; margin-top:-12px; margin-bottom:20px;">لإصدار الشهادات والتسجيل في الدورات نحتاج بعض البيانات الإضافية.</p>
-    <div class="field"><label>الاسم الكامل (ثلاثي) *</label><input type="text" id="cpName"></div>
-    <div class="field"><label>رقم الهاتف / الواتساب</label><input type="tel" id="cpPhone"></div>
-    <div class="field">
-      <label>الجنس</label>
-      <div class="seg"><button class="active" data-cgender="male">ذكر</button><button data-cgender="female">أنثى</button></div>
-    </div>
-    <div class="field">
-      <label>المستوى العلمي الحالي</label>
-      <div class="cselect" id="cpLevel" data-value="beginner">
-        <button type="button" class="cselect-trigger"><span class="cselect-label">مبتدئ</span><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></button>
-        <div class="cselect-menu">
-          <div class="cselect-opt active" data-value="beginner">مبتدئ</div>
-          <div class="cselect-opt" data-value="intermediate">متوسط</div>
-          <div class="cselect-opt" data-value="advanced">متقدم</div>
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-primary btn-block" id="completeSubmit">حفظ ومتابعة</button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<div class="cookie-bar" id="cookieBar">
-  <p>نستخدم ملفات تعريف الارتباط (Cookies) للحفاظ على تسجيل دخولك وتحسين تجربتك في سرمد.</p>
-  <button class="btn btn-primary btn-sm" id="cookieAcceptBtn">حسنًا، فهمت</button>
-</div>
-
-<!-- ============ FIREBASE SDKS (compat build — works with a plain script tag, no bundler needed) ============ -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
-<!-- html2canvas + jsPDF are only needed on the certificate page (to export it
-     as an image/PDF) — loaded lazily on demand (see loadScriptOnce below)
-     instead of on every single page, since together they're a few hundred
-     KB the vast majority of visits never touch. -->
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-
-<script src="script.js"></script>
 <script>
-/* Android: offer to open the current page (course / lecture / task / track) directly in the Sarmad app */
-(function(){
-  var ua = navigator.userAgent || '';
-  if (!/Android/i.test(ua) || /SarmadApp/.test(ua)) return;
-  function build(){
-    var old = document.getElementById('openInAppBar'); if (old) old.remove();
-    var route = location.hash.replace(/^#\/?/, '');
-    if (!route || sessionStorage.getItem('openInAppDismissed')) return;
-    var intent = 'intent://open/' + route + '#Intent;scheme=sarmad;package=sarmad.app;S.browser_fallback_url=' + encodeURIComponent(location.href) + ';end';
-    var bar = document.createElement('div');
-    bar.id = 'openInAppBar';
-    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#155FDB;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 14px;font:600 13px system-ui,sans-serif;direction:rtl';
-    bar.innerHTML = '<span style="flex:1">افتح هذه الصفحة في تطبيق سرمد</span>' +
-      '<a href="' + intent + '" style="background:#fff;color:#155FDB;border-radius:10px;padding:6px 14px;text-decoration:none">فتح التطبيق</a>' +
-      '<button type="button" style="background:none;border:0;color:#fff;font-size:18px;cursor:pointer" aria-label="إغلاق">×</button>';
-    bar.querySelector('button').onclick = function(){ sessionStorage.setItem('openInAppDismissed','1'); bar.remove(); };
-    (document.body || document.documentElement).appendChild(bar);
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pl=(n,w)=>n+' '+w+(n===1?'':'s');
+const setSt=(id,k,m)=>{const e=$(id);e.className='status '+k;e.textContent=m};
+const views=['json','jwt','hash','regex'];
+function route(){
+  let h=location.hash.slice(1);if(!views.includes(h))h='json';
+  views.forEach(v=>{$('#v-'+v).hidden=v!==h;const a=$('nav a[href="#'+v+'"]');if(v===h)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+}
+addEventListener('hashchange',route);route();
+
+async function copyText(t,btn){
+  const old=btn.textContent;let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}catch(e){
+    try{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(_){}
   }
-  window.addEventListener('hashchange', build);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
-})();
+  btn.textContent=ok?'Copied':'Copy failed';setTimeout(()=>btn.textContent=old,1300);
+}
+
+/* ---------- JSON ---------- */
+let jMode='fmt';
+function sortKeys(v){
+  if(Array.isArray(v))return v.map(sortKeys);
+  if(v&&typeof v==='object'){const o={};Object.keys(v).sort().forEach(k=>o[k]=sortKeys(v[k]));return o}
+  return v;
+}
+function runJson(){
+  const src=$('#j-in').value,out=$('#j-out');
+  if(!src.trim()){out.value='';setSt('#j-st','muted','Paste JSON to get started.');return}
+  try{
+    let v=JSON.parse(src);
+    if($('#j-sort').checked)v=sortKeys(v);
+    const ind=$('#j-ind').value,sp=ind==='tab'?'\t':+ind;
+    out.value=jMode==='min'?JSON.stringify(v):JSON.stringify(v,null,sp);
+    const d=Array.isArray(v)?'array with '+pl(v.length,'item'):v===null?'null':typeof v==='object'?'object with '+pl(Object.keys(v).length,'key'):typeof v;
+    setSt('#j-st','ok','Valid JSON: '+d+'. '+src.length.toLocaleString()+' characters in, '+out.value.length.toLocaleString()+' out.');
+  }catch(e){
+    let m=e.message;const p=/position (\d+)/.exec(m);
+    if(p){const n=+p[1],b=src.slice(0,n);m='Line '+b.split('\n').length+', column '+(n-b.lastIndexOf('\n'))+': '+m.replace(/\s*\(line.*\)/,'')}
+    out.value='';setSt('#j-st','bad','Invalid JSON. '+m);
+  }
+}
+$('#j-in').addEventListener('input',runJson);
+$('#j-ind').addEventListener('change',runJson);$('#j-sort').addEventListener('change',runJson);
+$('#j-fmt').onclick=()=>{jMode='fmt';runJson()};
+$('#j-min').onclick=()=>{jMode='min';runJson()};
+$('#j-copy').onclick=e=>copyText($('#j-out').value,e.target);
+$('#j-clear').onclick=()=>{$('#j-in').value='';runJson()};
+$('#j-sample').onclick=()=>{$('#j-in').value='{"name":"Sarmad","version":"1.0.0","tags":["json","jwt","hash","regex"],"author":{"name":"Ada","active":true},"stars":128,"license":null}';jMode='fmt';runJson()};
+
+/* ---------- JWT ---------- */
+function b64uDecode(s){
+  s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';
+  return new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
+}
+function b64uEncode(str){
+  const b=new TextEncoder().encode(str);let s='';b.forEach(x=>s+=String.fromCharCode(x));
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function rel(ms){
+  const s=Math.abs(Math.round(ms/1000));
+  for(const [u,n] of [[86400,'day'],[3600,'hour'],[60,'minute']])if(s>=u)return pl(Math.floor(s/u),n);
+  return pl(s,'second');
+}
+const stamp=t=>new Date(t*1000).toISOString().replace('T',' ').replace(/\.\d+Z$/,' UTC');
+function runJwt(){
+  let tok=$('#t-in').value.trim().replace(/^Bearer\s+/i,'');
+  ['#t-h','#t-p','#t-s'].forEach(i=>$(i).value='');$('#t-claims').innerHTML='';
+  if(!tok){setSt('#t-st','muted','Paste a token to decode it.');return}
+  const parts=tok.split('.');
+  if(parts.length!==3){setSt('#t-st','bad','A JWT has three parts separated by dots. This input has '+parts.length+'.');return}
+  let h,p;
+  try{h=JSON.parse(b64uDecode(parts[0]))}catch(e){setSt('#t-st','bad','The header is not valid base64url-encoded JSON.');return}
+  try{p=JSON.parse(b64uDecode(parts[1]))}catch(e){setSt('#t-st','bad','The payload is not valid base64url-encoded JSON.');return}
+  $('#t-h').value=JSON.stringify(h,null,2);$('#t-p').value=JSON.stringify(p,null,2);$('#t-s').value=parts[2]||'(empty: unsigned token)';
+  const now=Date.now(),rows=[];
+  const names={iss:'Issuer',sub:'Subject',aud:'Audience',exp:'Expires',nbf:'Not before',iat:'Issued at',jti:'Token ID'};
+  for(const k of Object.keys(names)){
+    if(!(k in p))continue;let v=p[k],txt=Array.isArray(v)?v.join(', '):String(v);
+    if(['exp','nbf','iat'].includes(k)&&typeof v==='number'){
+      const d=v*1000-now;txt=stamp(v)+' ('+(d<0?rel(d)+' ago':'in '+rel(d))+')';
+    }
+    rows.push('<tr><th>'+names[k]+'</th><td><code>'+esc(k)+'</code></td><td>'+esc(txt)+'</td></tr>');
+  }
+  if(rows.length)$('#t-claims').innerHTML='<table><tr><th>Claim</th><th>Key</th><th>Value</th></tr>'+rows.join('')+'</table>';
+  let k='muted',m='Decoded. This token has no expiry claim.';
+  if(typeof p.exp==='number'){const d=p.exp*1000-now;if(d<0){k='bad';m='Decoded. The token expired '+rel(d)+' ago.'}else{k='ok';m='Decoded. The token is valid for another '+rel(d)+'.'}}
+  if(typeof p.nbf==='number'&&p.nbf*1000>now){k='warn';m='Decoded. The token is not valid yet; it starts in '+rel(p.nbf*1000-now)+'.'}
+  if(String(h.alg).toLowerCase()==='none'){k='warn';m+=' Warning: alg is “none”, so this token is unsigned.'}
+  setSt('#t-st',k,m);
+}
+$('#t-in').addEventListener('input',runJwt);
+$('#t-clear').onclick=()=>{$('#t-in').value='';runJwt()};
+$('#t-sample').onclick=()=>{
+  const n=Math.floor(Date.now()/1000);
+  $('#t-in').value=b64uEncode(JSON.stringify({alg:'HS256',typ:'JWT'}))+'.'+b64uEncode(JSON.stringify({sub:'1234567890',name:'Ada Lovelace',iss:'https://auth.example.com',aud:['web','api'],iat:n,exp:n+3600}))+'.c2FtcGxlLXNpZ25hdHVyZS1ub3QtdmVyaWZpZWQ';
+  runJwt();
+};
+
+/* ---------- Hash ---------- */
+let fileBytes=null,hex256='',hex512='',b256='',b512='';
+const toHex=u=>[...u].map(x=>x.toString(16).padStart(2,'0')).join('');
+const toB64=u=>{let s='';u.forEach(x=>s+=String.fromCharCode(x));return btoa(s)};
+async function runHash(){
+  if(!(window.crypto&&crypto.subtle)){setSt('#h-src','bad','Web Crypto is unavailable. Open this page over HTTPS.');return}
+  const bytes=fileBytes||new TextEncoder().encode($('#h-in').value);
+  const [a,b]=await Promise.all([crypto.subtle.digest('SHA-256',bytes),crypto.subtle.digest('SHA-512',bytes)]).then(r=>r.map(x=>new Uint8Array(x)));
+  hex256=toHex(a);hex512=toHex(b);b256=toB64(a);b512=toB64(b);showHash();
+}
+function showHash(){
+  const f=$('#h-fmt').value;
+  $('#h-256').value=f==='b64'?b256:f==='HEX'?hex256.toUpperCase():hex256;
+  $('#h-512').value=f==='b64'?b512:f==='HEX'?hex512.toUpperCase():hex512;
+  const c=$('#h-cmp').value.trim().replace(/\s+/g,'');
+  if(!c){setSt('#h-cmp-st','muted','')}else{
+    const lc=c.toLowerCase(),hit=lc===hex256?'SHA-256':lc===hex512?'SHA-512':(c===b256?'SHA-256':c===b512?'SHA-512':'');
+    hit?setSt('#h-cmp-st','ok','Match: this is the '+hit+' hash.'):setSt('#h-cmp-st','bad','No match. This differs from both hashes above.');
+  }
+}
+$('#h-in').addEventListener('input',()=>{fileBytes=null;$('#h-file').value='';setSt('#h-src','muted','');runHash()});
+$('#h-fmt').addEventListener('change',showHash);
+$('#h-cmp').addEventListener('input',showHash);
+$('#h-file').addEventListener('change',async e=>{
+  const f=e.target.files[0];if(!f)return;
+  fileBytes=new Uint8Array(await f.arrayBuffer());
+  setSt('#h-src','muted','Hashing file: '+f.name+' ('+pl(f.size,'byte')+'). Edit the text box to switch back to text.');runHash();
+});
+document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyText($('#'+b.dataset.copy).value,b));
+runHash();
+
+/* ---------- Regex ---------- */
+function runRegex(){
+  const pat=$('#r-pat').value,txt=$('#r-txt').value;
+  const fl=[...document.querySelectorAll('#r-flags input:checked')].map(i=>i.value).join('');
+  const hl=$('#r-hl'),list=$('#r-list'),res=$('#r-res');
+  list.innerHTML='';res.value='';hl.innerHTML=esc(txt);
+  if(!pat){setSt('#r-st','muted','Enter a pattern to see matches.');return}
+  let re;
+  try{re=new RegExp(pat,fl.includes('g')?fl:fl+'g')}catch(e){setSt('#r-st','bad','Invalid pattern: '+e.message.replace(/^Invalid regular expression:\s*/,''));return}
+  let ms=[...txt.matchAll(re)];
+  if(!fl.includes('g'))ms=ms.slice(0,1);
+  const cap=ms.length>500;if(cap)ms=ms.slice(0,500);
+  setSt('#r-st',ms.length?'ok':'warn',ms.length?pl(ms.length,'match')+(cap?' (showing the first 500)':'')+'.':'No matches.');
+  let html='',pos=0;
+  ms.forEach((m,i)=>{
+    if(m[0].length){html+=esc(txt.slice(pos,m.index))+'<mark'+(i%2?' class="b"':'')+'>'+esc(m[0])+'</mark>';pos=m.index+m[0].length}
+  });
+  hl.innerHTML=html+esc(txt.slice(pos));
+  list.innerHTML=ms.map((m,i)=>{
+    const g=[];
+    for(let j=1;j<m.length;j++)g.push('<div>Group '+j+': <code>'+(m[j]===undefined?'undefined':esc(m[j]))+'</code></div>');
+    if(m.groups)for(const k in m.groups)g.push('<div>Named “'+esc(k)+'”: <code>'+(m.groups[k]===undefined?'undefined':esc(m.groups[k]))+'</code></div>');
+    return '<li><b>Match '+(i+1)+'</b> at index '+m.index+(m[0].length?'–'+(m.index+m[0].length):' (empty match)')+': <code>'+esc(m[0])+'</code>'+g.join('')+'</li>';
+  }).join('');
+  const rep=$('#r-rep').value;
+  if(rep){try{res.value=txt.replace(new RegExp(pat,fl),rep)}catch(e){}}
+}
+['#r-pat','#r-txt','#r-rep'].forEach(s=>$(s).addEventListener('input',runRegex));
+document.querySelectorAll('#r-flags input').forEach(i=>i.addEventListener('change',runRegex));
+$('#r-sample').onclick=()=>{
+  $('#r-pat').value='(?<user>[\\w.+-]+)@(?<domain>[\\w-]+\\.[\\w.]+)';
+  $('#r-txt').value='Contact ada@example.com or grace.hopper@navy.mil.\nBilling: billing+eu@shop.example.co.uk';
+  document.querySelectorAll('#r-flags input').forEach(i=>i.checked=i.value==='g'||i.value==='i');
+  $('#r-rep').value='<$<user> at $<domain>>';runRegex();
+};
 </script>
 </body>
 </html>
