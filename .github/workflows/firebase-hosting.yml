@@ -23,10 +23,10 @@ jobs:
           node-version: '22'
       - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
         with:
-          workload_identity_provider: projects/676932025599/locations/global/workloadIdentityPools/github-sarmad/providers/github-main
+          workload_identity_provider: projects/676932025599/locations/global/workloadIdentityPools/github-sarmad-safe/providers/github-main-safe
           token_format: access_token
           project_id: saemad-8a204
-          service_account: github-hosting-sarmad-v2@saemad-8a204.iam.gserviceaccount.com
+          service_account: github-hosting-sarmad-safe@saemad-8a204.iam.gserviceaccount.com
       - name: Stage only site files
         run: |
           rm -rf public
