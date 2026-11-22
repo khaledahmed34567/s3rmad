@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22'
@@ -26,6 +28,12 @@ jobs:
           project_id: saemad-8a204
           service_account: github-hosting-sarmad@saemad-8a204.iam.gserviceaccount.com
       - name: Stage only site files
-        run: mkdir -p public && cp index.html public/index.html
+        run: |
+          rm -rf public
+          mkdir public
+          cp index.html public/index.html
+          test "$(find public -type f | wc -l)" -eq 1
+          test "$(find public -type f)" = public/index.html
+          test ! -L public/index.html
       - name: Deploy Hosting only
         run: npx --yes firebase-tools@15.37.0 deploy --only hosting --project saemad-8a204 --non-interactive
