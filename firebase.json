@@ -1,7 +1,7 @@
 {
   "hosting": {
     "site": "saemad-8a204",
-    "public": ".",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
