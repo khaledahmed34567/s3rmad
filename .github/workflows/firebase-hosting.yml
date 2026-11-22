@@ -19,6 +19,18 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22'
+      - name: Check non-secret repository identity claims
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const url = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
+          url.searchParams.set('audience', 'https://iam.googleapis.com/projects/676932025599/locations/global/workloadIdentityPools/github-sarmad/providers/github-main');
+          const response = await fetch(url, {headers: {Authorization: `Bearer ${process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}`}});
+          if (!response.ok) throw new Error(`Identity request failed: ${response.status}`);
+          const {value} = await response.json();
+          const claims = JSON.parse(Buffer.from(value.split('.')[1], 'base64url').toString());
+          for (const key of ['sub', 'repository', 'repository_id', 'repository_owner_id', 'ref', 'aud']) console.log(`${key}: ${claims[key]}`);
+          NODE
       - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
         with:
           workload_identity_provider: projects/676932025599/locations/global/workloadIdentityPools/github-sarmad/providers/github-main
