@@ -26,7 +26,7 @@ jobs:
           workload_identity_provider: projects/676932025599/locations/global/workloadIdentityPools/github-sarmad/providers/github-main
           token_format: access_token
           project_id: saemad-8a204
-          service_account: github-hosting-sarmad@saemad-8a204.iam.gserviceaccount.com
+          service_account: github-hosting-sarmad-v2@saemad-8a204.iam.gserviceaccount.com
       - name: Stage only site files
         run: |
           rm -rf public
