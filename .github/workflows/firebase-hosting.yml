@@ -1,3 +1,4 @@
+# Federation rejects this workflow run numbers 1-9 permanently after recovery.
 name: Deploy Sarmad to Firebase Hosting
 on:
   push:
