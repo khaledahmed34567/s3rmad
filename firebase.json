@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "saemad-8a204",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "CNAME",
+      "README.md"
+    ]
+  }
+}
