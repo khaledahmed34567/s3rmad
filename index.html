@@ -1147,7 +1147,7 @@ const DB = {
     const u = cu(), ref = fbDb.collection('orders').doc(), data = { userId: u.uid, ref: 'TAM-' + Date.now().toString(36).toUpperCase(), title: o.title, courseId: o.courseId || null, plan: o.plan || null, receipt: o.receipt || '', amount: o.amount, currency: o.currency || SITE.currency.code, status: 'pending', at: tsNow() };
     await ref.set(data); return { id: ref.id, ...data, at: Date.now() };
   },
-  async orders() { const u = cu(), s = await fbDb.collection('orders').where('userId', '==', u.uid).get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at) })); return sortDesc(a); },
+  async orders() { const u = cu(), s = await fbDb.collection('orders').where('userId', '==', u.uid).get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at), paidAt: d.data().paidAt ? toMs(d.data().paidAt) : 0 })); return sortDesc(a); },
   async sendMessage(m) { const u = fbAuth && fbAuth.currentUser; await fbDb.collection('messages').add({ ...m, userId: u ? u.uid : null, at: tsNow() }); },
   async messages() { const u = cu(), s = await fbDb.collection('messages').where('userId', '==', u.uid).get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at) })); return sortDesc(a); },
   async subscribe(email) { await fbDb.collection('newsletter').doc(email.trim().toLowerCase()).set({ email: email.trim().toLowerCase(), at: tsNow() }); },
@@ -1175,7 +1175,7 @@ function computeAccess(en) {
   S.orders.forEach(o => {
     if (o.status !== 'paid') return;
     if (o.courseId) S.enr[o.courseId] = { at: o.at, orderId: o.id };
-    if (o.plan) { const d = new Date(o.at); d.setMonth(d.getMonth() + (o.plan === 'pro' ? 6 : 3)); const until = d.getTime(); if (until > now && (!S.sub || until > S.sub.until)) S.sub = { plan: o.plan, until }; }
+    if (o.plan) { const d = new Date(o.paidAt || o.at); d.setMonth(d.getMonth() + (o.plan === 'pro' ? 6 : 3)); const until = d.getTime(); if (until > now && (!S.sub || until > S.sub.until)) S.sub = { plan: o.plan, until }; }
   });
   if (S.sub) COURSES.forEach(c => { if (c.status !== 'soon' && !S.enr[c.id]) S.enr[c.id] = { sub: true }; });
 }
@@ -1513,7 +1513,8 @@ const v404 = () => pageHead('404', T('الصفحة غير موجودة', 'Page n
 /* ============================================================
    SARMAD — views (part 2): platform (blog), learning, auth, account, checkout
    ============================================================ */
-const renderBlocks = bs => (bs || []).map(b => b.h ? `<h2>${esc(b.h)}</h2>` : b.p ? `<p>${esc(b.p)}</p>` : b.ul ? `<ul>${b.ul.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : b.code ? `<pre dir="ltr">${esc(b.code)}</pre>` : b.note ? `<div class="callout">${esc(b.note)}</div>` : '').join('');
+const imgBlock = b => (b.src && /^https:\/\//.test(b.src) ? `<figure class="fig"><img src="${esc(b.src)}" alt="${esc(b.cap || '')}" loading="lazy" style="width:100%;height:auto;border-radius:12px">${b.cap ? `<figcaption>${esc(b.cap)}</figcaption>` : ''}</figure>` : '');
+const renderBlocks = bs => (bs || []).map(b => b.h ? `<h2>${esc(b.h)}</h2>` : b.p ? `<p>${esc(b.p)}</p>` : b.ul ? `<ul>${b.ul.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : b.code ? `<pre dir="ltr">${esc(b.code)}</pre>` : b.note ? `<div class="callout">${esc(b.note)}</div>` : imgBlock(b)).join('');
 const allLessons = c => c.modules.flatMap(m => m.lessons);
 const lessonDone = (c, l) => !!(S.prog[c.id] && S.prog[c.id].lessons && S.prog[c.id].lessons[l.id] && S.prog[c.id].lessons[l.id].done);
 function courseProgress(c) { const ls_ = allLessons(c); return ls_.length ? Math.round(ls_.filter(l => lessonDone(c, l)).length / ls_.length * 100) : 0; }
@@ -1965,6 +1966,7 @@ document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['c'
   lang = ls.get('lang', 'ar'); applyLang(); applyTheme();
   try {
     if (fbAuth) { const wait = new Promise(r => setTimeout(r, 7000)); await Promise.race([(async () => { try { await fbAuth.getRedirectResult(); } catch (e) { } await authReady; })(), wait]); }
+    await loadRemote();
     await loadState();
   } catch (e) { }
   renderAll();
@@ -1980,7 +1982,7 @@ const hashStr = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.c
 function permute(n, seed) { const idx = [...Array(n).keys()]; let h = hashStr(seed); for (let i = n - 1; i > 0; i--) { h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; const j = h % (i + 1);[idx[i], idx[j]] = [idx[j], idx[i]]; } return idx; }
 function rich(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/==(.+?)==/g, '<mark class="hl">$1</mark>').replace(/\{g:(.+?)\}/g, '<span class="cg">$1</span>').replace(/\{y:(.+?)\}/g, '<span class="cy">$1</span>').replace(/\{b:(.+?)\}/g, '<span class="cb">$1</span>'); }
 function stepBlocks(bs) {
-  return (bs || []).map(b => b.h ? `<h2>${rich(b.h)}</h2>` : b.p ? `<p>${rich(b.p)}</p>` : b.ul ? `<ul>${b.ul.map(x => `<li>${rich(x)}</li>`).join('')}</ul>` : b.code ? `<pre dir="ltr">${esc(b.code)}</pre>` : b.note ? `<div class="callout">${rich(b.note)}</div>` : b.img ? `<figure class="fig">${ILLUS[b.img] || ''}${b.cap && L(b.cap) ? `<figcaption>${esc(L(b.cap))}</figcaption>` : ''}</figure>` : '').join('');
+  return (bs || []).map(b => b.h ? `<h2>${rich(b.h)}</h2>` : b.p ? `<p>${rich(b.p)}</p>` : b.ul ? `<ul>${b.ul.map(x => `<li>${rich(x)}</li>`).join('')}</ul>` : b.code ? `<pre dir="ltr">${esc(b.code)}</pre>` : b.note ? `<div class="callout">${rich(b.note)}</div>` : b.src ? imgBlock(b) : b.img ? `<figure class="fig">${ILLUS[b.img] || ''}${b.cap && L(b.cap) ? `<figcaption>${esc(L(b.cap))}</figcaption>` : ''}</figure>` : '').join('');
 }
 const lessonP = (cid, lid) => (S.prog[cid] && S.prog[cid].lessons && S.prog[cid].lessons[lid]) || {};
 const courseOf = id => COURSES.find(x => x.id === id);
@@ -2267,5 +2269,39 @@ searchIndex = function () {
     }
   });
 })();
+
+/* ============================================================
+   Content managed from admin.html (Firestore: content_* and settings/site).
+   Public read, admin-only write. Same-id items replace built-in ones; hidden:true removes one.
+   ============================================================ */
+function fixMedia(o) {
+  if (typeof o === 'string') { const m = o.match(/^media\/sample\.(mp4|mp3|pdf)$/); return m ? MEDIA[m[1]] : o; }
+  if (Array.isArray(o)) return o.map(fixMedia);
+  if (o && typeof o === 'object') { const r = {}; for (const k in o) r[k] = fixMedia(o[k]); return r; }
+  return o;
+}
+async function loadRemote() {
+  if (!fbDb) return;
+  const get = async n => { try { const s = await fbDb.collection(n).get(), a = []; s.forEach(d => a.push({ ...d.data(), id: d.id })); return a; } catch (e) { return []; } };
+  const merge = (arr, items) => items.forEach(it => {
+    const i = arr.findIndex(x => x.id === it.id);
+    if (it.hidden) { if (i >= 0) arr.splice(i, 1); return; }
+    const v = fixMedia(it); delete v.updated;
+    if (i >= 0) arr[i] = v; else arr.push(v);
+  });
+  const [c, t, p, a] = await Promise.all([get('content_courses'), get('content_tracks'), get('content_posts'), get('content_apps')]);
+  merge(COURSES, c); merge(TRACKS, t); merge(POSTS, p); merge(APPS, a);
+  try {
+    const s = await fbDb.collection('settings').doc('site').get();
+    if (s.exists) {
+      const d = s.data();
+      if (d.plans) LEARN_PLANS.forEach(pl => { const o = d.plans[pl.id]; if (o && +o.price > 0) pl.price = +o.price; });
+      const plus = LEARN_PLANS.find(x => x.id === 'plus'), pro = LEARN_PLANS.find(x => x.id === 'pro');
+      if (plus && pro) { const sv = plus.price * 2 - pro.price; pro.feats[2] = sv > 0 ? { ar: 'مدة 6 أشهر، وفّر ' + sv + ' جنيه مقارنة بباقتي Plus', en: '6 months, saving EGP ' + sv + ' versus two Plus plans' } : { ar: 'مدة 6 أشهر', en: '6 months of access' }; }
+      if (d.social) Object.assign(SITE.social, d.social);
+      if (d.contact) Object.assign(SITE.contact, d.contact);
+    }
+  } catch (e) { }
+}
 
 </script>
