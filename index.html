@@ -620,6 +620,88 @@ img,.blk img,.rich img{-webkit-user-drag:none;user-drag:none;-webkit-touch-callo
 .mp input[type=range]{height:5px!important;min-height:0!important;padding:0!important;border:0!important;box-shadow:none!important;border-radius:5px!important;background:linear-gradient(to right,#e6c36a var(--p,0%),rgba(255,255,255,.25) var(--p,0%))!important}
 .mp .mp-vol{width:70px!important;flex:none;background:linear-gradient(to right,#e6c36a var(--vp,100%),rgba(255,255,255,.25) var(--vp,100%))!important}
 .mp-seek{display:block;width:100%!important}
+.legal-toc{padding-inline-start:22px}.legal-toc li{margin:4px 0;break-inside:avoid}@media(max-width:700px){.legal-toc{columns:1!important}}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:start}.linkbtn:hover{text-decoration:underline;color:var(--accent,#0f6b52)}.prose .linkbtn{color:var(--accent,#0f6b52)}
+
+/* ===== certificate v2 ===== */
+.cert2-wrap{position:relative;overflow:hidden;width:100%;height:707px}
+.cert2{position:absolute;left:50%;top:0;margin-left:-500px;width:1000px;height:707px;transform-origin:50% 0;padding:14px;border-radius:20px;background:linear-gradient(135deg,#b88a2c,#f2dc94 40%,#c9a24a 70%,#8e6a1c);box-shadow:0 30px 70px -30px rgba(70,50,10,.55);color:#12352c;direction:rtl}
+html[lang=en] .cert2{direction:ltr}
+.cert2-bd{height:100%;border-radius:12px;padding:8px;background:#0f6b52}
+.cert2-in{position:relative;height:100%;border-radius:8px;background:#fcf8ec;border:2px solid #c9a24a;text-align:center;display:flex;flex-direction:column;align-items:center;padding:22px 56px 20px;overflow:hidden}
+.cert2-in .cc{position:absolute;width:46px;height:46px;border:3px solid #c9a24a}
+.cc.tl{top:12px;left:12px;border-right:0;border-bottom:0}.cc.tr{top:12px;right:12px;border-left:0;border-bottom:0}.cc.bl{bottom:12px;left:12px;border-right:0;border-top:0}.cc.br{bottom:12px;right:12px;border-left:0;border-top:0}
+.cert2-wm{position:absolute;inset:0;display:grid;place-items:center;color:#c9a24a;opacity:.1;pointer-events:none}.cert2-star{width:520px;height:520px}
+.cert2-h{display:flex;justify-content:space-between;align-items:center;width:100%;color:#0f6b52}
+.cert2-tag{font-weight:700;color:#8a6a1c;letter-spacing:.06em;border:1px solid #c9a24a;border-radius:99px;padding:3px 14px;font-size:.85rem}
+.cert2-k{font-family:'Tafkir','Incise',serif;font-size:3.1rem;color:#0f6b52;margin:8px 0 0;line-height:1.2}
+.cert2-s{color:#5d6a5f;margin:6px 0 0;font-size:1.05rem}
+.cert2-n{font-family:'Tafkir','Incise',serif;font-size:3.3rem;color:#8a6a1c;margin:4px 0 0;line-height:1.3;max-width:100%}
+.cert2-ln{display:flex;align-items:center;gap:12px;color:#c9a24a;width:60%;margin:2px 0}.cert2-ln i{flex:1;height:2px;background:linear-gradient(90deg,transparent,#c9a24a,transparent)}
+.cert2-c{font-size:1.9rem;margin:4px 0 0;color:#12352c}
+.cert2-m{color:#5d6a5f;margin:6px 0 0}
+.cert2-f{margin-top:auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;width:100%;gap:18px}
+.cert2-sg{display:grid;justify-items:center;gap:2px}.cert2-sg img{height:56px;max-width:180px;object-fit:contain;pointer-events:none}.cert2-sg i{width:190px;height:1px;background:#12352c}.cert2-sg b{font-size:1rem}.cert2-sg span{font-size:.8rem;color:#5d6a5f}
+.cert2-seal{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2dc94,#c9a24a 60%,#8e6a1c);display:grid;place-items:center;align-content:center;color:#fff;box-shadow:0 0 0 5px #fcf8ec,0 0 0 7px #c9a24a;justify-self:center}.cert2-seal span svg{width:34px;height:34px}.cert2-seal small{font-weight:700;font-size:.7rem}
+.cert2-qr{display:grid;justify-items:center;gap:2px}.cert2-qr .qrbox{padding:5px;background:#fff;border:1px solid #e3d6ad;border-radius:10px;line-height:0}.cert2-qr b{font-size:.78rem;letter-spacing:.04em}
+.cert2-rev{position:absolute;inset:0;display:grid;place-items:center;font-size:6rem;font-weight:800;color:rgba(130,90,0,.28);transform:rotate(-18deg);pointer-events:none}
+.cert2.rev{filter:grayscale(.6)}
+.cert2-ver{max-width:560px;margin:16px auto 0;text-align:center;padding:10px 16px;border-radius:99px;font-weight:700;display:flex;gap:8px;justify-content:center;align-items:center}.cert2-ver.ok{background:#d9f0e5;color:#0f6b52}
+@page cert{size:A4 landscape;margin:6mm}
+@media print{body.printable .cert2-wrap{page:cert;height:auto!important;overflow:visible}body.printable .cert2{position:static;margin:0 auto;transform:none!important;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+/* ===== invoice ===== */
+.inv{background:#fff;color:#12352c;border:1px solid var(--line2,#e3d6ad);border-radius:22px;padding:30px;box-shadow:0 18px 50px -28px rgba(0,0,0,.3)}
+.inv-h{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding-bottom:18px;border-bottom:2px solid #c9a24a;color:#0f6b52}
+.inv-g{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}.inv-b{display:grid;gap:4px;align-content:start}
+.inv-r{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed #e8dcb8}
+.inv-t{width:100%;border-collapse:collapse;margin-top:6px}.inv-t th{background:#f3ead0;text-align:start;padding:10px 12px;font-size:.85rem}.inv-t td{padding:12px;border-bottom:1px solid #eee3c2;vertical-align:top}
+.inv-s{display:flex;justify-content:flex-end;margin-top:14px}.inv-sum{width:min(100%,340px)}.inv-r.tot{border-bottom:0;border-top:2px solid #0f6b52;margin-top:6px;padding-top:10px;font-size:1.15rem;color:#0f6b52}
+.inv-f{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid #eee3c2}.inv-qr{display:flex;gap:14px;align-items:center}.inv-qr>svg{flex:none;border:1px solid #e3d6ad;border-radius:10px}
+@media(max-width:640px){.inv{padding:18px}.inv-g{grid-template-columns:1fr}.inv-f{flex-direction:column;align-items:flex-start}.inv-qr{flex-direction:column;align-items:flex-start}}
+@media print{body.printable .inv{box-shadow:none;border:0;padding:0}}
+.mp-pct{position:absolute;inset:auto 0 46%;text-align:center;font-weight:700;pointer-events:none;text-shadow:0 1px 6px #000}
+.mp-audio .mp-pct{inset:6px 14px auto auto;font-size:.8rem}
+.lec-cover{margin:0 0 18px;border-radius:20px;overflow:hidden;border:1px solid var(--line2);aspect-ratio:16/6;background:var(--bg2)}.lec-cover img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+
+/* ===== aid form + scanner ===== */
+.aid-n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink,#fff);font-size:.9rem;margin-inline-end:8px}
+.aid-slots{display:grid;grid-template-columns:1fr 1fr;gap:14px}.aid-slot{display:flex;gap:12px;align-items:center;border:1.5px dashed var(--line2);border-radius:18px;padding:12px;background:var(--bg2)}.aid-slot.has{border-style:solid;border-color:var(--accent)}
+.aid-th{width:92px;height:62px;flex:none;border-radius:10px;background:var(--bg);display:grid;place-items:center;overflow:hidden;color:var(--muted)}.aid-th img{width:100%;height:100%;object-fit:cover;pointer-events:none}.aid-th svg{width:26px;height:26px}
+.chips-in,.seg{display:flex;flex-wrap:wrap;gap:8px}.chip.chk{cursor:pointer;display:inline-flex;gap:8px;align-items:center}.chip.chk input{accent-color:var(--accent)}.chk-row{display:flex;gap:10px;align-items:flex-start;cursor:pointer}.chk-row input{margin-top:.35em;accent-color:var(--accent)}
+.scan-view{position:relative;border-radius:18px;overflow:hidden;background:#000;aspect-ratio:4/3;max-height:60vh}.scan-view video{width:100%;height:100%;object-fit:cover}
+.scan-guide{position:absolute;inset:0;margin:auto;width:92%;aspect-ratio:1.586;max-height:92%;border:2px dashed rgba(255,255,255,.85);border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.45)}
+.scan-guide i{position:absolute;width:22px;height:22px;border:4px solid #e6c36a}.scan-guide i:nth-child(1){top:-2px;left:-2px;border-right:0;border-bottom:0}.scan-guide i:nth-child(2){top:-2px;right:-2px;border-left:0;border-bottom:0}.scan-guide i:nth-child(3){bottom:-2px;left:-2px;border-right:0;border-top:0}.scan-guide i:nth-child(4){bottom:-2px;right:-2px;border-left:0;border-top:0}
+.scan-prev canvas{width:100%;height:auto;border-radius:12px;border:1px solid var(--line2);display:block}
+.scan-modal{max-width:560px;width:calc(100% - 24px)}
+@media(max-width:640px){.aid-slots{grid-template-columns:1fr}}
+
+/* ===== features3 ===== */
+#sup{position:fixed;inset-inline-end:16px;bottom:16px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.sup-fab{width:54px;height:54px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 8px 24px rgba(15,60,45,.28);cursor:pointer}
+.sup-fab svg{width:24px;height:24px}
+.sup-p{width:min(320px,calc(100vw - 32px));background:var(--bg);border:1px solid var(--line2);border-radius:20px;padding:16px;display:grid;gap:10px;box-shadow:0 16px 44px rgba(15,60,45,.22)}
+.sup-p p{margin:0}.btn.block{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;text-align:center}
+body.has-timer #sup{bottom:76px}
+.bell{position:relative}.bell .bdg{position:absolute;top:-2px;inset-inline-end:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:var(--gold-ink);font:700 .7rem/18px var(--mono);text-align:center;font-style:normal;padding:0 4px}
+#rp{position:fixed;top:0;inset-inline:0;height:3px;z-index:80;background:transparent}#rp i{display:block;height:100%;width:0;background:var(--gold)}
+.toc{display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line);margin-top:10px}.toc a{font-size:.88rem;color:var(--muted);text-decoration:none}.toc a.sub{padding-inline-start:14px}.toc a:hover{color:var(--accent)}
+.btn.accent{background:var(--accent);color:var(--accent-ink)}
+.stars{display:inline-flex;gap:2px;direction:ltr}.stars i{font-style:normal;color:var(--line2)}.stars i.on{color:var(--gold)}
+.rate-in{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px;direction:ltr;width:max-content}.rate-in input{position:absolute;opacity:0;pointer-events:none}.rate-in label{font-size:1.8rem;color:var(--line2);cursor:pointer}.rate-in input:checked~label,.rate-in label:hover,.rate-in label:hover~label{color:var(--gold)}
+.xp-strip{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-bottom:22px}.xp-strip>div:first-child{min-width:200px;flex:1}
+.bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.xp-strip .stat{text-align:center;display:grid}.xp-strip .stat b{font-size:1.3rem}
+.badges{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}.badge{font-size:.78rem;padding:4px 10px;border-radius:999px;border:1px dashed var(--line2);color:var(--muted)}.badge.on{border-style:solid;background:var(--accent-soft);color:var(--fg)}
+.qa{padding:10px 12px;border-radius:12px;background:var(--bg2)}
+#tm{position:fixed;bottom:0;inset-inline:0;z-index:55;background:var(--bg);border-top:1px solid var(--line2);padding:8px 12px}.tm-in{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.tm-in b{font-size:1.15rem}
+.pay-amt{font-size:2.4rem;font-weight:700;color:var(--accent)}
+/* accessibility */
+html.hc{--bg:#fff;--bg2:#f2f2f2;--bg3:#e2e2e2;--fg:#000;--muted:#222;--line:#000;--line2:#000;--accent:#004d3b}
+html.hc[data-theme=dark],html.hc.dark{--bg:#000;--bg2:#0a0a0a;--bg3:#161616;--fg:#fff;--muted:#e6e6e6;--line:#fff;--line2:#fff;--accent:#ffd36b;--accent-ink:#000}
+html.hc a{text-decoration:underline}
+html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html.lh body{line-height:2!important}html.lh p,html.lh li{line-height:2!important}
+html.dys body{letter-spacing:.06em;word-spacing:.18em}
 
 </style>
 </head>
@@ -640,7 +722,7 @@ const SITE = {
   announce: { on: true, ar: 'جديد: سرمد ليرننج متاح الآن مع أول كورس مجاني.', en: 'New: Sarmad Learning is live with a free first course.', link: '#learning', label: 'اكتشف', labelEn: 'Explore' },
   name: { ar: 'سرمد', en: 'Sarmad' },
   /* Fill what you have; empty values are hidden automatically. */
-  contact: { email: 'contact@sarmad.qd.je', phone: '', whatsapp: '', address: { ar: '', en: '' } },
+  contact: { email: 'contact@sarmad.qd.je', telegram: 'https://t.me/sarmad_site_bot', phone: '', whatsapp: '', address: { ar: '', en: '' } },
   social: { github: '', linkedin: '', x: '', youtube: '', telegram: '', instagram: '' },
   currency: { code: 'EGP', ar: 'ج.م', en: 'EGP' }
 };
@@ -1088,6 +1170,8 @@ function fixDigits(root) {
 
 /* ---------- icons ---------- */
 const IC = {
+  bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/>', chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.6A8 8 0 1 1 21 12z"/>', send2: '<path d="m21 3-9.5 18-2.3-8.2L1 10.5z"/>', star: '<path d="m12 3 2.8 5.8 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 3 1.1-6.2L3 9.7l6.2-.9z"/>', timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>',
+  heart: '<path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/>', camera: '<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/>',
   upload: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>', share: '<path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>', menu: '<path d="M4 7h16M4 12h16M4 17h16"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
@@ -1231,7 +1315,7 @@ const DB = {
     if (snap.exists) await ref.update({ ['lessons.' + lessonId]: val }); else await ref.set({ lessons: { [lessonId]: val } });
   },
   async createOrder(o) {
-    const u = cu(), ref = fbDb.collection('orders').doc(), data = { userId: u.uid, ref: 'TAM-' + Date.now().toString(36).toUpperCase(), coupon: o.coupon || null, discount: o.discount || 0, baseAmount: o.baseAmount || o.amount, title: o.title, courseId: o.courseId || null, plan: o.plan || null, receipt: o.receipt || '', amount: o.amount, currency: o.currency || SITE.currency.code, status: 'pending', at: tsNow() };
+    const u = cu(), ref = fbDb.collection('orders').doc(), data = { userId: u.uid, ref: 'TAM-' + Date.now().toString(36).toUpperCase(), coupon: o.coupon || null, payLink: o.payLink || null, discount: o.discount || 0, baseAmount: o.baseAmount || o.amount, title: o.title, courseId: o.courseId || null, plan: o.plan || null, receipt: o.receipt || '', amount: o.amount, currency: o.currency || SITE.currency.code, status: 'pending', at: tsNow() };
     await ref.set(data); return { id: ref.id, ...data, at: Date.now() };
   },
   async coupon(code) { const d = await fbDb.collection('coupons').doc(code).get(); return d.exists ? d.data() : null; },
@@ -1240,10 +1324,16 @@ const DB = {
     const u = cu(), ex = await this.myCert(c.id); if (ex) return ex.id;
     const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', code = 'CRT-' + Array.from(crypto.getRandomValues(new Uint8Array(10)), x => A[x % A.length]).join('');
     const p = (S.user && S.user.profile) || {};
-    await fbDb.collection('certs').doc(code).set({ userId: u.uid, name: (S.user && S.user.name) || u.displayName || '', sid: (S.user && S.user.sid) || '', courseId: c.id, courseAr: c.t.ar, courseEn: c.t.en || c.t.ar, hours: c.hours || 0, revoked: false, at: tsNow() });
+    await fbDb.collection('certs').doc(code).set({ userId: u.uid, name: (S.user && S.user.name) || u.displayName || '', sid: (S.user && S.user.sid) || '', courseId: c.id, courseAr: c.t.ar, courseEn: c.t.en || c.t.ar, hours: c.hours || 0, status: 'pending', revoked: false, at: tsNow() });
     return code;
   },
+  async invoice(ref) { const d = await fbDb.collection('invoices').doc(ref).get(); return d.exists ? { id: d.id, ...d.data(), paidAt: toMs(d.data().paidAt) } : null; },
   async cert(code) { const d = await fbDb.collection('certs').doc(code).get(); return d.exists ? { id: d.id, ...d.data(), at: toMs(d.data().at) } : null; },
+  async submitAid(d) {
+    const u = fbAuth && fbAuth.currentUser, { idFront, idBack, ...main } = d, ref = fbDb.collection('aid').doc(), b = fbDb.batch();
+    b.set(ref, { ...main, status: 'new', userId: u ? u.uid : null, at: tsNow() }); b.set(ref.collection('docs').doc('front'), { d: idFront }); b.set(ref.collection('docs').doc('back'), { d: idBack }); await b.commit();
+  },
+  async resubmitOrder(id, receipt) { await fbDb.collection('orders').doc(id).update({ receipt, status: 'pending', resubAt: tsNow() }); },
   async orders() { const u = cu(), s = await fbDb.collection('orders').where('userId', '==', u.uid).get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at), paidAt: d.data().paidAt ? toMs(d.data().paidAt) : 0 })); return sortDesc(a); },
   async sendMessage(m) { const u = fbAuth && fbAuth.currentUser; await fbDb.collection('messages').add({ ...m, userId: u ? u.uid : null, at: tsNow() }); },
   async messages() { const u = cu(), s = await fbDb.collection('messages').where('userId', '==', u.uid).get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at) })); return sortDesc(a); },
@@ -1285,6 +1375,9 @@ function parse() {
   if (h.startsWith('post-')) return { name: 'post', id: h.slice(5), key: h };
   if (h.startsWith('course-')) return { name: 'course', id: h.slice(7), key: h };
   if (h.startsWith('learn-')) { const [, cid, lid, n] = h.split('-'); return { name: 'learn', cid, lid, step: n && +n > 0 ? +n - 1 : null, key: h }; }
+  if (h.startsWith('pay-')) return { name: 'pay', id: h.slice(4), key: h };
+  if (h.startsWith('invoice-')) return { name: 'invoice', id: h.slice(8), key: h };
+  if (h.startsWith('verify-')) return { name: 'verify', id: h.slice(7), key: h };
   if (h.startsWith('cert-')) return { name: 'cert', id: h.slice(5), key: h };
   if (h.startsWith('app-')) return { name: 'app', id: h.slice(4), key: h };
   if (h === 'lx-login') return { name: 'lxlogin', key: h };
@@ -1294,7 +1387,7 @@ function parse() {
   if (h.startsWith('test-')) return { name: 'test', id: h.slice(5), key: h };
   return { name: h, key: h };
 }
-const portalOf = n => ({ app: 'main', platform: 'platform', post: 'platform', learning: 'learning', course: 'learning', learn: 'learning', track: 'learning', test: 'learning', lxlogin: 'learning', lxsignup: 'learning', lxcomplete: 'learning', cert: 'learning', tam: 'tam' }[n] || 'main');
+const portalOf = n => ({ app: 'main', platform: 'platform', post: 'platform', learning: 'learning', course: 'learning', learn: 'learning', track: 'learning', test: 'learning', lxlogin: 'learning', lxsignup: 'learning', lxcomplete: 'learning', aid: 'learning', pay: 'tam', cert: 'learning', invoice: 'tam', verify: 'tam', tam: 'tam' }[n] || 'main');
 const go = h => { if (location.hash === '#' + h) render(); else location.hash = h; };
 const needAuth = () => { S.next = location.hash.slice(1) || 'home'; toast(T('سجّل دخولك أولًا', 'Please sign in first')); go(portalOf(parse().name) === 'learning' ? 'lx-login' : 'login'); };
 
@@ -1310,6 +1403,7 @@ function navItems() {
 function portals() {
   return [['home', 'main', T('سرمد', 'Sarmad')], ['platform', 'platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', 'learning', T('سرمد ليرننج', 'Sarmad Learning')], ['tam', 'tam', T('تم', 'Tam')]];
 }
+const AFTER = [];
 function renderHeader() {
   const r = parse(), portal = portalOf(r.name), nav = navItems();
   const acct = S.user
@@ -1327,7 +1421,7 @@ function renderHeader() {
       ${nav.slice(2).map(([h, n]) => `<a href="#${h}" class="${r.name === h ? 'on' : ''}">${n}</a>`).join('')}
     </nav>
     <div class="tools">
-      <button class="ib" data-act="search" aria-label="${T('بحث', 'Search')}">${icon('search')}</button>
+      ${typeof bellBtn === 'function' ? bellBtn() : ''}<button class="ib" data-act="search" aria-label="${T('بحث', 'Search')}">${icon('search')}</button>
       <button class="ib hide-m" data-act="lang" aria-label="language" style="font-size:.78rem;font-weight:700">${lang === 'ar' ? 'EN' : 'ع'}</button>
       <button class="ib hide-m" data-act="theme" aria-label="${T('تبديل الثيم', 'Toggle theme')}">${icon(isDark() ? 'sun' : 'moon')}</button>
       ${acct}
@@ -1356,11 +1450,11 @@ function renderFooter() {
         <form data-form="news" class="row" style="flex-wrap:nowrap;margin-top:6px"><div class="field" style="flex:1"><input id="news-email" type="email" required placeholder="${T('بريدك لتصلك مقالاتنا', 'Email for new articles')}" aria-label="email"></div><button class="btn accent sm" type="submit">${T('اشترك', 'Join')}</button></form>
         <div class="row">${socials()}</div></div>
       <div><h4>${T('الخدمات', 'Services')}</h4><ul>${SERVICES.map(s => `<li><a href="#services">${L(s.t)}</a></li>`).join('')}</ul></div>
-      <div><h4>${T('المنظومة', 'Ecosystem')}</h4><ul><li><a href="#platform">${T('سرمد بلاتفورم', 'Sarmad Platform')}</a></li><li><a href="#learning">${T('سرمد ليرننج', 'Sarmad Learning')}</a></li><li><a href="#tam">${T('تم للمدفوعات', 'Tam Payments')}</a></li><li><a href="#apps">${T('التطبيقات', 'Apps')}</a></li></ul></div>
+      <div><h4>${T('المنظومة', 'Ecosystem')}</h4><ul><li><a href="#platform">${T('سرمد بلاتفورم', 'Sarmad Platform')}</a></li><li><a href="${tgLink(S.user && S.user.sid)}" target="_blank" rel="noopener">${T('الدعم الفني (تيليجرام)', 'Support (Telegram)')}</a></li><li><button type="button" class="linkbtn" data-act="a11y">${T('إمكانية الوصول', 'Accessibility')}</button></li><li><a href="#aid">${T('نساعد بعض', 'We help each other')}</a></li><li><a href="#learning">${T('سرمد ليرننج', 'Sarmad Learning')}</a></li><li><a href="#tam">${T('تم للمدفوعات', 'Tam Payments')}</a></li><li><a href="#apps">${T('التطبيقات', 'Apps')}</a></li></ul></div>
       <div><h4>${T('الشركة', 'Company')}</h4><ul><li><a href="#about">${T('من نحن', 'About')}</a></li><li><a href="#pricing">${T('الأسعار', 'Pricing')}</a></li><li><a href="#contact">${T('تواصل معنا', 'Contact')}</a></li><li><a href="#account">${T('حسابي', 'My account')}</a></li></ul></div>
       <div><h4>${T('تواصل', 'Reach us')}</h4><ul>
         ${c.email ? `<li class="mono"><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>` : ''}${c.phone ? `<li class="mono">${esc(c.phone)}</li>` : ''}
-        <li><a href="#contact">${T('اطلب عرض سعر', 'Request a quote')}</a></li><li><a href="#privacy">${T('الخصوصية', 'Privacy')}</a></li><li><a href="#" data-act="cookieOpen">${T('إعدادات الكوكيز', 'Cookie settings')}</a></li><li><a href="#terms">${T('الشروط', 'Terms')}</a></li></ul></div>
+        <li><a href="#contact">${T('اطلب عرض سعر', 'Request a quote')}</a></li><li><a href="#privacy">${T('الخصوصية', 'Privacy')}</a></li><li><button type="button" class="linkbtn" data-act="cookieOpen">${T('إعدادات الكوكيز', 'Cookie settings')}</button></li><li><a href="#terms">${T('الشروط', 'Terms')}</a></li></ul></div>
     </div>
     <div class="ftr-bottom"><span>© ${new Date().getFullYear()} ${T('سرمد. جميع الحقوق محفوظة.', 'Sarmad. All rights reserved.')}</span>
       <span class="row"><button class="chip" data-act="lang" style="background:none;color:inherit">${icon('globe')} ${lang === 'ar' ? 'English' : 'العربية'}</button><button class="chip" data-act="theme" style="background:none;color:inherit">${icon(isDark() ? 'sun' : 'moon')} ${isDark() ? T('فاتح', 'Light') : T('داكن', 'Dark')}</button></span></div>
@@ -1446,8 +1540,9 @@ function mediaPlayer(kind, src, title) {
     <button type="button" class="mp-rate" data-mp="rate" aria-label="speed">1x</button>
     ${a('mute', MPI.vol, T('الصوت', 'Volume'))}<input type="range" class="mp-vol" min="0" max="1" step="0.05" value="1" data-mp-vol aria-label="volume">
     ${kind === 'video' ? a('full', MPI.full, T('تكبير', 'Fullscreen')) : ''}</div></div>`;
-  if (kind === 'video') return `<div class="mp mp-video" id="${id}" tabindex="0" data-kind="video"><video playsinline preload="metadata" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback" src="${esc(src)}"></video><button type="button" class="mp-big" data-mp="toggle" aria-label="play">${MPI.play}</button><div class="mp-load"></div>${ctrl}</div>`;
-  return `<div class="mp mp-audio" id="${id}" tabindex="0" data-kind="audio"><audio preload="metadata" controlslist="nodownload noplaybackrate" src="${esc(src)}"></audio><div class="mp-art"><div class="mp-eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div><b>${esc(title || T('مقطع صوتي', 'Audio clip'))}</b><span class="xs muted">${T('سرمد ليرننج', 'Sarmad Learning')}</span></div></div>${ctrl}</div>`;
+  const isFs = /^fs:[A-Za-z0-9]{20}$/.test(src || ''), sa = isFs ? `data-fs="${src.slice(3)}"` : `src="${esc(src)}"`, pc = '<span class="mp-pct" data-mp-pct></span>';
+  if (kind === 'video') return `<div class="mp mp-video" id="${id}" tabindex="0" data-kind="video" ${isFs ? `data-fsid="${src.slice(3)}"` : ''}><video playsinline preload="metadata" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback" ${isFs ? '' : sa}></video>${pc}<button type="button" class="mp-big" data-mp="toggle" aria-label="play">${MPI.play}</button><div class="mp-load"></div>${ctrl}</div>`;
+  return `<div class="mp mp-audio" id="${id}" tabindex="0" data-kind="audio" ${isFs ? `data-fsid="${src.slice(3)}"` : ''}><audio preload="metadata" controlslist="nodownload noplaybackrate" ${isFs ? '' : sa}></audio>${pc}<div class="mp-art"><div class="mp-eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div><b>${esc(title || T('مقطع صوتي', 'Audio clip'))}</b><span class="xs muted">${T('سرمد ليرننج', 'Sarmad Learning')}</span></div></div>${ctrl}</div>`;
 }
 (function () {
   const med = r => r.querySelector('video,audio'), fmt = s => { s = Math.max(0, Math.floor(s || 0)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
@@ -1470,9 +1565,15 @@ function mediaPlayer(kind, src, title) {
     if (rq) { try { const p = rq.call(r); if (p && p.catch) p.catch(() => { r.classList.add('fs'); document.body.classList.add('mp-lock'); ui(r); }); return; } catch (e) { } }
     r.classList.add('fs'); document.body.classList.add('mp-lock'); ui(r);
   }
-  function act(r, k) {
+  async function ensure(r) {
+    const m = med(r), id = r.dataset.fsid; if (!id || m.getAttribute('src')) return true;
+    const pc = r.querySelector('[data-mp-pct]'); r.classList.add('busy');
+    try { const u = await fsBlobUrl(id, f => { pc.textContent = Math.round(f * 100) + '%'; }); m.src = u; pc.textContent = ''; r.classList.remove('busy'); return true; }
+    catch (e) { r.classList.remove('busy'); pc.textContent = T('تعذر تحميل الملف', 'Could not load the file'); return false; }
+  }
+  async function act(r, k) {
     const m = med(r); if (!m) return;
-    if (k === 'toggle') { if (m.paused) { document.querySelectorAll('.mp').forEach(o => { const x = med(o); if (o !== r && x && !x.paused) x.pause(); }); m.play().catch(() => { }); } else m.pause(); }
+    if (k === 'toggle') { if (m.paused && r.dataset.fsid && !m.getAttribute('src')) { if (!await ensure(r)) return; } if (m.paused) { document.querySelectorAll('.mp').forEach(o => { const x = med(o); if (o !== r && x && !x.paused) x.pause(); }); m.play().catch(() => { }); } else m.pause(); }
     else if (k === 'back') m.currentTime = Math.max(0, m.currentTime - 10);
     else if (k === 'fwd') m.currentTime = Math.min(m.duration || 1e9, m.currentTime + 10);
     else if (k === 'mute') m.muted = !m.muted;
@@ -1501,6 +1602,17 @@ function mediaPlayer(kind, src, title) {
     const k = map[e.key]; if (k && !(k === 'full' && r.dataset.kind === 'audio')) { e.preventDefault(); act(r, k); }
   });
 })();
+
+/* ---------- files stored in Firestore (fs:<id>), chunked ---------- */
+const FSC = {};
+async function fsParts(id, onp) {
+  const ref = fbDb.collection('files').doc(id), m = await ref.get(); if (!m.exists || m.data().status !== 'ready') throw new Error('missing');
+  const n = m.data().chunks, parts = new Array(n), q = [...Array(n).keys()]; let got = 0;
+  await Promise.all(Array(4).fill(0).map(async () => { while (q.length) { const i = q.shift(), d = await ref.collection('chunks').doc(String(i).padStart(4, '0')).get(); parts[i] = d.data().d.toUint8Array(); got++; if (onp) onp(got / n); } }));
+  return { parts, type: m.data().type };
+}
+async function fsBlobUrl(id, onp) { if (FSC[id]) return FSC[id]; const { parts, type } = await fsParts(id, onp); return (FSC[id] = URL.createObjectURL(new Blob(parts, { type }))); }
+async function fsBuf(id) { const { parts, type } = await fsParts(id); return await new Blob(parts, { type }).arrayBuffer(); }
 
 /* ============================================================
    SARMAD — views (part 1): home, services, apps, tam, pricing, about, contact, legal
@@ -1755,7 +1867,7 @@ function vLearning() {
 }
 function courseCta(c) {
   if (c.status === 'soon') return `<button class="btn block off" disabled>${T('قريبًا', 'Coming soon')}</button>`;
-  if (S.enr[c.id]) { const nl = nextLesson(c), pr = courseProgress(c); return `<div class="bar"><i style="width:${pr}%"></i></div><span class="xs muted">${pr}% ${T('مكتمل', 'complete')}</span>${pr === 100 ? `<button class="btn accent block" data-act="getCert" data-c="${c.id}">${T('احصل على شهادتك', 'Get your certificate')}</button>` : ''}<a class="btn primary block" href="#learn-${c.id}-${nl.id}">${pr ? T('أكمل التعلم', 'Continue learning') : T('ابدأ الكورس', 'Start course')} ${arrow()}</a>`; }
+  if (S.enr[c.id]) { const nl = nextLesson(c), pr = courseProgress(c); return `<div class="bar"><i style="width:${pr}%"></i></div><span class="xs muted">${pr}% ${T('مكتمل', 'complete')}</span>${pr === 100 ? `<button class="btn accent block" data-act="getCert" data-c="${c.id}">${T('شهادة الإتمام', 'Completion certificate')}</button>` : ''}<a class="btn primary block" href="#learn-${c.id}-${nl.id}">${pr ? T('أكمل التعلم', 'Continue learning') : T('ابدأ الكورس', 'Start course')} ${arrow()}</a>`; }
   if (c.price === 0) return `<button class="btn primary block" data-act="enroll" data-c="${c.id}">${T('ابدأ مجانًا', 'Start for free')}</button>`;
   return `<button class="btn accent block" data-act="buy" data-c="${c.id}">${icon('card')} ${T('اشترِ عبر تم', 'Buy with Tam')}</button><span class="xs muted" style="text-align:center">${T('أو اشترك في باقة Plus أو Pro من صفحة ليرننج.', 'Or get a Plus or Pro plan from the Learning page.')}</span>`;
 }
@@ -1824,7 +1936,7 @@ async function drawPdf() {
   const box = $('.pdf-box'); if (!box) return; const tok = ++pdfTok, pages = $('#pdf-pages'), info = $('#pdf-info'), src = box.dataset.pdf, alive = () => tok === pdfTok && pages.isConnected;
   try {
     await ensurePdfJs(); if (!alive()) return;
-    if (!pdfDocs[src]) { const buf = await (await fetch(src)).arrayBuffer(); pdfDocs[src] = await window.pdfjsLib.getDocument({ data: buf }).promise; }
+    if (!pdfDocs[src]) { const buf = src.startsWith('fs:') ? await fsBuf(src.slice(3)) : await (await fetch(src)).arrayBuffer(); pdfDocs[src] = await window.pdfjsLib.getDocument({ data: buf }).promise; }
     if (!alive()) return;
     const doc = pdfDocs[src], dpr = Math.min(window.devicePixelRatio || 1, 2), avail = Math.max(240, pages.clientWidth - 32), frag = document.createDocumentFragment();
     for (let i = 1; i <= doc.numPages; i++) {
@@ -1906,8 +2018,8 @@ function vAccount() {
     body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('تعلّمي', 'My learning')}</h2>` + (mine.length ? `<div class="grid g2">${mine.map(courseCard).join('')}</div>` : `<div class="empty">${T('لم تبدأ أي كورس بعد.', 'You have not started a course yet.')}<a class="btn primary sm" href="#learning">${T('تصفح الكورسات', 'Browse courses')}</a></div>`);
   }
   if (tab === 'linked') body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:8px">${T('الحسابات المربوطة', 'Linked services')}</h2><p class="muted" style="margin-bottom:22px">${T('رقم حسابك الموحد', 'Your unified ID')}: <span class="mono" data-keep>${u.sid}</span></p><div class="stack">${LINKS().map(([k, i, n, d]) => `<div class="link-card ${linked(k) ? 'on' : ''}"><div class="ic" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--bg3)">${icon(i)}</div><div><b>${n}</b><p class="sm muted">${d}</p></div><label class="sw" aria-label="${n}"><input type="checkbox" data-change="toggleLink" data-v="${k}" ${linked(k) ? 'checked' : ''}><i></i></label></div>`).join('')}</div><div class="note" style="margin-top:20px">${icon('info')}<span>${T('تُربط البوابة تلقائيًا عند أول استخدام، ويمكنك فصلها وقتما تشاء.', 'A portal links automatically on first use, and you can unlink it any time.')}</span></div>`;
-  if (tab === 'payments') body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('المدفوعات', 'Payments')}</h2>` + (S.orders.length ? `<div class="tbl"><table><thead><tr><th>${T('المرجع', 'Reference')}</th><th>${T('البند', 'Item')}</th><th>${T('المبلغ', 'Amount')}</th><th>${T('التاريخ', 'Date')}</th><th>${T('الحالة', 'Status')}</th></tr></thead><tbody>${S.orders.map(o => `<tr><td class="mono" data-keep>${o.ref}</td><td>${esc(typeof o.title === 'object' ? L(o.title) : o.title)}</td><td>${fmtMoney(o.amount)}</td><td>${fmtDate(o.at)}</td><td>${o.status === 'paid' ? `<span class="tag ok">${T('مدفوع', 'Paid')}</span>` : `<span class="tag">${T('قيد التأكيد', 'Awaiting confirmation')}</span>`}</td></tr>`).join('')}</tbody></table></div>` : `<div class="empty">${T('لا توجد عمليات دفع بعد.', 'No payments yet.')}</div>`) + (S.sub ? `<div class="note" style="margin-top:16px">${icon('check')}<span>${T('اشتراكك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' ساري حتى ', 'Your ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan is active until ') + fmtDate(S.sub.until)}</span></div>` : '');
-  if (tab === 'requests') body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('طلباتي', 'My requests')}</h2>` + (S.msgs.length ? `<div class="list">${S.msgs.map(m => `<div><div><b>${m.type === 'career' ? T('طلب انضمام', 'Join request') : T('طلب عرض سعر', 'Quote request')}</b><p class="sm muted" style="max-width:60ch">${esc((m.message || m.link || '').slice(0, 140))}</p></div><span class="xs muted">${fmtDate(m.at)}</span></div>`).join('')}</div>` : `<div class="empty">${T('لم ترسل أي طلب بعد.', 'You have not sent any request yet.')}<a class="btn primary sm" href="#contact">${T('اطلب عرض سعر', 'Request a quote')}</a></div>`);
+  if (tab === 'payments') body = `<div class="row" style="justify-content:space-between;margin-bottom:22px"><h2 class="h2" style="font-size:1.6rem;margin:0">${T('المدفوعات', 'Payments')}</h2>${S.orders.length ? `<button class="btn sm" data-act="exportOrders">${icon('file')} ${T('تصدير CSV', 'Export CSV')}</button>` : ''}</div>` + (S.orders.length ? `<div class="tbl"><table><thead><tr><th>${T('المرجع', 'Reference')}</th><th>${T('البند', 'Item')}</th><th>${T('المبلغ', 'Amount')}</th><th>${T('التاريخ', 'Date')}</th><th>${T('الحالة', 'Status')}</th><th></th></tr></thead><tbody>${S.orders.map(o => `<tr><td class="mono" data-keep>${o.ref}</td><td>${esc(typeof o.title === 'object' ? L(o.title) : o.title)}</td><td>${fmtMoney(o.amount)}</td><td>${fmtDate(o.at)}</td><td>${o.status === 'paid' ? `<span class="tag ok">${T('مدفوع', 'Paid')}</span>` : o.status === 'rejected' ? `<span class="tag bad">${T('مرفوض', 'Rejected')}</span>` : `<span class="tag">${T('قيد التأكيد', 'Awaiting confirmation')}</span>`}</td><td>${o.status === 'paid' ? `<a class="chip" href="#invoice-${o.id}">${T('الفاتورة', 'Invoice')}</a>` : ''}${o.status === 'rejected' ? `<button class="chip" data-act="reReceipt" data-id="${o.id}">${T('إعادة رفع الإيصال', 'Re-upload receipt')}</button>` : ''}<a class="chip" href="${tgLink(o.ref)}" target="_blank" rel="noopener">${T('الدعم', 'Support')}</a></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty">${T('لا توجد عمليات دفع بعد.', 'No payments yet.')}</div>`) + (S.sub ? `<div class="note" style="margin-top:16px">${icon('check')}<span>${T('اشتراكك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' ساري حتى ', 'Your ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan is active until ') + fmtDate(S.sub.until)}</span></div>` : '');
+  if (tab === 'requests') body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('طلباتي', 'My requests')}</h2>` + (S.msgs.length ? `<div class="list">${S.msgs.map(m => `<div><div><b>${m.type === 'career' ? T('طلب انضمام', 'Join request') : T('طلب عرض سعر', 'Quote request')}</b><p class="sm muted" style="max-width:60ch">${esc((m.message || m.link || '').slice(0, 140))}</p>${m.reply ? `<p class="sm" style="margin-top:6px"><b>${T('رد الفريق', 'Team reply')}:</b> ${esc(m.reply)}</p>` : ''}</div><span class="xs muted" style="text-align:end"><span class="tag ${m.handled ? 'ok' : 'gold'}">${m.handled ? T('تمت المعالجة', 'Handled') : T('قيد المراجعة', 'In review')}</span><br>${fmtDate(m.at)}</span></div>`).join('')}</div>` : `<div class="empty">${T('لم ترسل أي طلب بعد.', 'You have not sent any request yet.')}<a class="btn primary sm" href="#contact">${T('اطلب عرض سعر', 'Request a quote')}</a></div>`);
   return `<section class="sec" style="padding-top:clamp(32px,5vw,56px)"><div class="wrap acc-grid"><aside class="stack" style="align-content:start"><div class="avatar">${esc(u.name.trim().charAt(0).toUpperCase())}</div><div><b style="font-size:1.2rem">${esc(u.name)}</b><p class="sm muted" style="word-break:break-all">${esc(u.email)}</p><span class="mono muted" data-keep>${u.sid}</span> <button class="chip" data-act="copy" data-v="${u.sid}" aria-label="copy">${icon('copy')}</button></div>
     <div class="stack" style="gap:4px">${tabs.map(([k, i, n]) => `<button class="les ${tab === k ? 'on' : ''}" data-act="tab" data-v="${k}" style="padding:12px">${icon(i)} <span>${n}</span></button>`).join('')}</div><button class="btn ghost sm" data-act="logout">${icon('logout', 'flip')} ${T('تسجيل الخروج', 'Sign out')}</button></aside><div style="min-width:0">${body}</div></div></section>`;
 }
@@ -1942,7 +2054,7 @@ async function runPay() {
   btn.disabled = true; btn.textContent = T('جارٍ الرفع…', 'Uploading…'); err.textContent = '';
   try {
     const receipt = await uploadReceipt(f);
-    const ord = await DB.createOrder({ title: o.title, courseId: o.courseId || null, plan: o.plan || null, amount: o.amount, coupon: o.coupon || null, discount: o.discount || 0, baseAmount: o.base || o.amount, currency: SITE.currency.code, receipt });
+    const ord = await DB.createOrder({ title: o.title, courseId: o.courseId || null, plan: o.plan || null, amount: o.amount, coupon: o.coupon || null, payLink: o.payLink || null, discount: o.discount || 0, baseAmount: o.base || o.amount, currency: SITE.currency.code, receipt });
     await autoLink('tam'); await loadState(); renderHeader();
     body.innerHTML = `<div class="stack" style="text-align:center;justify-items:center;padding:10px 0"><span class="done-check" role="img" aria-label="ok"></span><h2 class="h2" style="font-size:1.5rem">${T('تم استلام طلبك', 'Order received')}</h2><p class="muted sm">${T('رقم المرجع', 'Reference')}: <span class="mono" data-keep>${ord.ref}</span></p><p class="muted sm" style="max-width:38ch">${T('نراجع الإيصال ويُفعَّل الوصول فور التأكيد. تتابع الحالة من حسابك.', 'We review the receipt and activate access as soon as it is confirmed. Follow the status in your account.')}</p><div class="row" style="justify-content:center"><button class="btn" data-act="copy" data-v="${ord.ref}">${icon('copy')} ${T('نسخ المرجع', 'Copy reference')}</button><a class="btn primary" href="#account" data-act="ordersTab">${T('طلباتي', 'My orders')}</a></div></div>`;
     fixDigits(body);
@@ -2001,6 +2113,7 @@ let lastKey = null;
 function render() {
   const r = parse(), fn = ROUTE[r.name] || v404;
   closeModal(); closeDrawer();
+  if (S.user && S.user.mustChange && !['setup', 'privacy', 'terms'].includes(r.name)) { go('setup'); return; }
   if (S.user && !S.user.phone && !['complete', 'lxcomplete', 'privacy', 'terms'].includes(r.name)) { S.next = S.next || location.hash.slice(1) || 'home'; go(portalOf(r.name) === 'learning' ? 'lx-complete' : 'complete'); return; }
   if (r.name === 'learn' && r.step != null && lastKey !== r.key) STEPI[r.cid + '.' + r.lid] = r.step;
   $('#main').innerHTML = `<div class="view">${fn(r)}</div>`;
@@ -2008,6 +2121,7 @@ function render() {
   document.title = routeTitle(r);
   if (lastKey !== r.key) { window.scrollTo(0, 0); lastKey = r.key; }
   if (r.name === 'learn') { pdfZoom = 1; drawPdf(); }
+  AFTER.forEach(f => { try { f(r); } catch (e) { console.error(e); } });
 }
 function renderAll() { applyLang(); renderHeader(); renderAnnounce(); renderFooter(); renderCookie(); render(); }
 
@@ -2176,7 +2290,7 @@ document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['c'
     await loadRemote();
     await loadState();
   } catch (e) { }
-  startAnalytics(); renderAll();
+  await loadExtras(); startAnalytics(); renderAll(); renderSupport();
   if (!fbAuth) toast(T('تعذر الاتصال بالخادم. تحقق من الإنترنت ثم أعد تحميل الصفحة.', 'Could not reach the server. Check your connection and reload.'));
 })();
 
@@ -2206,7 +2320,7 @@ const stepMeta = s => { const m = STEP_META[s.type] || STEP_META.text; return [m
 /* ---------- learning sub-navigation ---------- */
 function learnNav() {
   const r = parse();
-  const items = [['learning', T('الرئيسية', 'Hub'), 'layout', ['learning', 'course', 'learn', 'track'].includes(r.name)], ['test-code', T('اختبار البرمجة', 'Coding test'), 'code', r.key === 'test-code'], ['test-cyber', T('اختبار الأمن والشبكات', 'Security test'), 'shield', r.key === 'test-cyber']];
+  const items = [['learning', T('الرئيسية', 'Hub'), 'layout', ['learning', 'course', 'learn', 'track'].includes(r.name)], ['test-code', T('اختبار البرمجة', 'Coding test'), 'code', r.key === 'test-code'], ['test-cyber', T('اختبار الأمن والشبكات', 'Security test'), 'shield', r.key === 'test-cyber'], ['aid', T('نساعد بعض', 'We help each other'), 'heart', r.name === 'aid']];
   return `<div class="lxnav"><div class="wrap">${items.map(([h, n, i, on]) => `<a href="#${h}" class="${on ? 'on' : ''}">${icon(i)} ${n}</a>`).join('')}<span class="sp"></span>${S.user ? `<a href="#account" class="who">${icon('user')} ${esc(S.user.name.split(' ')[0])}</a>` : `<a href="#lx-login" class="who">${icon('user')} ${T('دخول المتعلم', 'Learner sign in')}</a>`}</div></div>`;
 }
 
@@ -2291,7 +2405,7 @@ function vLecture(c, l) {
   const pills = l.steps.map((st, k) => `<button class="pill ${k === i ? 'on' : ''} ${sd[k] ? 'ok' : ''}" data-act="stepGo" data-c="${c.id}" data-l="${l.id}" data-i="${k}" aria-label="${T('المهمة', 'Task')} ${k + 1}">${sd[k] ? icon('check') : k + 1}</button>`).join('');
   const last = i === l.steps.length - 1, answered = !isQ || sq[i];
   return learnNav() + `<div class="learn">${side}<div class="learn-main"><div class="crumb"><a href="#learning">${T('سرمد ليرننج', 'Sarmad Learning')}</a>${icon('chev')}<a href="#course-${c.id}">${L(c.t)}</a>${icon('chev')}<span>${T('محاضرة', 'Lecture')} ${idx + 1}/${ls_.length}</span></div><div class="row" style="margin:-6px 0 14px">${shareBtn('learn-' + c.id + '-' + l.id, L(l.t), 'chip', T('مشاركة المحاضرة', 'Share lecture'))}${shareBtn('learn-' + c.id + '-' + l.id + '-' + (i + 1), L(l.t) + ' · ' + T('مهمة ', 'Task ') + (i + 1), 'chip', T('مشاركة المهمة', 'Share task'))}</div>
-    <h1 class="h1" style="font-size:clamp(1.7rem,3.4vw,2.5rem);margin-bottom:18px">${L(l.t)}</h1>
+    ${l.cover && /^https:\/\//.test(l.cover) ? `<figure class="lec-cover"><img src="${esc(l.cover)}" alt="" draggable="false"></figure>` : ''}<h1 class="h1" style="font-size:clamp(1.7rem,3.4vw,2.5rem);margin-bottom:18px">${L(l.t)}</h1>
     <div class="steps-bar"><div class="row" style="justify-content:space-between;margin-bottom:10px"><span class="sm muted">${doneN}/${l.steps.length} ${T('مهمة مكتملة', 'tasks done')}</span><span class="sm muted">${pct}%</span></div><div class="bar"><i style="width:${pct}%"></i></div><div class="pills">${pills}</div></div>
     <div class="stp" key="${i}">${stepContent(c, l, s, i, sq)}</div>
     <div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:22px;margin-top:30px"><button class="btn ghost" data-act="stepPrev" data-c="${c.id}" data-l="${l.id}" ${i === 0 ? 'disabled' : ''}>${icon('arrow')} ${T('السابق', 'Previous')}</button>
@@ -2508,6 +2622,7 @@ async function loadRemote() {
       if (d.social) Object.assign(SITE.social, d.social);
       if (d.contact) Object.assign(SITE.contact, d.contact);
       if (d.announce) SITE.announce = d.announce;
+      if (d.signature) SITE.signature = d.signature;
     }
   } catch (e) { }
 }
@@ -2533,31 +2648,648 @@ Object.assign(A, {
       msg.style.color = 'var(--ok,#0f7a5a)'; msg.textContent = T('تم تطبيق الخصم ✓', 'Discount applied ✓'); fixDigits($('#ck-body'));
     } catch (e) { bad(T('تعذر التحقق من الكود الآن.', 'Could not verify the code right now.')); }
   },
+  printCert() { document.body.classList.add('printable'); window.print(); setTimeout(() => document.body.classList.remove('printable'), 500); }
+});
+
+/* ---------- tiny offline QR encoder (byte mode, ECC level M, versions 1-10) ---------- */
+const QR = (() => {
+  const ECPB = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26], NB = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5];
+  const rawModules = v => { let r = (16 * v + 128) * v + 64; if (v >= 2) { const n = Math.floor(v / 7) + 2; r -= (25 * n - 10) * n - 55; if (v >= 7) r -= 36; } return r; };
+  const dataCw = v => Math.floor(rawModules(v) / 8) - ECPB[v] * NB[v];
+  const EXP = new Array(512), LOG = new Array(256);
+  (() => { let x = 1; for (let i = 0; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 256) x ^= 0x11D; } for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255]; })();
+  const mul = (a, b) => (a && b ? EXP[LOG[a] + LOG[b]] : 0);
+  const rsGen = d => { let r = [1]; for (let i = 0; i < d; i++) { const n = new Array(r.length + 1).fill(0); r.forEach((c, j) => { n[j] ^= c; n[j + 1] ^= mul(c, EXP[i]); }); r = n; } return r; };
+  const rsRem = (data, d) => { const g = rsGen(d), res = new Array(d).fill(0); data.forEach(b => { const f = b ^ res.shift(); res.push(0); if (f) g.slice(1).forEach((c, i) => { res[i] ^= mul(c, f); }); }); return res; };
+  const alignPos = v => { if (v === 1) return []; const n = Math.floor(v / 7) + 2, size = v * 4 + 17, step = Math.ceil((v * 4 + 4) / (n * 2 - 2)) * 2, r = [6]; for (let p = size - 7; r.length < n; p -= step) r.splice(1, 0, p); return r; };
+  function encode(text) {
+    const bytes = Array.from(new TextEncoder().encode(text));
+    let v = 1; while (v <= 10 && Math.ceil((4 + (v < 10 ? 8 : 16) + bytes.length * 8) / 8) > dataCw(v)) v++;
+    if (v > 10) throw new Error('qr too long');
+    const bits = []; const put = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+    put(4, 4); put(bytes.length, v < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    const cap = dataCw(v) * 8; put(0, Math.min(4, cap - bits.length)); while (bits.length % 8) bits.push(0);
+    for (let p = 0xEC; bits.length < cap; p ^= 0xEC ^ 0x11) put(p, 8);
+    const cw = []; for (let i = 0; i < bits.length; i += 8) cw.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+    const nb = NB[v], ec = ECPB[v], total = Math.floor(rawModules(v) / 8), shortN = nb - total % nb, shortLen = Math.floor(total / nb) - ec, blocks = [];
+    for (let i = 0, k = 0; i < nb; i++) { const len = shortLen + (i < shortN ? 0 : 1), d = cw.slice(k, k + len); k += len; blocks.push({ d, e: rsRem(d, ec) }); }
+    const out = []; for (let i = 0; i <= shortLen; i++) blocks.forEach(b => { if (i < b.d.length) out.push(b.d[i]); }); for (let i = 0; i < ec; i++) blocks.forEach(b => out.push(b.e[i]));
+    const size = v * 4 + 17, g = Array.from({ length: size }, () => new Array(size).fill(false)), fn = Array.from({ length: size }, () => new Array(size).fill(false));
+    const set = (x, y, d) => { g[y][x] = d; fn[y][x] = true; };
+    for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    [[3, 3], [size - 4, 3], [3, size - 4]].forEach(([cx, cy]) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const x = cx + dx, y = cy + dy; if (x >= 0 && x < size && y >= 0 && y < size) set(x, y, Math.max(Math.abs(dx), Math.abs(dy)) !== 2 && Math.max(Math.abs(dx), Math.abs(dy)) !== 4); } });
+    const ap = alignPos(v); ap.forEach((cy, i) => ap.forEach((cx, j) => { if ((i === 0 && j === 0) || (i === 0 && j === ap.length - 1) || (i === ap.length - 1 && j === 0)) return; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(cx + dx, cy + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1); }));
+    const drawFmt = mask => { const d = (0 << 3) | mask; let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537); const b = ((d << 10) | r) ^ 0x5412, bit = i => ((b >>> i) & 1) === 1;
+      for (let i = 0; i <= 5; i++) set(8, i, bit(i)); set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8)); for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+      for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i)); for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i)); set(8, size - 8, true); };
+    drawFmt(0);
+    if (v >= 7) { let r = v; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25); const b = (v << 12) | r; for (let i = 0; i < 18; i++) { const a = size - 11 + i % 3, c = Math.floor(i / 3), bt = ((b >>> i) & 1) === 1; set(a, c, bt); set(c, a, bt); } }
+    let i = 0; for (let right = size - 1; right >= 1; right -= 2) { if (right === 6) right = 5; for (let vert = 0; vert < size; vert++) for (let j = 0; j < 2; j++) { const x = right - j, up = ((right + 1) & 2) === 0, y = up ? size - 1 - vert : vert; if (!fn[y][x] && i < out.length * 8) { g[y][x] = ((out[i >>> 3] >>> (7 - (i & 7))) & 1) === 1; i++; } } }
+    const M = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x, y) => x % 3 === 0, (x, y) => (x + y) % 3 === 0, (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0, (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+    const pen = m => { let p = 0; for (let a = 0; a < size; a++) for (const row of [true, false]) { let run = 1, prev = null; for (let b = 0; b < size; b++) { const c = row ? m[a][b] : m[b][a]; if (c === prev) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else { run = 1; prev = c; } } } for (let y = 0; y < size - 1; y++) for (let x = 0; x < size - 1; x++) if (m[y][x] === m[y][x + 1] && m[y][x] === m[y + 1][x] && m[y][x] === m[y + 1][x + 1]) p += 3; return p; };
+    let best = 0, bm = null, bp = 1e9;
+    for (let k = 0; k < 8; k++) { const m = g.map((row, y) => row.map((c, x) => (fn[y][x] ? c : c !== M[k](x, y)))); const sv = g.map(r => r.slice()); g.forEach((row, y) => row.forEach((c, x) => { if (!fn[y][x]) g[y][x] = m[y][x]; })); drawFmt(k); const pp = pen(g); if (pp < bp) { bp = pp; best = k; bm = g.map(r => r.slice()); } sv.forEach((row, y) => row.forEach((c, x) => { g[y][x] = c; })); }
+    g.forEach((row, y) => row.forEach((c, x) => { if (!fn[y][x]) g[y][x] = bm[y][x]; })); drawFmt(best);
+    return g;
+  }
+  return { encode, svg(text, px = 140, fg = '#0f3d31', bg = '#fff') { const g = encode(text), n = g.length + 8; let d = ''; g.forEach((row, y) => row.forEach((c, x) => { if (c) d += `M${x + 4},${y + 4}h1v1h-1z`; })); return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="QR"><rect width="${n}" height="${n}" fill="${bg}"/><path d="${d}" fill="${fg}"/></svg>`; } };
+})();
+const qrSvg = (t, px, fg, bg) => QR.svg(t, px, fg, bg);
+
+/* ---------- certificates (admin-approved) and invoices with QR ---------- */
+const baseUrl = () => location.href.split('#')[0];
+const certUrl = c => baseUrl() + '#cert-' + c;
+Object.assign(A, {
   async getCert(el) {
     const c = COURSES.find(x => x.id === el.dataset.c); if (!c || !S.user) return needAuth();
     if (courseProgress(c) < 100) return toast(T('أكمل الكورس أولًا.', 'Finish the course first.'));
-    el.disabled = true; try { const code = await DB.makeCert(c); go('cert-' + code); } catch (e) { el.disabled = false; toast(T('تعذر إصدار الشهادة.', 'Could not issue the certificate.')); }
-  },
-  printCert() { document.body.classList.add('printable'); window.print(); setTimeout(() => document.body.classList.remove('printable'), 500); }
+    el.disabled = true; try { const code = await DB.makeCert(c); go('cert-' + code); } catch (e) { el.disabled = false; toast(T('تعذر إرسال الطلب.', 'Could not send the request.')); }
+  }
 });
+const certState = (icon_, h, p) => `<div class="card stack" style="text-align:center;justify-items:center;padding:36px 22px"><span class="done-check" style="${icon_}" role="img"></span><h2 class="h2">${h}</h2><p class="muted" style="max-width:46ch">${p}</p><a class="btn" href="#learning">${T('العودة لسرمد ليرننج', 'Back to Sarmad Learning')}</a></div>`;
+function certHtml(c) {
+  const d = new Date(c.approvedAt || c.at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' }), sg = c.sig || {}, url = certUrl(c.id);
+  const star = `<svg class="cert-star" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2"><rect x="18" y="18" width="64" height="64"/><rect x="18" y="18" width="64" height="64" transform="rotate(45 50 50)"/><circle cx="50" cy="50" r="22"/><circle cx="50" cy="50" r="10"/></g></svg>`;
+  return `<div class="cert2 ${c.revoked ? 'rev' : ''}" id="cert-sheet"><div class="cert2-bd"><div class="cert2-in">
+    <i class="cc tl"></i><i class="cc tr"></i><i class="cc bl"></i><i class="cc br"></i>
+    <div class="cert2-wm">${star}</div>
+    <header class="cert2-h"><span class="logo" style="--lw:170px"></span><span class="cert2-tag">${T('سرمد ليرننج', 'Sarmad Learning')}</span></header>
+    <p class="cert2-k">${T('شهادة إتمام', 'Certificate of Completion')}</p>
+    <p class="cert2-s">${T('تشهد سرمد ليرننج بأن', 'Sarmad Learning proudly certifies that')}</p>
+    <h1 class="cert2-n">${esc(c.name || '—')}</h1><div class="cert2-ln"><i></i><b>◆</b><i></i></div>
+    <p class="cert2-s">${T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course')}</p>
+    <h2 class="cert2-c">${esc(lang === 'ar' ? c.courseAr : c.courseEn)}</h2>
+    <p class="cert2-m">${c.hours ? (T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours')) + ' · ' : ''}${d}</p>
+    <footer class="cert2-f">
+      <div class="cert2-sg">${sg.img ? `<img src="${esc(sg.img)}" alt="" draggable="false">` : '<span style="height:46px"></span>'}<i></i><b>${esc(sg.name || '')}</b><span>${esc(sg.title || '')}</span></div>
+      <div class="cert2-seal"><span>${icon('check')}</span><small>${T('معتمدة', 'Approved')}</small></div>
+      <div class="cert2-qr"><div class="qrbox">${qrSvg(url, 92)}</div><span class="xs">${T('رمز التحقق', 'Verification code')}</span><b class="mono" dir="ltr">${esc(c.id)}</b></div>
+    </footer>
+    ${c.revoked ? `<div class="cert2-rev">${T('ملغاة', 'REVOKED')}</div>` : ''}
+  </div></div></div>`;
+}
 function vCert(r) {
   const code = (r.id || '').toUpperCase().replace(/[^A-Z0-9-]/g, '');
   DB.cert(code).then(c => {
     const box = $('#certbox'); if (!box) return;
-    if (!c) { box.innerHTML = `<div class="card stack" style="text-align:center"><h2 class="h2">${T('شهادة غير موجودة', 'Certificate not found')}</h2><p class="muted">${T('تأكد من الكود وحاول مرة أخرى.', 'Check the code and try again.')}</p></div>`; return; }
-    const d = new Date(c.at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-    box.innerHTML = `<div class="cert ${c.revoked ? 'rev' : ''}"><div class="cert-in"><span class="logo" style="--lw:130px;margin-inline:auto"></span>
-      <p class="cert-k">${T('شهادة إتمام', 'Certificate of Completion')}</p><p class="muted">${T('تشهد سرمد ليرننج بأن', 'Sarmad Learning certifies that')}</p>
-      <h1 class="cert-n">${esc(c.name || '—')}</h1><p class="muted">${T('قد أتمّ بنجاح كورس', 'has successfully completed the course')}</p>
-      <h2 class="cert-c">${esc(lang === 'ar' ? c.courseAr : c.courseEn)}</h2>
-      <div class="cert-f"><span>${d}</span><span class="mono" dir="ltr">${esc(c.id)}</span></div>
-      <div class="cert-st ${c.revoked ? 'bad' : 'ok'}">${c.revoked ? T('هذه الشهادة ملغاة', 'This certificate has been revoked') : T('شهادة موثّقة وصالحة ✓', 'Verified and valid ✓')}</div></div></div>
+    if (!c) { box.innerHTML = certState('', T('شهادة غير موجودة', 'Certificate not found'), T('تأكد من الكود وحاول مرة أخرى.', 'Check the code and try again.')); return; }
+    if (c.revoked || c.status === 'revoked') { box.innerHTML = certState('', T('هذه الشهادة ملغاة', 'This certificate has been revoked'), T('لم تعد صالحة للتحقق.', 'It is no longer valid.')); return; }
+    if (c.status !== 'approved') { box.innerHTML = certState('', T('شهادتك قيد المراجعة', 'Your certificate is under review'), T('أرسلنا طلبك لفريق سرمد. ستظهر الشهادة هنا فور اعتماد الفريق لإتمامك الكورس.', 'Your request has been sent to the Sarmad team. The certificate appears here as soon as the team confirms you completed the course.')); return; }
+    box.innerHTML = `<div class="cert2-wrap">${certHtml(c)}</div><div class="cert2-ver ok">${icon('check')} ${T('شهادة موثّقة وصالحة · صادرة من سرمد ليرننج', 'Verified and valid · issued by Sarmad Learning')}</div>
       <div class="row noprint" style="justify-content:center;gap:10px;margin-top:16px"><button class="btn primary" data-act="printCert">${T('طباعة / حفظ PDF', 'Print / save PDF')}</button>${shareBtn('cert-' + c.id, T('شهادة سرمد ليرننج', 'Sarmad Learning certificate'), 'btn', T('مشاركة', 'Share'))}</div>`;
-    fixDigits(box);
+    fixDigits(box); const w = box.querySelector('.cert2-wrap'); if (w) fitCert(w);
   }).catch(() => { const box = $('#certbox'); if (box) box.innerHTML = `<p class="muted">${T('تعذر تحميل الشهادة.', 'Could not load the certificate.')}</p>`; });
-  return `<section class="wrap" style="padding-block:40px;max-width:820px"><div id="certbox"><div class="spin" style="margin:60px auto"></div></div></section>`;
+  return `<section class="wrap" style="padding-block:34px;max-width:1040px"><div id="certbox"><div class="spin" style="margin:60px auto"></div></div></section>`;
 }
+function fitCert(w) { const s = w.querySelector('.cert2'); if (!s) return; const k = Math.min(1, w.clientWidth / 1000); s.style.transform = `scale(${k})`; w.style.height = (s.offsetHeight * k) + 'px'; }
+addEventListener('resize', () => { const w = document.querySelector('.cert2-wrap'); if (w) fitCert(w); });
 ROUTE.cert = vCert;
+
+/* ---------- invoice ---------- */
+function vInvoice(r) {
+  if (!S.user) { setTimeout(needAuth, 0); return ''; }
+  const o = S.orders.find(x => x.id === r.id);
+  if (!o) { DB.orders().then(a => { S.orders = a; if (location.hash === '#invoice-' + r.id) render(); }); return `<section class="wrap" style="padding-block:60px"><div class="spin" style="margin:60px auto"></div></section>`; }
+  if (o.status !== 'paid') return `<section class="wrap" style="padding-block:50px;max-width:720px">${certState('', T('الفاتورة بعد تأكيد الدفع', 'Invoice after payment confirmation'), T('ستتاح الفاتورة هنا بمجرد مراجعة الإيصال وتأكيد طلبك.', 'The invoice will be available here once your receipt is reviewed and your order confirmed.'))}</section>`;
+  const u = S.user, title = typeof o.title === 'object' ? L(o.title) : o.title, base = +o.baseAmount || +o.amount + (+o.discount || 0), disc = +o.discount || 0, total = +o.amount, when = o.paidAt || o.at;
+  const vurl = baseUrl() + '#verify-' + o.ref;
+  const row = (k, v) => `<div class="inv-r"><span class="muted">${k}</span><b>${v}</b></div>`;
+  return `<section class="wrap" style="padding-block:34px;max-width:860px"><div class="inv" id="inv-sheet">
+    <header class="inv-h"><div><span class="logo" style="--lw:150px"></span><p class="xs muted" style="margin-top:8px">${T('سرمد للتصميم البرمجي', 'Sarmad Software Design')}<br>${esc(SITE.contact.email)}</p></div>
+      <div style="text-align:end"><h1 class="h2" style="margin:0">${T('فاتورة', 'Invoice')}</h1><b class="mono" dir="ltr">${esc(o.ref)}</b><div style="margin-top:6px"><span class="tag ok">${T('مدفوعة', 'Paid')}</span></div></div></header>
+    <div class="inv-g"><div class="inv-b"><h3 class="xs muted">${T('بيانات العميل', 'Billed to')}</h3><b>${esc(u.name || '')}</b><span class="sm">${esc(u.email || '')}</span><span class="sm mono" dir="ltr">${esc(showPhone ? showPhone(u.phone) : u.phone || '')}</span><span class="xs muted mono" dir="ltr">${esc(u.sid || '')}</span></div>
+      <div class="inv-b"><h3 class="xs muted">${T('تفاصيل الفاتورة', 'Invoice details')}</h3>${row(T('رقم الفاتورة', 'Invoice no.'), `<span class="mono" dir="ltr">${esc(o.ref)}</span>`)}${row(T('تاريخ الدفع', 'Payment date'), fmtDate(when))}${row(T('طريقة الدفع', 'Payment method'), T('تحويل بنكي عبر بوابة تم', 'Bank transfer via Tam'))}${row(T('حالة الدفع', 'Status'), T('مؤكَّد', 'Confirmed'))}</div></div>
+    <table class="inv-t"><thead><tr><th>${T('البند', 'Item')}</th><th>${T('السعر', 'Price')}</th><th>${T('الخصم', 'Discount')}</th><th>${T('الإجمالي', 'Total')}</th></tr></thead><tbody><tr><td>${esc(title)}${o.plan ? ` <span class="tag gold">${esc(o.plan)}</span>` : ''}${o.coupon ? `<br><span class="xs muted">${T('كود الخصم', 'Code')}: <span class="mono" dir="ltr">${esc(o.coupon)}</span></span>` : ''}</td><td>${fmtMoney(base)}</td><td>${disc ? '− ' + fmtMoney(disc) : '—'}</td><td>${fmtMoney(total)}</td></tr></tbody></table>
+    <div class="inv-s"><div class="inv-sum">${row(T('المجموع', 'Subtotal'), fmtMoney(base))}${disc ? row(T('الخصم', 'Discount'), '− ' + fmtMoney(disc)) : ''}${row(T('رسوم بوابة تم', 'Tam gateway fee'), T('مجانًا', 'Free'))}<div class="inv-r tot"><span>${T('الإجمالي المدفوع', 'Total paid')}</span><b>${fmtMoney(total)}</b></div></div></div>
+    <footer class="inv-f"><div class="inv-qr">${qrSvg(vurl, 108)}<div><b class="sm">${T('تحقق من الفاتورة', 'Verify this invoice')}</b><p class="xs muted">${T('امسح الرمز أو افتح الرابط للتأكد أن الفاتورة صادرة من سرمد.', 'Scan the code or open the link to confirm this invoice was issued by Sarmad.')}</p><span class="xs mono" dir="ltr" style="word-break:break-all">${esc(vurl)}</span></div></div><span class="done-check" role="img" aria-label="paid"></span></footer>
+    <p class="xs muted" style="margin-top:14px">${T('فاتورة إلكترونية صادرة تلقائيًا من منظومة سرمد وصالحة بدون ختم أو توقيع.', 'An electronic invoice generated by the Sarmad system; valid without a stamp or signature.')}</p>
+  </div><div class="row noprint" style="justify-content:center;gap:10px;margin-top:16px"><button class="btn primary" data-act="printInv">${T('طباعة / حفظ PDF', 'Print / save PDF')}</button><a class="btn" href="#account">${T('العودة للحساب', 'Back to account')}</a></div></section>`;
+}
+A.printInv = () => A.printCert();
+function vVerify(r) {
+  const ref = (r.id || '').toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  DB.invoice(ref).then(i => {
+    const box = $('#vbox'); if (!box) return;
+    if (!i) { box.innerHTML = certState('', T('فاتورة غير موجودة', 'Invoice not found'), T('لم نجد فاتورة بهذا الرقم.', 'No invoice found with this number.')); return; }
+    const ok = i.status === 'paid';
+    box.innerHTML = `<div class="card stack" style="padding:28px"><div class="row" style="gap:12px">${ok ? '<span class="done-check" role="img"></span>' : ''}<h2 class="h2" style="margin:0">${ok ? T('فاتورة صحيحة وصادرة من سرمد', 'Valid invoice issued by Sarmad') : T('فاتورة ملغاة', 'Voided invoice')}</h2></div>
+      <div class="inv-r"><span class="muted">${T('رقم الفاتورة', 'Invoice no.')}</span><b class="mono" dir="ltr">${esc(i.id)}</b></div><div class="inv-r"><span class="muted">${T('البند', 'Item')}</span><b>${esc(i.title || '')}</b></div><div class="inv-r"><span class="muted">${T('المبلغ', 'Amount')}</span><b>${fmtMoney(+i.amount || 0)}</b></div><div class="inv-r"><span class="muted">${T('تاريخ الدفع', 'Payment date')}</span><b>${fmtDate(i.paidAt)}</b></div><div class="inv-r"><span class="muted">${T('العميل', 'Customer')}</span><b>${esc(i.name || '')}</b></div></div>`;
+    fixDigits(box);
+  }).catch(() => { const b = $('#vbox'); if (b) b.innerHTML = `<p class="muted">${T('تعذر التحقق الآن.', 'Could not verify now.')}</p>`; });
+  return `<section class="wrap" style="padding-block:40px;max-width:640px"><div id="vbox"><div class="spin" style="margin:60px auto"></div></div></section>`;
+}
+Object.assign(ROUTE, { invoice: vInvoice, verify: vVerify });
+
+/* ---------- "نساعد بعض": financial-aid application with document scanner ---------- */
+const AID = { img: {}, kind: 'univ' };
+function parseNid(raw) {
+  const n = String(raw || '').replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/\D/g, ''); if (n.length !== 14 || !'23'.includes(n[0])) return null;
+  const y = (n[0] === '2' ? 1900 : 2000) + +n.slice(1, 3), m = +n.slice(3, 5), d = +n.slice(5, 7), dt = new Date(y, m - 1, d);
+  if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d || dt > new Date()) return null;
+  const g = +n.slice(7, 9); if (!((g >= 1 && g <= 4) || (g >= 11 && g <= 19) || (g >= 21 && g <= 29) || (g >= 31 && g <= 35) || g === 88)) return null;
+  return { n, birth: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, gender: (+n[12]) % 2 ? 'm' : 'f' };
+}
+const maskNid = n => (n ? '•'.repeat(Math.max(0, n.length - 3)) + n.slice(-3) : '');
+const latin = v => String(v || '').replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c));
+const aidCourses = () => [...COURSES.filter(c => c.price > 0 && c.status !== 'soon').map(c => [c.id, L(c.t)]), ...LEARN_PLANS.map(p => [p.id, L(p.name)])];
+const docLabel = side => (AID.kind === 'univ' ? T('كارنيه الجامعة', 'University ID') : T('بطاقة الرقم القومي', 'National ID card')) + ' — ' + (side === 'front' ? T('الوجه', 'front') : T('الظهر', 'back'));
+function aidSlot(side) {
+  const img = AID.img[side];
+  return `<div class="aid-slot ${img ? 'has' : ''}" id="slot-${side}"><div class="aid-th">${img ? `<img src="${img}" alt="">` : icon('camera')}</div><div class="stack" style="gap:8px"><b class="sm" id="slot-l-${side}">${docLabel(side)} *</b><div class="row" style="gap:8px"><button type="button" class="btn sm primary" data-act="scanOpen" data-v="${side}">${icon('camera')} ${img ? T('إعادة المسح', 'Rescan') : T('مسح بالكاميرا', 'Scan with camera')}</button></div></div></div>`;
+}
+function vAid() {
+  const u = S.user || {}, p = u.profile || {};
+  const sec = (n, h, body) => `<div class="card stack" style="gap:16px"><h2 class="h3" style="margin:0"><span class="aid-n">${n}</span> ${h}</h2>${body}</div>`;
+  const fld = (id, name, label, extra = '', type = 'text') => `<div class="field"><label for="${id}">${label}</label><input id="${id}" name="${name}" type="${type}" ${extra}></div>`;
+  const incomes = [T('أقل من 2000 جنيه', 'Under EGP 2,000'), T('2000 إلى 4000', 'EGP 2,000 – 4,000'), T('4000 إلى 7000', 'EGP 4,000 – 7,000'), T('أكثر من 7000', 'Over EGP 7,000')];
+  return pageHead(T('نساعد بعض', 'We help each other'), T('ادعم رحلتك التعليمية', 'Support for your learning journey'), T('لو ظروفك المادية لا تسمح بدفع رسوم الكورسات، قدّم طلب دعم ويراجعه فريق سرمد. كل البيانات سرّية ولا يراها غير الفريق المختص.', 'If your financial situation does not allow you to pay course fees, submit a support request that the Sarmad team will review. All data is confidential and seen only by the responsible team.'))
+    + `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:860px"><div class="note" style="margin-bottom:18px">${icon('shield')}<span>${T('بطاقتك ورقمك القومي يُحفظان بسرّية، ويُخفى رقمك بعد التسجيل، ولا يراه إلا مراجع الطلب. بعد القبول ستصلك رسالة على بريدك: تابعه جيدًا.', 'Your ID and national number are stored confidentially; the number is masked after registration and only the reviewer can see it. After acceptance you will receive a message at your email: watch it closely.')}</span></div>
+    <form class="stack" style="gap:18px" data-form="aid" novalidate autocomplete="off">
+      <input name="website" tabindex="-1" autocomplete="off" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;clip-path:inset(50%)" aria-hidden="true">
+      ${sec(1, T('البيانات الشخصية', 'Personal details'), `${fld('a-name', 'name', T('الاسم الرباعي', 'Full name (four parts)') + ' *', `required value="${esc(u.name || '')}" autocomplete="name"`)}
+        <div class="f2">${fld('a-nid', 'nid', T('الرقم القومي (14 رقمًا)', 'National ID number (14 digits)') + ' *', 'required inputmode="numeric" maxlength="14" dir="ltr" data-change="aidNid" placeholder="2xxxxxxxxxxxxx"')}${fld('a-birth', 'birth', T('تاريخ الميلاد (يُستخرج تلقائيًا)', 'Date of birth (auto)'), 'readonly dir="ltr"')}</div>
+        <div class="f2">${phoneField('a-phone', 'phone', u.phone || '')}${phoneField('a-wa', 'whatsapp', '', false).replace(T('رقم الهاتف', 'Phone number'), T('واتساب (إن اختلف)', 'WhatsApp (if different)'))}</div>
+        ${fld('a-mail', 'email', T('البريد الإلكتروني (سنرسل عليه الرد وتفعيل الحساب)', 'Email (we will reply and activate your account here)') + ' *', `required type="email" dir="ltr" value="${esc(u.email || '')}" autocomplete="email"`)}
+        <div class="f2"><div class="field"><label for="a-city">${T('المحافظة', 'Governorate')} *</label><select id="a-city" name="city" required>${GOVS().map(x => `<option ${p.city === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>${fld('a-addr', 'address', T('العنوان بالتفصيل', 'Address in detail') + ' *', 'required autocomplete="street-address"')}</div>`)}
+      ${sec(2, T('بيانات الدراسة', 'Study details'), `${studyFields(p.stage ? p : { stage: 'university' })}${fld('a-gpa', 'gpa', T('التقدير أو المجموع (اختياري)', 'Grade or score (optional)'))}`)}
+      ${sec(3, T('الحالة الأسرية والمادية', 'Family and financial situation'), `<div class="f2">${fld('a-fam', 'famsize', T('عدد أفراد الأسرة', 'Family size') + ' *', 'required type="number" min="1" max="30" inputmode="numeric"')}<div class="field"><label for="a-inc">${T('متوسط دخل الأسرة الشهري', 'Average monthly family income')} *</label><select id="a-inc" name="income">${incomes.map(x => `<option>${x}</option>`).join('')}</select></div></div>
+        <div class="f2"><div class="field"><label for="a-fs">${T('الحالة الأسرية', 'Family status')}</label><select id="a-fs" name="famstatus">${[T('الوالدان على قيد الحياة', 'Both parents alive'), T('يتيم الأب', 'Father deceased'), T('يتيم الأم', 'Mother deceased'), T('يتيم الأب والأم', 'Both deceased'), T('الوالدان منفصلان', 'Parents separated')].map(x => `<option>${x}</option>`).join('')}</select></div>${fld('a-job', 'parentjob', T('مهنة ولي الأمر أو مصدر الدخل', 'Guardian job or income source') + ' *', 'required')}</div>
+        <div class="f2"><div class="field"><label for="a-dev">${T('الجهاز المتاح للتعلّم', 'Available device')}</label><select id="a-dev" name="device">${[T('هاتف ذكي', 'Smartphone'), T('لابتوب أو حاسوب', 'Laptop or PC'), T('الاثنان', 'Both'), T('لا يوجد جهاز خاص', 'No personal device')].map(x => `<option>${x}</option>`).join('')}</select></div><div class="field"><label for="a-net">${T('الإنترنت', 'Internet')}</label><select id="a-net" name="internet">${[T('باقة منزلية', 'Home plan'), T('باقة هاتف محدودة', 'Limited mobile data'), T('غير مستقر', 'Unstable')].map(x => `<option>${x}</option>`).join('')}</select></div></div>`)}
+      ${sec(4, T('ما الذي تحتاجه؟', 'What do you need?'), `<div class="field"><label>${T('اختر الكورسات أو الباقة المطلوبة', 'Choose the courses or plan you need')} *</label><div class="chips-in">${aidCourses().map(([id, n]) => `<label class="chip chk"><input type="checkbox" name="want" value="${esc(id)}"><span>${esc(n)}</span></label>`).join('')}</div></div>
+        <div class="field"><label for="a-why">${T('لماذا تحتاج الدعم؟ وماذا تخطط أن تفعل بما ستتعلمه؟ (50 حرفًا على الأقل)', 'Why do you need support, and what will you do with what you learn? (at least 50 characters)')} *</label><textarea id="a-why" name="reason" rows="5" required></textarea></div>`)}
+      ${sec(5, T('المستندات (مسح ضوئي بالكاميرا)', 'Documents (camera scan)'), `<div class="field"><label>${T('نوع المستند', 'Document type')}</label><div class="seg"><label class="chip chk"><input type="radio" name="dockind" value="univ" checked data-change="aidKind"><span>${T('كارنيه الجامعة', 'University ID')}</span></label><label class="chip chk"><input type="radio" name="dockind" value="nid" data-change="aidKind"><span>${T('ليس لدي كارنيه: بطاقة الرقم القومي', 'No university ID: national ID card')}</span></label></div></div>
+        <div class="aid-slots">${aidSlot('front')}${aidSlot('back')}</div><p class="xs muted">${T('ضع المستند على سطح مضاء داخل الإطار ثم التقط الصورة. نحوّلها لصورة ممسوحة واضحة. لا ترسلها لأحد غيرنا.', 'Place the document on a lit surface inside the frame, then capture. We turn it into a clean scan. Do not send it to anyone else.')}</p>`)}
+      <div class="card stack" style="gap:12px"><label class="chk-row"><input type="checkbox" name="truth"><span>${T('أقر بأن كل البيانات والمستندات المرفقة صحيحة، وأن تقديم بيانات مضللة يلغي الطلب.', 'I confirm all data and documents are true; false information voids the request.')}</span></label>
+        <label class="chk-row"><input type="checkbox" name="consent"><span>${T('أوافق على معالجة بياناتي ومستنداتي لدى سرمد لغرض دراسة الطلب وفق ', 'I consent to Sarmad processing my data and documents to review this request, per the ')}<a class="link" href="#privacy">${T('سياسة الخصوصية', 'Privacy Policy')}</a>.</span></label>
+        <label class="chk-row"><input type="checkbox" name="commit"><span>${T('أتعهد بالالتزام بإتمام الكورسات وبمساعدة غيري مستقبلًا بما أستطيع.', 'I commit to finishing the courses and to helping others in the future as I can.')}</span></label>
+        <div class="err" id="aid-err" role="alert"></div><button class="btn primary lg" type="submit">${T('إرسال الطلب', 'Submit request')}</button></div>
+    </form></div></section>`;
+}
+ROUTE.aid = vAid;
+
+/* ----- scanner ----- */
+const SCAN = { stream: null, side: null, facing: 'environment', raw: null, mode: 'color' };
+function stopScan() { if (SCAN.stream) { SCAN.stream.getTracks().forEach(t => t.stop()); SCAN.stream = null; } }
+async function startCam() {
+  stopScan(); const v = $('#scan-v'), t = $('#scan-t'); if (!v) return;
+  try {
+    SCAN.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: SCAN.facing }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+    v.srcObject = SCAN.stream; await v.play(); t.textContent = T('ضع المستند داخل الإطار ثم اضغط «التقاط».', 'Fit the document inside the frame, then press Capture.');
+  } catch (e) { t.textContent = T('تعذّر فتح الكاميرا (تأكد من السماح بها). يمكنك رفع صورة بدلًا منها.', 'Could not open the camera (check permission). You can upload a photo instead.'); }
+}
+function enhance(src, mode) {
+  const c = document.createElement('canvas'); c.width = src.width; c.height = src.height; const x = c.getContext('2d'); x.drawImage(src, 0, 0);
+  const im = x.getImageData(0, 0, c.width, c.height), d = im.data, h = new Uint32Array(256);
+  for (let i = 0; i < d.length; i += 4) h[(d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000 | 0]++;
+  const tot = d.length / 4; let a = 0, lo = 0, hi = 255; for (let i = 0; i < 256; i++) { a += h[i]; if (a > tot * 0.02) { lo = i; break; } } a = 0; for (let i = 255; i >= 0; i--) { a += h[i]; if (a > tot * 0.02) { hi = i; break; } }
+  const k = 255 / Math.max(30, hi - lo);
+  for (let i = 0; i < d.length; i += 4) {
+    if (mode === 'bw') { let g = ((d[i] * 299 + d[i + 1] * 587 + d[i + 2] * 114) / 1000 - lo) * k; g = (g - 128) * 1.5 + 140; g = g < 0 ? 0 : g > 255 ? 255 : g; d[i] = d[i + 1] = d[i + 2] = g; }
+    else for (let j = 0; j < 3; j++) { const v = (d[i + j] - lo) * k * 1.04; d[i + j] = v < 0 ? 0 : v > 255 ? 255 : v; }
+  }
+  x.putImageData(im, 0, 0); return c;
+}
+function toJpeg(c, maxKB = 250) {
+  let w = Math.min(1100, c.width), q = 0.82;
+  for (let n = 0; n < 12; n++) { const o = document.createElement('canvas'); o.width = w; o.height = Math.round(c.height * w / c.width); const x = o.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, o.width, o.height); x.drawImage(c, 0, 0, o.width, o.height); const u = o.toDataURL('image/jpeg', q); if (u.length * 0.75 <= maxKB * 1024) return u; if (q > 0.5) q -= 0.08; else { w = Math.round(w * 0.85); q = 0.7; } }
+  return null;
+}
+function scanPreview() {
+  const b = $('#scan-b'); if (!b || !SCAN.raw) return; const r = enhance(SCAN.raw, SCAN.mode); r.id = 'scan-res'; SCAN.res = r;
+  b.innerHTML = `<div class="scan-prev"></div><div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn sm ${SCAN.mode === 'color' ? 'primary' : ''}" data-act="scanMode" data-v="color">${T('ألوان', 'Color')}</button><button class="btn sm ${SCAN.mode === 'bw' ? 'primary' : ''}" data-act="scanMode" data-v="bw">${T('أبيض وأسود (ممسوح)', 'Black & white scan')}</button></div><div class="row" style="gap:8px;justify-content:center"><button class="btn primary" data-act="scanOk">${icon('check')} ${T('اعتماد الصورة', 'Use this scan')}</button><button class="btn" data-act="scanOpen" data-v="${SCAN.side}">${T('إعادة', 'Retake')}</button></div>`;
+  b.querySelector('.scan-prev').appendChild(r);
+}
+function scanFromSource(el, vw, vh, crop) {
+  const c = document.createElement('canvas'); let sx = 0, sy = 0, sw = vw, sh = vh;
+  if (crop) { sw = Math.min(vw * 0.94, vh * 0.94 * 1.586); sh = sw / 1.586; sx = (vw - sw) / 2; sy = (vh - sh) / 2; }
+  c.width = Math.round(sw); c.height = Math.round(sh); c.getContext('2d').drawImage(el, sx, sy, sw, sh, 0, 0, c.width, c.height); return c;
+}
+Object.assign(A, {
+  scanOpen(el) {
+    SCAN.side = el.dataset.v; SCAN.raw = null;
+    openModal(`<div class="modal-h"><b>${T('ماسح المستندات', 'Document scanner')} — ${docLabel(SCAN.side)}</b><button class="ib" data-act="scanClose" aria-label="close">${icon('x')}</button></div><div class="modal-b stack" id="scan-b" style="gap:12px"><div class="scan-view"><video id="scan-v" playsinline muted autoplay></video><div class="scan-guide"><i></i><i></i><i></i><i></i></div></div><p class="xs muted" id="scan-t" style="text-align:center;min-height:18px"></p><div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" data-act="scanShot">${icon('camera')} ${T('التقاط', 'Capture')}</button><button class="btn" data-act="scanFlip">${T('تبديل الكاميرا', 'Switch camera')}</button><label class="btn">${icon('upload')} ${T('رفع صورة', 'Upload photo')}<input type="file" accept="image/*" capture="environment" hidden data-change="scanFile"></label></div></div>`, 'scan-modal');
+    startCam();
+  },
+  scanClose() { stopScan(); closeModal(); },
+  scanFlip() { SCAN.facing = SCAN.facing === 'environment' ? 'user' : 'environment'; startCam(); },
+  scanShot() { const v = $('#scan-v'); if (!v || !v.videoWidth) return toast(T('الكاميرا غير جاهزة.', 'Camera not ready.')); SCAN.raw = scanFromSource(v, v.videoWidth, v.videoHeight, true); stopScan(); scanPreview(); },
+  scanMode(el) { SCAN.mode = el.dataset.v; scanPreview(); },
+  scanOk() {
+    const u = toJpeg(SCAN.res); if (!u) return toast(T('تعذّر ضغط الصورة، جرّب صورة أوضح.', 'Could not compress the image, try another.'));
+    AID.img[SCAN.side] = u; const s = $('#slot-' + SCAN.side); if (s) s.outerHTML = aidSlot(SCAN.side); stopScan(); closeModal();
+  }
+});
+Object.assign(CH, {
+  scanFile(el) {
+    const f = el.files[0]; if (!f) return; const im = new Image(), url = URL.createObjectURL(f);
+    im.onload = () => { const max = 1800, k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url); stopScan(); SCAN.raw = c; scanPreview(); };
+    im.onerror = () => toast(T('الملف ليس صورة صالحة.', 'Not a valid image.')); im.src = url;
+  },
+  aidNid(el) { const r = parseNid(el.value); $('#a-birth').value = r ? r.birth : ''; el.setCustomValidity(r ? '' : 'x'); },
+  aidKind(el) { AID.kind = el.value; ['front', 'back'].forEach(s => { const l = $('#slot-l-' + s); if (l) l.textContent = docLabel(s) + ' *'; }); }
+});
+FORMS.aid = async f => {
+  const d = new FormData(f), err = $('#aid-err'), bad = t => { err.textContent = t; err.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+  if (d.get('website')) return;
+  const last = +ls.get('aidSent', 0); if (Date.now() - last < 600000) return bad(T('أرسلت طلبًا للتو. انتظر قليلًا.', 'You just submitted a request. Please wait a little.'));
+  const name = (d.get('name') || '').trim().split(/\s+/); if (name.length < 4) return bad(T('اكتب الاسم الرباعي كاملًا.', 'Enter the full four-part name.'));
+  const nid = parseNid(d.get('nid')); if (!nid) return bad(T('الرقم القومي غير صحيح.', 'Invalid national ID number.'));
+  const ph = normPhone(d.get('phone')); if (!ph) return bad(phoneErr());
+  let wa = ''; if ((d.get('whatsapp') || '').trim()) { wa = normPhone(d.get('whatsapp')); if (!wa) return bad(phoneErr()); }
+  const em = (d.get('email') || '').trim().toLowerCase(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return bad(T('البريد الإلكتروني غير صحيح.', 'Invalid email.'));
+  if (!(d.get('address') || '').trim()) return bad(T('اكتب العنوان.', 'Enter your address.'));
+  const st = readStudy(d); if (st.err) return bad(st.err);
+  const fam = +latin(d.get('famsize')); if (!(fam >= 1 && fam <= 30)) return bad(T('عدد أفراد الأسرة غير صحيح.', 'Invalid family size.'));
+  if (!(d.get('parentjob') || '').trim()) return bad(T('اكتب مهنة ولي الأمر أو مصدر الدخل.', 'Enter the guardian job or income source.'));
+  const want = d.getAll('want'); if (!want.length) return bad(T('اختر كورسًا أو باقة واحدة على الأقل.', 'Choose at least one course or plan.'));
+  const why = (d.get('reason') || '').trim(); if (why.length < 50) return bad(T('اشرح حالتك في 50 حرفًا على الأقل.', 'Explain your situation in at least 50 characters.'));
+  if (!AID.img.front || !AID.img.back) return bad(T('امسح وجه وظهر المستند.', 'Scan both sides of the document.'));
+  if (!d.get('truth') || !d.get('consent') || !d.get('commit')) return bad(T('وافق على الإقرارات الثلاثة.', 'Accept the three declarations.'));
+  err.textContent = '';
+  await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back });
+  ls.set('aidSent', Date.now()); const masked = maskNid(nid.n); AID.img = {};
+  f.outerHTML = `<div class="card stack" style="text-align:center;justify-items:center;padding:34px 22px"><span class="done-check" role="img"></span><h2 class="h2">${T('وصلنا طلبك', 'We received your request')}</h2>
+    <p class="muted" style="max-width:56ch">${T('الرقم القومي المسجّل: ', 'Registered national ID: ')}<b class="mono" dir="ltr" data-keep>${masked}</b> ${T('(أُخفي لحمايتك)', '(masked for your protection)')}</p>
+    <div class="note" style="text-align:start">${icon('check')}<span><b>${T('تابع بريدك الإلكتروني', 'Watch your email')}</b> <span class="mono" dir="ltr">${esc(em)}</span><br>${T('سيراجع الفريق طلبك، وعند القبول ينشئ لك الأدمن حسابًا ويصلك رابط تفعيل على بريدك. عند أول دخول ستؤكد بريدك وتغيّر كلمة المرور المؤقتة.', 'The team will review your request; on acceptance the admin creates your account and an activation link reaches your email. On first sign-in you will confirm your email and change the temporary password.')}</span></div>
+    <a class="btn" href="#learning">${T('العودة لسرمد ليرننج', 'Back to Sarmad Learning')}</a></div>`;
+  fixDigits($('#main')); window.scrollTo(0, 0);
+};
+
+/* ---------- first sign-in for admin-created accounts: confirm email + change the temporary password ---------- */
+function vSetup() {
+  if (!S.user) { setTimeout(needAuth, 0); return ''; }
+  if (!S.user.mustChange) { setTimeout(() => go('account'), 0); return ''; }
+  const cu_ = fbAuth && fbAuth.currentUser, ver = !!(cu_ && cu_.emailVerified);
+  return pageHead(T('تفعيل الحساب', 'Activate your account'), T('خطوتان قبل أن تبدأ', 'Two steps before you start'), T('أنشأ لك فريق سرمد هذا الحساب. لأمانك، أكّد بريدك الإلكتروني ثم اختر كلمة مرور خاصة بك.', 'The Sarmad team created this account for you. For your security, confirm your email and then choose your own password.'))
+    + `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:640px"><div class="stack" style="gap:16px">
+      <div class="card stack" style="gap:12px"><h2 class="h3" style="margin:0"><span class="aid-n">1</span> ${T('تأكيد البريد الإلكتروني', 'Confirm your email')} ${ver ? `<span class="tag ok">${T('تم', 'Done')}</span>` : ''}</h2>
+        <p class="muted">${T('أرسلنا رابط التفعيل إلى ', 'We sent an activation link to ')}<b class="mono" dir="ltr" data-keep>${esc(S.user.email)}</b>. ${T('افتح الرسالة واضغط الرابط (راجع مجلد الرسائل غير المرغوبة) ثم ارجع واضغط «تحققت».', 'Open the message and press the link (check spam), then come back and press "I verified".')}</p>
+        ${ver ? '' : `<div class="row" style="gap:8px"><button class="btn primary" data-act="setupCheck">${T('تحققت', 'I verified')}</button><button class="btn" data-act="setupResend">${T('أعد إرسال الرابط', 'Resend link')}</button></div>`}<div class="err" id="su-msg" role="status"></div></div>
+      <form class="card stack" style="gap:14px;${ver ? '' : 'opacity:.5;pointer-events:none'}" data-form="setup" novalidate autocomplete="off"><h2 class="h3" style="margin:0"><span class="aid-n">2</span> ${T('تغيير كلمة المرور المؤقتة', 'Change the temporary password')}</h2>
+        <div class="field"><label for="su-old">${T('كلمة المرور المؤقتة التي استلمتها', 'Temporary password you received')}</label><input id="su-old" name="old" type="password" dir="ltr" autocomplete="current-password" required></div>
+        <div class="field"><label for="su-new">${T('كلمة المرور الجديدة (10 أحرف على الأقل، حروف وأرقام)', 'New password (10+ characters, letters and numbers)')}</label><input id="su-new" name="pw" type="password" dir="ltr" autocomplete="new-password" required></div>
+        <div class="field"><label for="su-new2">${T('تأكيد كلمة المرور الجديدة', 'Confirm new password')}</label><input id="su-new2" name="pw2" type="password" dir="ltr" autocomplete="new-password" required></div>
+        <div class="err" id="su-err" role="alert"></div><button class="btn primary" type="submit">${T('حفظ ومتابعة', 'Save and continue')}</button></form>
+      <button class="btn" data-act="logout" style="justify-self:start">${T('تسجيل الخروج', 'Sign out')}</button></div></div></section>`;
+}
+ROUTE.setup = vSetup;
+Object.assign(A, {
+  async setupCheck() { const m = $('#su-msg'); try { await fbAuth.currentUser.reload(); if (fbAuth.currentUser.emailVerified) { render(); } else m.textContent = T('لم يتم التفعيل بعد. اضغط الرابط في بريدك أولًا.', 'Not confirmed yet. Press the link in your email first.'); } catch (e) { m.textContent = T('تعذر التحقق الآن.', 'Could not check now.'); } },
+  async setupResend() { const m = $('#su-msg'); try { await fbAuth.currentUser.sendEmailVerification(); m.textContent = T('أرسلنا الرابط من جديد.', 'Link sent again.'); } catch (e) { m.textContent = T('انتظر قليلًا ثم أعد المحاولة.', 'Wait a moment and try again.'); } }
+});
+FORMS.setup = async f => {
+  const d = new FormData(f), err = $('#su-err'), old = d.get('old'), pw = d.get('pw'), pw2 = d.get('pw2'), u = fbAuth.currentUser;
+  if (!u.emailVerified) { err.textContent = T('أكّد بريدك أولًا.', 'Confirm your email first.'); return; }
+  if (pw.length < 10 || !/[A-Za-z]/.test(pw) || !/\d/.test(pw)) { err.textContent = T('كلمة المرور 10 أحرف على الأقل وتحتوي حروفًا وأرقامًا.', 'Password must be 10+ characters with letters and numbers.'); return; }
+  if (pw !== pw2) { err.textContent = T('كلمتا المرور غير متطابقتين.', 'Passwords do not match.'); return; }
+  if (pw === old) { err.textContent = T('اختر كلمة مرور مختلفة عن المؤقتة.', 'Choose a password different from the temporary one.'); return; }
+  try {
+    await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, old));
+    await u.updatePassword(pw);
+    await fbDb.collection('users').doc(u.uid).update({ mustChange: false, passwordChangedAt: tsNow() });
+    S.user.mustChange = false; toast(T('تم تفعيل حسابك', 'Your account is active')); go('learning');
+  } catch (e) { err.textContent = ['auth/wrong-password', 'auth/invalid-credential', 'auth/invalid-login-credentials'].includes(e.code) ? T('كلمة المرور المؤقتة غير صحيحة.', 'The temporary password is wrong.') : T('تعذر الحفظ، حاول مرة أخرى.', 'Could not save, try again.'); }
+};
+
+/* ================= 20 features: 5 per portal (main, platform, learning, Tam) ================= */
+function tgLink(ctx) { const b = String((SITE.contact && SITE.contact.telegram) || 'https://t.me/sarmad_site_bot').replace(/\/$/, ''); const c = String(ctx || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64); return c ? b + (b.includes('?') ? '&' : '?') + 'start=' + c : b; }
+const X = { notices: [], testi: [] };
+const dkey = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const starsHtml = n => `<span class="stars" aria-label="${n}/5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= Math.round(n) ? 'on' : ''}">★</i>`).join('')}</span>`;
+const colList = async (name, q) => { let r = fbDb.collection(name); if (q) r = r.where(q[0], q[1], q[2]); if (q && q[3]) r = r.where(q[3], q[4], q[5]); const s = await r.get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at) })); return a; };
+const ago = ms => fmtDate(ms);
+
+/* ---------- MAIN 1: support widget + Telegram bot ---------- */
+function renderSupport() {
+  let el = $('#sup'); if (!el) { el = document.createElement('div'); el.id = 'sup'; document.body.appendChild(el); }
+  const open = el.dataset.open === '1', sid = S.user && S.user.sid;
+  el.innerHTML = `${open ? `<div class="sup-p" role="dialog" aria-label="${T('الدعم الفني', 'Support')}"><b>${T('الدعم الفني', 'Support')}</b><p class="sm muted">${T('اسأل بوت سرمد على تيليجرام وسيوصل الفريق باستفسارك.', 'Ask the Sarmad bot on Telegram and the team will get your question.')}</p>
+    <a class="btn primary block" href="${tgLink(sid)}" target="_blank" rel="noopener">${icon('send2')} ${T('بوت الدعم على تيليجرام', 'Telegram support bot')}</a>
+    <a class="btn block" href="#contact" data-act="supClose">${icon('chat')} ${T('نموذج التواصل وطلب عرض سعر', 'Contact / quote form')}</a>
+    <a class="btn block" href="mailto:${esc(SITE.contact.email)}">${esc(SITE.contact.email)}</a>
+    <button class="btn block" data-act="a11y">${T('إمكانية الوصول', 'Accessibility')}</button></div>` : ''}<button class="sup-fab" data-act="supToggle" aria-label="${T('الدعم الفني', 'Support')}" aria-expanded="${open}">${icon(open ? 'x' : 'chat')}</button>`;
+}
+Object.assign(A, { supToggle() { const el = $('#sup'); el.dataset.open = el.dataset.open === '1' ? '0' : '1'; renderSupport(); }, supClose() { const el = $('#sup'); el.dataset.open = '0'; renderSupport(); } });
+AFTER.push(r => { if (r.name === 'contact') { const v = $('#main .view'); if (v) v.insertAdjacentHTML('beforeend', `<section class="sec" style="padding-top:0"><div class="wrap"><div class="note">${icon('send2')}<span><b>${T('تحتاج رد أسرع؟', 'Need a faster answer?')}</b> ${T('تحدث مع بوت الدعم الفني على تيليجرام: ', 'Chat with the support bot on Telegram: ')}<a class="link" href="${tgLink(S.user && S.user.sid)}" target="_blank" rel="noopener">@sarmad_site_bot</a></span></div></div></section>`); } });
+
+/* ---------- MAIN 2: accessibility panel ---------- */
+const A11Y = () => ls.get('a11y', { fs: 100, hc: false, rm: false, lh: false, dys: false });
+function applyA11y() { const a = A11Y(), h = document.documentElement; h.style.fontSize = a.fs + '%'; h.classList.toggle('hc', !!a.hc); h.classList.toggle('rm', !!a.rm); h.classList.toggle('lh', !!a.lh); h.classList.toggle('dys', !!a.dys); }
+Object.assign(A, {
+  a11y() {
+    const a = A11Y(), sw = (k, n) => `<label class="chk-row"><input type="checkbox" data-change="a11yT" data-k="${k}" ${a[k] ? 'checked' : ''}><span>${n}</span></label>`;
+    openModal(`<div class="modal-h"><b>${T('إمكانية الوصول', 'Accessibility')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b stack" style="gap:14px"><div class="row" style="gap:8px"><span>${T('حجم الخط', 'Text size')}:</span><button class="btn sm" data-act="a11yFs" data-v="-10">A−</button><b id="a11y-fs">${a.fs}%</b><button class="btn sm" data-act="a11yFs" data-v="10">A+</button><button class="btn sm ghost" data-act="a11yFs" data-v="0">${T('افتراضي', 'Reset')}</button></div>${sw('hc', T('تباين عالٍ', 'High contrast'))}${sw('rm', T('تقليل الحركة', 'Reduce motion'))}${sw('lh', T('تباعد أسطر أكبر', 'Larger line spacing'))}${sw('dys', T('تباعد أحرف وكلمات أكبر', 'Wider letter/word spacing'))}<p class="xs muted">${T('اختصار: Ctrl+K للبحث.', 'Shortcut: Ctrl+K opens search.')}</p></div>`);
+  },
+  a11yFs(el) { const a = A11Y(), v = +el.dataset.v; a.fs = v === 0 ? 100 : Math.min(140, Math.max(80, a.fs + v)); ls.set('a11y', a); applyA11y(); const t = $('#a11y-fs'); if (t) t.textContent = a.fs + '%'; }
+});
+CH.a11yT = el => { const a = A11Y(); a[el.dataset.k] = el.checked; ls.set('a11y', a); applyA11y(); };
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && !e.target.matches('input,textarea')) { e.preventDefault(); openSearch(); } });
+
+/* ---------- MAIN 3: notification bell (admin notices) ---------- */
+function bellBtn() { const seen = +ls.get('noticeSeen', 0), n = X.notices.filter(x => x.at > seen).length; return `<button class="ib bell" data-act="bell" aria-label="${T('الإشعارات', 'Notifications')}">${icon('bell')}${n ? `<i class="bdg">${n}</i>` : ''}</button>`; }
+A.bell = () => {
+  openModal(`<div class="modal-h"><b>${T('الإشعارات', 'Notifications')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b stack" style="gap:10px">${X.notices.length ? X.notices.map(n => `<div class="note" style="align-items:flex-start">${icon('bell')}<span><b>${esc(L(n.t || { ar: n.ar, en: n.en || n.ar }))}</b>${n.link && /^(https:\/\/|#)/.test(n.link) ? ` <a class="link" href="${esc(n.link)}" ${n.link[0] === '#' ? 'data-act="closeModal"' : 'target="_blank" rel="noopener"'}>${T('فتح', 'Open')}</a>` : ''}<br><span class="xs muted">${ago(n.at)}</span></span></div>`).join('') : `<p class="muted">${T('لا توجد إشعارات.', 'No notifications.')}</p>`}</div>`);
+  ls.set('noticeSeen', Date.now()); renderHeader();
+};
+
+/* ---------- MAIN 4: testimonials (admin-managed) ---------- */
+AFTER.push(r => { if (r.name === 'home' && X.testi.length) { const v = $('#main .view'); if (v) v.insertAdjacentHTML('beforeend', `<section class="sec"><div class="wrap"><h2 class="h2" style="text-align:center;margin-bottom:28px">${T('آراء عملائنا', 'What our clients say')}</h2><div class="grid g3">${X.testi.slice(0, 6).map(t => `<figure class="card stack" style="margin:0;gap:10px">${starsHtml(+t.rating || 5)}<blockquote style="margin:0">${esc(L(t.text || { ar: t.ar, en: t.en || t.ar }))}</blockquote><figcaption class="sm muted"><b>${esc(t.name || '')}</b>${t.role ? ' · ' + esc(L(t.role)) : ''}</figcaption></figure>`).join('')}</div></div></section>`); } });
+async function loadExtras() {
+  try { const [n, t] = await Promise.all([colList('notices', ['on', '==', true]), colList('testimonials', ['on', '==', true])]); X.notices = n.sort((a, b) => b.at - a.at); X.testi = t; } catch (e) { }
+}
+
+/* ---------- MAIN 5: request status + team reply (account) → see views2 'requests' tab ---------- */
+
+/* ---------- PLATFORM: comments, likes, reading aid + TOC, listen, QR share ---------- */
+const TTS = { on: false, q: [] };
+function ttsStop() { try { speechSynthesis.cancel(); } catch (e) { } TTS.on = false; const b = $('[data-act=ttsToggle]'); if (b) b.classList.remove('accent'); }
+A.ttsToggle = el => {
+  if (!('speechSynthesis' in window)) return toast(T('المتصفح لا يدعم القراءة الصوتية.', 'Your browser does not support read-aloud.'));
+  if (TTS.on) return ttsStop(); const art = $('article.prose'); if (!art) return;
+  const txt = art.innerText.replace(/\s+/g, ' ').trim(), parts = txt.match(/[^.؟!?۔\n]{1,220}[.؟!?۔]?/g) || [txt]; TTS.on = true; el.classList.add('accent');
+  const vs = speechSynthesis.getVoices(), v = vs.find(x => /^ar/i.test(x.lang)); if (!v && lang === 'ar') toast(T('لا يوجد صوت عربي على جهازك، قد تُقرأ بصوت آخر.', 'No Arabic voice on your device; another voice may be used.'));
+  parts.forEach((p, i) => { const u = new SpeechSynthesisUtterance(p); u.lang = lang === 'ar' ? 'ar-SA' : 'en-US'; if (v && lang === 'ar') u.voice = v; if (i === parts.length - 1) u.onend = ttsStop; speechSynthesis.speak(u); });
+};
+A.qrShare = el => {
+  const r = el.dataset.v || (location.hash.slice(1) || 'home'), sep = r.includes('?') ? '&' : '?', url = baseUrl() + '#' + r + (S.user ? (r.includes('?') ? '' : '') : ''), title = el.dataset.t || document.title;
+  openModal(`<div class="modal-h"><b>${T('مشاركة عبر QR', 'Share via QR')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b stack" style="gap:14px;text-align:center;justify-items:center"><div class="qrbox" style="padding:10px;background:#fff;border-radius:16px;line-height:0">${qrSvg(url, 220)}</div><p class="xs mono" dir="ltr" style="word-break:break-all" data-keep>${esc(url)}</p><div class="row" style="gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn sm" data-act="copy" data-v="${esc(url)}">${icon('copy')} ${T('نسخ الرابط', 'Copy link')}</button><a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}">WhatsApp</a><a class="btn sm" target="_blank" rel="noopener" href="https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}">Telegram</a></div></div>`);
+};
+A.like = async el => {
+  if (!S.user) return needAuth(); const id = el.dataset.v, ref = fbDb.collection('likes').doc(id + '_' + S.user.id), on = el.classList.contains('accent');
+  try { if (on) await ref.delete(); else await ref.set({ postId: id, userId: S.user.id, at: tsNow() }); el.classList.toggle('accent', !on); const c = el.querySelector('.cnt'); c.textContent = Math.max(0, +c.textContent + (on ? -1 : 1)); } catch (e) { toast(T('تعذر التنفيذ.', 'Could not do that.')); }
+};
+A.cmtSend = async el => {
+  if (!S.user) return needAuth(); const t = $('#cmt-t'), v = t.value.trim(); if (v.length < 3) return toast(T('اكتب تعليقًا أطول.', 'Write a longer comment.')); if (v.length > 600) return toast(T('الحد الأقصى 600 حرف.', 'Max 600 characters.'));
+  el.disabled = true; try { await fbDb.collection('comments').add({ postId: el.dataset.v, userId: S.user.id, name: S.user.name, text: v, status: 'pending', at: tsNow() }); t.value = ''; toast(T('أُرسل تعليقك وسيظهر بعد مراجعة الإدارة.', 'Your comment was sent and will appear after review.')); } catch (e) { toast(T('تعذر الإرسال.', 'Could not send.')); } el.disabled = false;
+};
+AFTER.push(async r => {
+  const ps = $('#rp'); if (ps) ps.remove(); ttsStop(); if (r.name !== 'post') return;
+  const art = $('article.prose'), aside = $('.sticky-card'), v = $('#main .view'); if (!art || !v) return;
+  document.body.insertAdjacentHTML('beforeend', '<div id="rp"><i></i></div>');
+  const hs = [...art.querySelectorAll('h2,h3')]; hs.forEach((h, i) => { h.id = 'h-' + i; });
+  const id = r.id, liked = false;
+  if (aside) aside.insertAdjacentHTML('beforeend', `${hs.length > 1 ? `<div class="toc"><b class="xs muted">${T('محتويات المقال', 'In this article')}</b>${hs.map((h, i) => `<a href="#" data-act="tocGo" data-v="h-${i}" class="${h.tagName === 'H3' ? 'sub' : ''}">${esc(h.textContent)}</a>`).join('')}</div>` : ''}
+    <button class="btn block" data-act="like" data-v="${esc(id)}">${icon('heart')} ${T('أعجبني', 'Like')} <b class="cnt">0</b></button><button class="btn block" data-act="ttsToggle">${icon('headphones')} ${T('استمع للمقال', 'Listen')}</button><button class="btn block" data-act="qrShare" data-v="post-${esc(id)}" data-t="${esc(document.title)}">${icon('share')} ${T('مشاركة عبر QR', 'Share via QR')}</button>`);
+  v.insertAdjacentHTML('beforeend', `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:760px"><h2 class="h2" style="font-size:1.6rem;margin-bottom:16px">${T('التعليقات', 'Comments')}</h2><div id="cmts" class="stack" style="gap:10px"></div>
+    ${S.user ? `<div class="card stack" style="gap:10px;margin-top:16px"><textarea id="cmt-t" rows="3" maxlength="600" placeholder="${T('أضف تعليقك…', 'Add your comment…')}"></textarea><div class="row" style="justify-content:space-between"><span class="xs muted">${T('تظهر التعليقات بعد مراجعة الإدارة.', 'Comments appear after moderation.')}</span><button class="btn primary sm" data-act="cmtSend" data-v="${esc(id)}">${T('إرسال', 'Send')}</button></div></div>` : `<div class="note" style="margin-top:16px">${icon('user')}<span><a class="link" href="#login">${T('سجّل الدخول', 'Sign in')}</a> ${T('لتضيف تعليقًا.', 'to add a comment.')}</span></div>`}</div></section>`);
+  try {
+    const [cm, lk] = await Promise.all([colList('comments', ['postId', '==', id, 'status', '==', 'approved']), fbDb.collection('likes').where('postId', '==', id).get()]);
+    if (parse().key !== r.key) return; const box = $('#cmts'); if (box) { cm.sort((a, b) => a.at - b.at); box.innerHTML = cm.length ? cm.map(c => `<div class="card" style="padding:14px"><div class="row" style="justify-content:space-between"><b class="sm">${esc(c.name || '')}</b><span class="xs muted">${ago(c.at)}</span></div><p style="margin:6px 0 0;white-space:pre-wrap">${esc(c.text)}</p></div>`).join('') : `<p class="muted sm">${T('كن أول من يعلّق.', 'Be the first to comment.')}</p>`; }
+    const b = $('[data-act=like]'); if (b) { b.querySelector('.cnt').textContent = lk.size; if (S.user && lk.docs.some(d => d.id === id + '_' + S.user.id)) b.classList.add('accent'); }
+  } catch (e) { }
+});
+A.tocGo = el => { const t = document.getElementById(el.dataset.v); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+addEventListener('scroll', () => { const p = $('#rp i'), a = $('article.prose'); if (!p || !a) return; const r = a.getBoundingClientRect(), t = Math.min(1, Math.max(0, (-r.top) / Math.max(1, r.height - innerHeight * .6))); p.style.width = (t * 100) + '%'; }, { passive: true });
+
+/* ---------- LEARNING: XP + streak + badges, notes + resume, Q&A, reviews, study timer ---------- */
+const BADGES = [['first', 'أول محاضرة', 'First lecture', s => s.doneKeys.length >= 1], ['five', '5 محاضرات', '5 lectures', s => s.doneKeys.length >= 5], ['twenty', '20 محاضرة', '20 lectures', s => s.doneKeys.length >= 20], ['streak3', 'سلسلة 3 أيام', '3-day streak', s => s.best >= 3], ['streak7', 'سلسلة 7 أيام', '7-day streak', s => s.best >= 7], ['xp500', '500 نقطة', '500 XP', s => s.xp >= 500], ['finisher', 'أنهيت كورسًا', 'Course finisher', s => COURSES.some(c => courseProgress(c) === 100)]];
+async function loadStats() { if (!S.user) return null; if (S.stats) return S.stats; const d = await udoc(S.user.id).collection('meta').doc('stats').get(); S.stats = { xp: 0, streak: 0, best: 0, last: '', doneKeys: [], quizKeys: [], badges: [], ...(d.exists ? d.data() : {}) }; return S.stats; }
+async function award(n, key, kind) {
+  if (!S.user) return; const s = await loadStats(); if (!s) return; const list = kind === 'quiz' ? s.quizKeys : s.doneKeys; if (list.includes(key)) return; list.push(key); s.xp += n;
+  const today = dkey(), y = dkey(new Date(Date.now() - 864e5)); if (s.last !== today) { s.streak = s.last === y ? s.streak + 1 : 1; s.last = today; s.best = Math.max(s.best, s.streak); }
+  const got = []; BADGES.forEach(([id, a, e, f]) => { if (!s.badges.includes(id) && f(s)) { s.badges.push(id); got.push(lang === 'ar' ? a : e); } });
+  try { await udoc(S.user.id).collection('meta').doc('stats').set(s); } catch (e) { }
+  toast('+' + n + ' XP' + (got.length ? ' · 🏅 ' + got.join('، ') : ''));
+}
+const _saveLesson = saveLesson;
+saveLesson = async function (cid, lid, patch) { const before = S.prog[cid] && S.prog[cid].lessons[lid]; await _saveLesson(cid, lid, patch); try { if (patch.done === true && !(before && before.done)) await award(20, cid + '_' + lid, 'lec'); else if (patch.quiz && !(before && before.quiz)) await award(10, cid + '_' + lid, 'quiz'); } catch (e) { } };
+const lvl = xp => Math.floor(xp / 100) + 1;
+AFTER.push(async r => {
+  if (r.name !== 'learning' || !S.user) return; const s = await loadStats(), v = $('#main .wrap'); if (!s || !v || parse().name !== 'learning') return;
+  const rs = ls.get('resume', null), c = rs && COURSES.find(x => x.id === rs.c);
+  v.insertAdjacentHTML('afterbegin', `<div class="card xp-strip"><div><b class="h3" style="margin:0">${T('المستوى', 'Level')} ${lvl(s.xp)}</b><div class="bar" style="margin-top:6px"><i style="width:${s.xp % 100}%"></i></div><span class="xs muted">${s.xp} XP · ${T('التالي بعد', 'next in')} ${100 - s.xp % 100}</span></div><div class="stat"><b>🔥 ${s.last === dkey() || s.last === dkey(new Date(Date.now() - 864e5)) ? s.streak : 0}</b><span class="xs muted">${T('أيام متتالية', 'day streak')}</span></div><div class="stat"><b>${s.doneKeys.length}</b><span class="xs muted">${T('محاضرة مكتملة', 'lectures done')}</span></div><div class="badges">${BADGES.map(([id, a, e]) => `<span class="badge ${s.badges.includes(id) ? 'on' : ''}" title="${lang === 'ar' ? a : e}">${s.badges.includes(id) ? '🏅' : '○'} ${lang === 'ar' ? a : e}</span>`).join('')}</div>${c ? `<a class="btn primary sm" href="#${esc(rs.h)}">${T('أكمل من حيث توقفت', 'Resume where you left')}: ${esc(L(c.t))}</a>` : ''}</div>`);
+});
+const noteT = { t: 0 };
+AFTER.push(async r => {
+  if (r.name !== 'learn') return; ls.set('resume', { c: r.cid || r.c, l: r.lid || r.l, h: location.hash.slice(1) });
+  const v = $('#main .view'); if (!v || !S.user) return; const key = (r.cid || r.c) + '_' + (r.lid || r.l); if (!r.cid && !r.c) return;
+  document.body.classList.add('has-timer'); renderTimer();
+  v.insertAdjacentHTML('beforeend', `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:860px"><div class="card stack" style="gap:10px"><h3 class="h3" style="margin:0">${T('ملاحظاتي على هذه المحاضرة', 'My notes for this lecture')}</h3><textarea id="note-t" rows="4" data-keep placeholder="${T('اكتب ما تريد تذكّره… يُحفظ تلقائيًا', 'Write what you want to remember… autosaves')}"></textarea><span class="xs muted" id="note-s"></span></div>
+    <div class="card stack" style="gap:10px;margin-top:14px"><h3 class="h3" style="margin:0">${T('اسأل المدرّس', 'Ask the instructor')}</h3><div id="qa-l" class="stack" style="gap:8px"></div><textarea id="qa-t" rows="2" maxlength="500" data-keep placeholder="${T('سؤالك عن هذه المحاضرة…', 'Your question about this lecture…')}"></textarea><div class="row" style="justify-content:flex-end"><button class="btn primary sm" data-act="qaSend" data-v="${esc(key)}">${T('إرسال السؤال', 'Send question')}</button></div></div></div></section>`);
+  try {
+    const nd = await udoc(S.user.id).collection('meta').doc('notes').get(); const t = $('#note-t'); if (t && nd.exists) t.value = (nd.data() || {})[key] || '';
+    if (t) t.addEventListener('input', () => { clearTimeout(noteT.t); $('#note-s').textContent = '…'; noteT.t = setTimeout(async () => { try { await udoc(S.user.id).collection('meta').doc('notes').set({ [key]: t.value }, { merge: true }); $('#note-s').textContent = T('تم الحفظ ✓', 'Saved ✓'); } catch (e) { $('#note-s').textContent = T('تعذر الحفظ', 'Could not save'); } }, 800); });
+    const q = await colList('qa', ['key', '==', key]); const mine = q.filter(x => x.userId === S.user.id || x.status === 'answered'); mine.sort((a, b) => a.at - b.at); const box = $('#qa-l'); if (box) box.innerHTML = mine.map(x => `<div class="qa"><p class="sm" style="margin:0"><b>${esc(x.name || '')}:</b> ${esc(x.q)}</p>${x.status === 'answered' ? `<p class="sm" style="margin:4px 0 0;color:var(--accent)"><b>${T('المدرّس', 'Instructor')}:</b> ${esc(x.answer)}</p>` : `<span class="tag gold">${T('بانتظار الرد', 'Awaiting answer')}</span>`}</div>`).join('') || `<p class="xs muted">${T('لا توجد أسئلة بعد.', 'No questions yet.')}</p>`;
+  } catch (e) { }
+});
+A.qaSend = async el => {
+  const t = $('#qa-t'), v = t.value.trim(); if (v.length < 5) return toast(T('اكتب سؤالًا أوضح.', 'Write a clearer question.')); const key = el.dataset.v, [c, ...l] = key.split('_');
+  el.disabled = true; try { await fbDb.collection('qa').add({ key, courseId: c, lessonId: l.join('_'), userId: S.user.id, name: S.user.name, q: v, status: 'open', at: tsNow() }); t.value = ''; toast(T('وصل سؤالك للمدرّس.', 'Your question reached the instructor.')); render(); } catch (e) { toast(T('تعذر الإرسال.', 'Could not send.')); } el.disabled = false;
+};
+/* study timer (pomodoro + daily goal) */
+const TM = { mode: 'focus', left: 25 * 60, run: false, iv: 0 };
+const tmMin = () => +ls.get('study:' + dkey(), 0), tmGoal = () => +ls.get('studyGoal', 30);
+function renderTimer() {
+  let el = $('#tm'); if (parse().name !== 'learn') { if (el) el.remove(); document.body.classList.remove('has-timer'); return; } if (!el) { el = document.createElement('div'); el.id = 'tm'; document.body.appendChild(el); }
+  const m = String(Math.floor(TM.left / 60)).padStart(2, '0'), s = String(TM.left % 60).padStart(2, '0'), p = Math.min(100, Math.round(tmMin() / tmGoal() * 100));
+  el.innerHTML = `<div class="tm-in"><span>${icon('timer')}</span><b class="mono" dir="ltr">${m}:${s}</b><button class="ib" data-act="tmGo" aria-label="start/pause">${TM.run ? '❚❚' : '▶'}</button><button class="ib" data-act="tmReset" aria-label="reset">↺</button><button class="ib" data-act="tmMode" title="${T('تبديل تركيز/راحة', 'Focus/break')}">${TM.mode === 'focus' ? T('تركيز', 'Focus') : T('راحة', 'Break')}</button><span class="xs muted" title="${T('هدف اليوم', 'Daily goal')}">${tmMin()}/${tmGoal()} ${T('د', 'min')} · ${p}%</span></div>`;
+}
+Object.assign(A, {
+  tmGo() { TM.run = !TM.run; clearInterval(TM.iv); if (TM.run) TM.iv = setInterval(() => { TM.left--; if (TM.mode === 'focus' && TM.left % 60 === 59) ls.set('study:' + dkey(), tmMin() + 1); if (TM.left <= 0) { TM.run = false; clearInterval(TM.iv); toast(TM.mode === 'focus' ? T('انتهت جلسة التركيز، خذ راحة!', 'Focus session done, take a break!') : T('انتهت الراحة، ارجع للتركيز.', 'Break over, back to focus.')); TM.mode = TM.mode === 'focus' ? 'break' : 'focus'; TM.left = (TM.mode === 'focus' ? 25 : 5) * 60; } renderTimer(); }, 1000); renderTimer(); },
+  tmReset() { TM.run = false; clearInterval(TM.iv); TM.left = (TM.mode === 'focus' ? 25 : 5) * 60; renderTimer(); },
+  tmMode() { TM.mode = TM.mode === 'focus' ? 'break' : 'focus'; A.tmReset(); }
+});
+AFTER.push(r => { if (r.name !== 'learn') { const el = $('#tm'); if (el) el.remove(); document.body.classList.remove('has-timer'); } });
+/* course reviews (admin-moderated) */
+A.revSend = async el => {
+  if (!S.user) return needAuth(); const c = el.dataset.v, rt = +(document.querySelector('input[name=rv]:checked') || {}).value, t = ($('#rv-t').value || '').trim(); if (!rt) return toast(T('اختر عدد النجوم.', 'Pick a star rating.'));
+  el.disabled = true; try { await fbDb.collection('reviews').doc(c + '_' + S.user.id).set({ courseId: c, userId: S.user.id, name: S.user.name, rating: rt, text: t.slice(0, 400), status: 'pending', at: tsNow() }); toast(T('شكرًا! سيظهر تقييمك بعد المراجعة.', 'Thanks! Your review appears after moderation.')); } catch (e) { toast(T('تعذر الإرسال.', 'Could not send.')); } el.disabled = false;
+};
+AFTER.push(async r => {
+  if (r.name !== 'course') return; const v = $('#main .view'), c = COURSES.find(x => x.id === r.id); if (!v || !c) return;
+  v.insertAdjacentHTML('beforeend', `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:860px"><div class="row" style="justify-content:space-between"><h2 class="h2" style="font-size:1.6rem;margin:0">${T('تقييمات الطلاب', 'Student reviews')}</h2><span id="rv-avg"></span></div><div id="rv-l" class="stack" style="gap:10px;margin-top:14px"></div>
+    ${S.user && S.enr[c.id] ? `<div class="card stack" style="gap:10px;margin-top:14px"><b>${T('قيّم هذا الكورس', 'Rate this course')}</b><div class="rate-in">${[5, 4, 3, 2, 1].map(i => `<input type="radio" name="rv" id="rv${i}" value="${i}"><label for="rv${i}" title="${i}">★</label>`).join('')}</div><textarea id="rv-t" rows="2" maxlength="400" data-keep placeholder="${T('رأيك (اختياري)', 'Your opinion (optional)')}"></textarea><div class="row" style="justify-content:flex-end"><button class="btn primary sm" data-act="revSend" data-v="${esc(c.id)}">${T('إرسال التقييم', 'Submit review')}</button></div></div>` : ''}</div></section>`);
+  try { const rv = await colList('reviews', ['courseId', '==', c.id, 'status', '==', 'approved']); if (parse().key !== r.key) return; const avg = rv.length ? rv.reduce((a, x) => a + +x.rating, 0) / rv.length : 0; const a = $('#rv-avg'); if (a) a.innerHTML = rv.length ? `${starsHtml(avg)} <b>${avg.toFixed(1)}</b> <span class="xs muted">(${rv.length})</span>` : ''; const l = $('#rv-l'); if (l) l.innerHTML = rv.length ? rv.sort((x, y) => y.at - x.at).map(x => `<div class="card" style="padding:14px"><div class="row" style="justify-content:space-between"><b class="sm">${esc(x.name || '')}</b>${starsHtml(+x.rating)}</div>${x.text ? `<p style="margin:6px 0 0">${esc(x.text)}</p>` : ''}</div>`).join('') : `<p class="muted sm">${T('لا توجد تقييمات بعد.', 'No reviews yet.')}</p>`; } catch (e) { }
+});
+
+/* ---------- TAM: payment links, live order status, verify invoice, CSV export, re-upload receipt ---------- */
+function vPay(r) {
+  const code = String(r.id || '').toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+  fbDb.collection('paylinks').doc(code).get().then(d => {
+    const box = $('#paybox'); if (!box) return; const x = d.exists ? d.data() : null;
+    if (!x || !x.active) { box.innerHTML = certState('', T('رابط الدفع غير متاح', 'Payment link unavailable'), T('الرابط غير صحيح أو أوقفته الإدارة.', 'The link is invalid or was disabled by the team.')); return; }
+    box.innerHTML = `<div class="card stack" style="gap:14px;padding:28px;text-align:center;justify-items:center">${tamMark(40)}<h2 class="h2" style="margin:0">${esc(L(x.title))}</h2>${x.note ? `<p class="muted" style="max-width:48ch">${esc(L(x.note))}</p>` : ''}<div class="pay-amt">${fmtMoney(+x.amount)}</div><button class="btn primary lg" data-act="payLink" data-v="${esc(code)}">${T('ادفع عبر تم', 'Pay with Tam')}</button><span class="xs muted">${T('الدفع بتحويل بنكي ثم رفع الإيصال، وتؤكده الإدارة.', 'Pay by bank transfer, then upload the receipt; the team confirms it.')}</span></div>`; box.dataset.t = JSON.stringify({ t: x.title, a: +x.amount });
+  }).catch(() => { const b = $('#paybox'); if (b) b.innerHTML = `<p class="muted">${T('تعذر تحميل الرابط.', 'Could not load the link.')}</p>`; });
+  return `<section class="wrap" style="padding-block:40px;max-width:640px"><div id="paybox"><div class="spin" style="margin:60px auto"></div></div></section>`;
+}
+ROUTE.pay = vPay;
+A.payLink = el => { const b = $('#paybox'); if (!b || !b.dataset.t) return; if (!S.user) return needAuth(); const d = JSON.parse(b.dataset.t); openCheckout({ title: d.t, amount: d.a, payLink: el.dataset.v }); };
+let _unw = null;
+function watchOrders() {
+  if (_unw) { _unw(); _unw = null; } if (!S.user || !fbDb.collection('orders').where || !fbDb.collection('orders').where('userId', '==', S.user.id).onSnapshot) return;
+  try { _unw = fbDb.collection('orders').where('userId', '==', S.user.id).onSnapshot(sn => { let ch = false; sn.docChanges().forEach(c => { if (c.type === 'modified') { ch = true; const d = c.doc.data(); if (d.status === 'paid') toast('✓ ' + T('تم تأكيد دفعتك ', 'Payment confirmed ') + d.ref); else if (d.status === 'rejected') toast(T('تم رفض إيصال ', 'Receipt rejected: ') + d.ref); } }); if (ch) loadState().then(() => render()); }, () => { }); } catch (e) { }
+}
+const _loadState = loadState; loadState = async function (...a) { const r = await _loadState(...a); watchOrders(); return r; };
+AFTER.push(r => { if (r.name === 'tam') { const v = $('#main .view'); if (v) v.insertAdjacentHTML('beforeend', `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:720px"><div class="card stack" style="gap:12px"><h3 class="h3" style="margin:0">${T('تحقق من فاتورة', 'Verify an invoice')}</h3><p class="sm muted" style="margin:0">${T('اكتب رقم الفاتورة (TAM-…) أو امسح رمز QR من الفاتورة.', 'Enter the invoice number (TAM-…) or scan the invoice QR code.')}</p><form class="row" data-form="verifyInv" style="gap:8px"><input name="ref" dir="ltr" placeholder="TAM-XXXXXXXX" style="flex:1" required><button class="btn primary" type="submit">${T('تحقق', 'Verify')}</button></form></div></div></section>`); } });
+FORMS.verifyInv = f => { const r = String(new FormData(f).get('ref') || '').toUpperCase().replace(/[^A-Z0-9-]/g, ''); if (r.length < 5) return toast(T('اكتب رقم الفاتورة.', 'Enter the invoice number.')); go('verify-' + r); };
+A.exportOrders = () => {
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"', rows = [['ref', 'item', 'amount', 'discount', 'coupon', 'status', 'date']].concat(S.orders.map(o => [o.ref, typeof o.title === 'object' ? L(o.title) : o.title, o.amount, o.discount || 0, o.coupon || '', o.status, new Date(o.at).toISOString().slice(0, 10)]));
+  const blob = new Blob(['﻿' + rows.map(r => r.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }), a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'sarmad-payments.csv'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+};
+A.reReceipt = el => { const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*'; i.onchange = async () => { const f = i.files[0]; if (!f) return; try { toast(T('جارٍ رفع الإيصال…', 'Uploading receipt…')); const url = await uploadReceipt(f); await DB.resubmitOrder(el.dataset.id, url); S.orders = await DB.orders(); render(); toast(T('أُعيد إرسال الإيصال للمراجعة.', 'Receipt re-submitted for review.')); } catch (e) { toast(T('تعذر رفع الإيصال.', 'Could not upload the receipt.')); } }; i.click(); };
+/* boot hooks */
+applyA11y();
+addEventListener('hashchange', () => { const el = $('#sup'); if (el && el.dataset.open === '1') { el.dataset.open = '0'; renderSupport(); } });
+
+/* ---------- detailed Privacy Policy & Terms of Use ---------- */
+const LEGAL_DATE = { ar: '24 نوفمبر 2026', en: 'November 24, 2026' };
+const _l = (ar, en) => ({ ar, en });
+const P = (ar, en) => ({ p: _l(ar, en) });
+const U = (...items) => ({ ul: items.map(([a, e]) => _l(a, e)) });
+const N = (ar, en) => ({ n: _l(ar, en) });
+
+const LEGAL_PRIVACY = [
+  [_l('مقدمة ونطاق السياسة', 'Introduction and scope'), [
+    P('تشرح هذه السياسة بالتفصيل ما هي البيانات التي تجمعها «سرمد» للتصميم البرمجي («سرمد» أو «نحن») عند استخدامك موقعنا وبواباتنا، وكيف نستخدمها ونحميها، وما هي حقوقك تجاهها. وتسري على: الموقع الرئيسي، سرمد بلاتفورم (المدونة)، سرمد ليرننج (المسارات والدورات والاختبارات والشهادات)، وبوابة تم للدفع، ولوحة الإدارة.', 'This policy explains in detail what data Sarmad Software Design ("Sarmad", "we") collects when you use our site and portals, how we use and protect it, and what rights you have. It covers the main site, Sarmad Platform (blog), Sarmad Learning (tracks, courses, tests and certificates), the Tam payment gateway and the admin panel.'),
+    P('باستخدامك الموقع أو إنشائك حسابًا فأنت تقرّ بأنك قرأت هذه السياسة. إن لم توافق عليها فلا تستخدم الخدمات التي تتطلب بياناتك.', 'By using the site or creating an account you confirm you have read this policy. If you do not agree, do not use the services that require your data.')]],
+  [_l('من المسؤول عن بياناتك', 'Who is responsible for your data'), [
+    P('«سرمد» هي المتحكّم في البيانات الشخصية التي تُجمع عبر الخدمات. للتواصل في أي أمر يخص بياناتك: contact@sarmad.qd.je. وتتعامل سرمد مع البيانات وفق قانون حماية البيانات الشخصية المصري رقم 151 لسنة 2020 ولوائحه التنفيذية.', 'Sarmad is the controller of personal data collected through the services. For anything about your data, contact: contact@sarmad.qd.je. Sarmad handles data in line with Egypt\'s Personal Data Protection Law No. 151 of 2020 and its executive regulations.')]],
+  [_l('البيانات التي نجمعها', 'Data we collect'), [
+    P('نجمع فقط ما نحتاجه لتقديم الخدمة، وهو على النحو التالي:', 'We collect only what we need to provide the service, as follows:'),
+    N('أ) بيانات الحساب', 'A) Account data'),
+    U(['الاسم الكامل والبريد الإلكتروني وكلمة المرور (تُخزَّن مشفّرة لدى Firebase Authentication ولا نراها).', 'Full name, email and password (stored hashed by Firebase Authentication; we never see it).'], ['رقم الهاتف المصري (+20) المطلوب إلزاميًا بصيغة 010/011/012/015.', 'Egyptian phone number (+20), mandatory, in 010/011/012/015 format.'], ['تاريخ الميلاد والمحافظة والصورة الشخصية عند الدخول بحساب Google.', 'Date of birth, governorate and profile photo when signing in with Google.'], ['المعرّف الفريد للمستخدم (SRM-XXXXXXXX) ورمز الإحالة إن وُجد.', 'Your unique user ID (SRM-XXXXXXXX) and referral code if any.']),
+    N('ب) بيانات الدراسة', 'B) Study data'),
+    U(['المرحلة الدراسية (مدرسة/جامعة)، والصف أو الفرقة، واسم المؤسسة التعليمية، وسنة التخرج المتوقعة.', 'Education stage (school/university), grade or year, institution name and expected graduation year.'], ['نستخدمها لتخصيص المحتوى والمستوى وإصدار الشهادات، وهي اختيارية خارج الحقول المطلوبة في النموذج.', 'Used to tailor content and level and to issue certificates; optional outside the fields marked required in the form.']),
+    N('ج) بيانات التعلّم', 'C) Learning data'),
+    U(['الدورات المسجّل بها، والمحاضرات والمهام المكتملة، ونتائج اختبارات تحديد المستوى، والإجابات، والتقدّم.', 'Enrolled courses, completed lectures and tasks, placement-test results, answers and progress.'], ['الشهادات الصادرة لك (الكود والاسم والكورس والتاريخ).', 'Certificates issued to you (code, name, course, date).'], ['المقالات التي حفظتها.', 'Articles you saved.']),
+    N('د) بيانات الدفع', 'D) Payment data'),
+    U(['بيانات الطلب: البند والمبلغ والعملة وكود الخصم وقيمته وحالة الطلب وتاريخه.', 'Order data: item, amount, currency, discount code and value, order status and date.'], ['صورة إيصال التحويل البنكي التي ترفعها بنفسك. قد تتضمن الصورة بيانات تظهر على الإيصال؛ نرجو إخفاء أي بيانات لا تخص التحويل قبل الرفع.', 'The bank-transfer receipt image you upload. It may contain data printed on the receipt; please hide anything unrelated to the transfer before uploading.'], ['لا نجمع ولا نخزّن أرقام بطاقات أو بيانات حسابك البنكي الخاصة بك.', 'We do not collect or store your card numbers or your own bank account details.']),
+    N('هـ) الرسائل والنشرة', 'E) Messages and newsletter'),
+    U(['ما تكتبه في نماذج التواصل وطلب عرض السعر والانضمام للفريق (الخدمات، الميزانية، الموعد، الرابط، الرسالة...).', 'What you write in contact, quote-request and career forms (services, budget, timeline, link, message…).'], ['بريدك إذا اشتركت في النشرة البريدية.', 'Your email if you subscribe to the newsletter.']),
+    N('و) بيانات تقنية', 'F) Technical data'),
+    U(['تفضيلات اللغة والثيم وجلسة الدخول وقرارك بشأن الكوكيز، وتُحفظ في متصفحك.', 'Language, theme, sign-in session and your cookie choice, stored in your browser.'], ['بيانات تحليلية مجمّعة (الصفحات المزارة، نوع الجهاز، الدولة التقريبية) عبر Google Analytics for Firebase، وذلك فقط إن اخترت «قبول الكل».', 'Aggregated analytics (pages visited, device type, approximate country) via Google Analytics for Firebase, only if you chose "Accept all".'])]],
+  [_l('لماذا نستخدم بياناتك (الأغراض والأساس)', 'Why we use your data (purposes and basis)'), [
+    U(['تنفيذ العقد: إنشاء حسابك وتقديم الدورات وحفظ تقدمك ومعالجة طلباتك.', 'Performing the contract: creating your account, delivering courses, saving progress and processing orders.'], ['التحقق والأمان: منع الاحتيال وإساءة الاستخدام، وربط الحساب برقم هاتف واحد حقيقي، والتحقق من الإيصالات.', 'Verification and security: preventing fraud and abuse, tying an account to a real phone number, and verifying receipts.'], ['التواصل: الرد على رسائلك وإبلاغك بحالة الطلب وبالتغييرات المهمة على الخدمة.', 'Communication: replying to your messages and informing you about order status and important service changes.'], ['إصدار الشهادات والتحقق منها علنًا.', 'Issuing certificates and allowing public verification.'], ['التحسين: فهم كيفية استخدام المنصة لتحسينها (بموافقتك فقط).', 'Improvement: understanding how the platform is used so we can improve it (with your consent only).'], ['الالتزام القانوني: حفظ سجلات الطلبات والاستجابة للجهات المختصة عند الاقتضاء.', 'Legal compliance: keeping order records and responding to competent authorities when required.']),
+    P('لا نبيع بياناتك، ولا نستخدمها للإعلانات المستهدفة، ولا نبني عنك ملفات تسويقية لأطراف أخرى.', 'We do not sell your data, use it for targeted advertising, or build marketing profiles about you for third parties.')]],
+  [_l('ملفات تعريف الارتباط (الكوكيز) والتخزين المحلي', 'Cookies and local storage'), [
+    P('عند أول زيارة تظهر نافذة تخيّرك بين:', 'On your first visit a banner lets you choose between:'),
+    U(['الأساسية فقط: تحفظ لغتك وثيمك وجلسة دخولك وقرارك. وهي لازمة لعمل الموقع ولا تتطلب موافقة.', 'Essential only: stores your language, theme, sign-in session and your choice. Required for the site to work and needs no consent.'], ['قبول الكل: يضيف التحليلات المجمّعة (Google Analytics for Firebase). ولا يبدأ التحليل قبل موافقتك.', 'Accept all: adds aggregated analytics (Google Analytics for Firebase). Analytics never starts before you consent.']),
+    P('يمكنك تغيير اختيارك في أي وقت من رابط «إعدادات الكوكيز» أسفل كل صفحة، كما يمكنك مسح بيانات الموقع من إعدادات متصفحك (وسيُطلب منك تسجيل الدخول مجددًا). لا نستخدم كوكيز إعلانية أو كوكيز تتبّع عبر المواقع.', 'You can change your choice any time via "Cookie settings" at the foot of every page, or clear site data from your browser settings (you will need to sign in again). We use no advertising or cross-site tracking cookies.')]],
+  [_l('الخدمات الخارجية التي نعتمد عليها', 'Third-party services we rely on'), [
+    U(['Google Firebase (Authentication وFirestore وAnalytics): لتسجيل الدخول وتخزين الحسابات والتقدّم والطلبات. تخضع بياناتك لسياسة خصوصية Google.', 'Google Firebase (Authentication, Firestore, Analytics): sign-in, and storage of accounts, progress and orders. Your data is also subject to Google\'s privacy policy.'], ['تسجيل الدخول عبر Google: نستلم اسمك وبريدك وصورتك فقط، ولا نصل إلى بريدك أو ملفاتك.', 'Sign in with Google: we receive only your name, email and photo, never your mail or files.'], ['ImgBB: لاستضافة صور الإيصالات والصور التي يرفعها المشرف، وتُحفظ كروابط. من يملك الرابط قد يستطيع فتح الصورة، فلا تشارك رابط إيصالك.', 'ImgBB: hosts receipt images and images uploaded by the admin, stored as links. Anyone holding the link may open the image, so do not share your receipt link.'], ['Google Fonts وgstatic وcdnjs: لتحميل الخطوط والمكتبات، وقد ترى هذه الجهات عنوان IP الخاص بك عند التحميل.', 'Google Fonts, gstatic and cdnjs: to load fonts and libraries; these providers may see your IP address when loading.']),
+    P('لا نشارك بياناتك مع أي مزوّد آخر. وبوابة «تم» جزء من سرمد وليست طرفًا ثالثًا، وهي مخصّصة لمشاريع سرمد فقط وبلا رسوم ربط.', 'We share your data with no other provider. The "Tam" gateway is part of Sarmad, not a third party; it is for Sarmad\'s own projects only and has no integration fee.')]],
+  [_l('مشاركة البيانات والإفصاح عنها', 'Sharing and disclosure'), [
+    P('لا نبيع بياناتك ولا نؤجّرها. نفصح عنها فقط في الحالات الآتية:', 'We never sell or rent your data. We disclose it only:'),
+    U(['لفريق الإدارة المصرّح له، لغرض تشغيل الخدمة (مراجعة الطلبات، الدعم، منح الوصول، إلغاء الشهادات).', 'To authorised admin staff, to run the service (reviewing orders, support, granting access, revoking certificates).'], ['لمزودي البنية التقنية المذكورين أعلاه بالقدر اللازم لعملهم.', 'To the infrastructure providers listed above, as far as needed for them to operate.'], ['للجهات القضائية أو الرقابية المصرية المختصة بموجب أمر أو التزام قانوني.', 'To competent Egyptian judicial or regulatory authorities under an order or legal obligation.'], ['عند اندماج أو نقل ملكية الخدمة، مع إبلاغك وبنفس مستوى الحماية.', 'In a merger or transfer of the service, with notice to you and the same level of protection.'])]],
+  [_l('الشهادات والتحقق العلني', 'Certificates and public verification'), [
+    P('كل شهادة لها كود فريد ورابط تحقق عام (#cert-الكود). يعرض الرابط لأي شخص يملكه: اسمك وعنوان الكورس وتاريخ الإصدار وحالة الصلاحية، ولا يعرض بريدك أو هاتفك. شاركه فقط مع من تريد إثبات إنجازك أمامه. يمكنك طلب إلغاء شهادتك بمراسلتنا.', 'Each certificate has a unique code and a public verification link (#cert-CODE). Anyone with the link sees your name, the course title, issue date and validity, but not your email or phone. Share it only with people you want to prove your achievement to. You can ask us to revoke your certificate by contacting us.')]],
+  [_l('الإحالة والمشاركة بالروابط', 'Referrals and link sharing'), [
+    P('عند مشاركتك رابط مقال أو دورة أو محاضرة أو مسار أو مشروع من الموقع، يُضاف إلى الرابط رمز إحالتك (?ref=SRM-…) وهو معرّفك العام الذي لا يكشف اسمك أو بياناتك. وعند فتح شخص آخر لرابطك وإنشائه حسابًا نسجّل أنك أحلته. يمكنك مشاركة الروابط بدون الرمز بحذفه يدويًا.', 'When you share a link to an article, course, lecture, track or project, your referral code (?ref=SRM-…) is appended. It is your public identifier and reveals neither your name nor your data. If someone opens your link and signs up, we record that you referred them. You can share links without the code by deleting it manually.')]],
+  [_l('مدة الاحتفاظ بالبيانات', 'Data retention'), [
+    U(['بيانات الحساب والتقدّم: طوال بقاء حسابك، وتُحذف عند طلبك حذف الحساب.', 'Account and progress data: while your account exists; deleted when you ask us to delete the account.'], ['سجلات الطلبات والإيصالات: نحتفظ بها للمدة اللازمة للمحاسبة والنزاعات والالتزامات القانونية (حتى 5 سنوات).', 'Order and receipt records: kept as long as needed for accounting, disputes and legal duties (up to 5 years).'], ['الرسائل وطلبات عروض الأسعار: حتى 24 شهرًا من آخر تواصل.', 'Messages and quote requests: up to 24 months after last contact.'], ['النشرة البريدية: حتى إلغاء اشتراكك.', 'Newsletter: until you unsubscribe.'], ['الشهادات: تبقى صالحة للتحقق ما لم تُلغَ، وقد نحتفظ بسجل الإصدار.', 'Certificates: remain verifiable unless revoked; we may keep an issuance record.'])]],
+  [_l('كيف نحمي بياناتك', 'How we protect your data'), [
+    U(['اتصال مشفّر (HTTPS) وتخزين على بنية Google Cloud.', 'Encrypted connections (HTTPS) and storage on Google Cloud infrastructure.'], ['قواعد أمان صارمة في قاعدة البيانات: لا يقرأ بياناتك أحد غيرك والمشرف، ولا يستطيع المستخدم تأكيد دفعته بنفسه.', 'Strict database security rules: nobody but you and the admin can read your data, and a user cannot confirm their own payment.'], ['لوحة إدارة منفصلة بلا تسجيل حسابات، ومقصورة على حساب مشرف موثّق.', 'A separate admin panel with no sign-up, limited to a verified admin account.'], ['حماية للمحتوى من النسخ والتحميل العادي، وتحقق من المدخلات وتنقية المحتوى المعروض.', 'Protection of content against ordinary copying and downloading, input validation and sanitised rendering.'], ['ننبّهك: لا يوجد نظام آمن بنسبة 100%. حافظ على سرية كلمة مرورك وسجّل الخروج من الأجهزة المشتركة، وأبلغنا فورًا بأي اختراق مشتبه به.', 'Note: no system is 100% secure. Keep your password private, sign out on shared devices, and tell us immediately about any suspected breach.'])]],
+  [_l('حقوقك', 'Your rights'), [
+    P('وفق قانون حماية البيانات الشخصية رقم 151 لسنة 2020 يحق لك:', 'Under Personal Data Protection Law No. 151 of 2020 you have the right to:'),
+    U(['معرفة البيانات التي نحتفظ بها عنك والاطلاع عليها والحصول على نسخة منها.', 'Know and access the data we hold about you and get a copy.'], ['تصحيح بياناتك أو تحديثها (يمكنك تعديل أغلبها من صفحة حسابك).', 'Correct or update your data (most can be edited from your account page).'], ['طلب حذف بياناتك أو إغلاق حسابك، مع مراعاة ما يلزم الاحتفاظ به قانونًا.', 'Ask us to delete your data or close your account, subject to what we must keep by law.'], ['سحب موافقتك على التحليلات في أي وقت من «إعدادات الكوكيز».', 'Withdraw your analytics consent at any time from "Cookie settings".'], ['الاعتراض على المعالجة أو تقييدها في الحدود التي يقرّها القانون.', 'Object to or restrict processing within the limits the law allows.'], ['تقديم شكوى إلى مركز حماية البيانات الشخصية في مصر.', 'Lodge a complaint with Egypt\'s Personal Data Protection Centre.']),
+    P('لممارسة أي حق راسلنا على contact@sarmad.qd.je من البريد المسجّل في حسابك، وسنرد خلال 30 يومًا كحد أقصى. قد نطلب إثبات هويتك حمايةً لبياناتك.', 'To exercise any right email contact@sarmad.qd.je from the address registered on your account; we will reply within 30 days at most. We may ask you to verify your identity to protect your data.')]],
+  [_l('الأطفال والقُصّر', 'Children and minors'), [
+    P('الخدمات التعليمية متاحة لمن هم دون 18 عامًا بعلم وليّ الأمر وموافقته. لا نجمع عمدًا بيانات طفل دون موافقة وليّه، فإن علمنا بذلك حذفناها. لوليّ الأمر مراسلتنا لمراجعة بيانات ابنه أو حذفها.', 'The learning services are open to people under 18 with the knowledge and consent of a parent or guardian. We do not knowingly collect a child\'s data without guardian consent, and will delete it if we learn we have. A guardian may contact us to review or delete their child\'s data.')]],
+  [_l('نقل البيانات خارج مصر', 'Transfers outside Egypt'), [
+    P('تُخزَّن بياناتك على خوادم Google، وقد تقع خارج مصر. نعتمد على مزوّد يطبّق ضمانات أمنية معتبرة، وننقل أقل قدر لازم من البيانات.', 'Your data is stored on Google servers which may be outside Egypt. We rely on a provider that applies recognised security safeguards and transfer only the minimum necessary data.')]],
+  [_l('الإخطار بالاختراق', 'Breach notification'), [
+    P('إذا وقع اختراق لبياناتك الشخصية يُرجَّح أن يسبب ضررًا لك، فسنبلغ الجهة المختصة وإياك دون إبطاء غير مبرّر ونوضّح ما حدث وما نفعله وما عليك فعله.', 'If a personal-data breach occurs that is likely to harm you, we will notify the competent authority and you without undue delay, explaining what happened, what we are doing and what you should do.')]],
+  [_l('تغييرات على السياسة', 'Changes to this policy'), [
+    P('قد نحدّث هذه السياسة. سنغيّر تاريخ «آخر تحديث» أعلاها، وللتغييرات الجوهرية سنضع إشعارًا في الموقع. استمرارك في الاستخدام بعد التحديث يعني قبولك له.', 'We may update this policy. We will change the "last updated" date above and, for material changes, post a notice on the site. Continued use after an update means you accept it.')]],
+  [_l('تواصل معنا', 'Contact us'), [
+    P('لأي سؤال أو طلب يخص الخصوصية: contact@sarmad.qd.je', 'For any privacy question or request: contact@sarmad.qd.je')]]
+];
+
+const LEGAL_TERMS = [
+  [_l('القبول والتعريفات', 'Acceptance and definitions'), [
+    P('تحكم هذه الشروط استخدامك لموقع «سرمد» للتصميم البرمجي وبواباته. بدخولك الموقع أو إنشائك حسابًا أو شرائك أي خدمة فأنت توافق عليها وعلى سياسة الخصوصية. إن لم توافق فتوقف عن الاستخدام.', 'These terms govern your use of the Sarmad Software Design site and portals. By entering the site, creating an account or buying anything you agree to them and to the Privacy Policy. If you do not agree, stop using it.'),
+    U(['«الخدمات»: الموقع، وسرمد بلاتفورم، وسرمد ليرننج، وبوابة تم، والتطبيقات، وخدمات التصميم والبرمجة.', '"Services": the site, Sarmad Platform, Sarmad Learning, the Tam gateway, the apps, and design and development services.'], ['«المحتوى»: النصوص والدروس والفيديوهات والصوتيات والملفات والصور والاختبارات والشهادات والشيفرات.', '"Content": text, lessons, videos, audio, files, images, tests, certificates and code.'], ['«أنت»: كل من يستخدم الخدمات أو يملك حسابًا.', '"You": anyone using the services or holding an account.'])]],
+  [_l('الأهلية', 'Eligibility'), [
+    P('يجب أن تكون بالغًا 18 عامًا فأكثر لإتمام عمليات الشراء. ومن هم أقل من ذلك يستخدمون الخدمات التعليمية بعلم وليّ الأمر وتحت مسؤوليته، وهو من يجري الدفع.', 'You must be 18 or older to make purchases. Younger users use the learning services with the knowledge and under the responsibility of a parent or guardian, who makes any payment.')]],
+  [_l('الحساب والمعرّف الفريد', 'Account and unique ID'), [
+    U(['حساب واحد لكل شخص، ويُشترط رقم هاتف مصري صحيح (+20) وبيانات صحيحة ومحدّثة. يجوز استخدام الحساب نفسه في سرمد بلاتفورم وسرمد ليرننج وتم.', 'One account per person, with a valid Egyptian phone (+20) and accurate, up-to-date details. The same account works across Sarmad Platform, Sarmad Learning and Tam.'], ['يُمنح كل مستخدم معرّفًا فريدًا (SRM-XXXXXXXX) لا يتغير ولا يُنقل.', 'Each user gets a unique ID (SRM-XXXXXXXX) that cannot be changed or transferred.'], ['أنت مسؤول عن سرية كلمة المرور وعن كل نشاط يتم من حسابك. أبلغنا فورًا عند الاشتباه في استخدام غير مصرّح به.', 'You are responsible for keeping your password secret and for all activity on your account. Tell us immediately if you suspect unauthorised use.'], ['لا يجوز بيع الحساب أو تأجيره أو مشاركته، والوصول للدورات المدفوعة شخصي.', 'You may not sell, rent or share your account; access to paid courses is personal.'])]],
+  [_l('الاستخدام المقبول', 'Acceptable use'), [
+    P('تتعهد بعدم:', 'You agree not to:'),
+    U(['محاولة اختراق الخدمات أو الالتفاف على الحماية أو فحصها بحثًا عن ثغرات دون إذن كتابي، أو تعطيلها أو إرهاقها بطلبات آلية.', 'Attempt to hack the services, bypass protections or probe for vulnerabilities without written permission, or disrupt or overload them with automated requests.'], ['استخدام برامج للسحب الآلي (scraping) أو التسجيل أو التحميل المنهجي للمحتوى.', 'Use scrapers, recorders or systematic downloading of content.'], ['رفع إيصالات مزوّرة أو معدّلة أو إدخال بيانات كاذبة أو انتحال شخصية أخرى.', 'Upload forged or altered receipts, give false data or impersonate others.'], ['نشر محتوى مخالف للقانون أو مسيء أو ضار أو يمسّ حقوق الآخرين.', 'Post unlawful, abusive, harmful content or content infringing others\' rights.'], ['إساءة استخدام أكواد الخصم أو الإحالات أو إنشاء حسابات وهمية للاستفادة منها.', 'Abuse discount codes or referrals, or create fake accounts to benefit from them.'], ['استخدام ما تتعلمه من الأمن السيبراني ضد أي نظام لا تملكه أو لا تملك إذنًا باختباره. التدريب يتم في بيئات مصرّح بها فقط.', 'Use what you learn in cybersecurity against any system you do not own or lack permission to test. Practice only in authorised environments.']),
+    P('نص قانون مكافحة جرائم تقنية المعلومات رقم 175 لسنة 2018 على عقوبات للاعتداء على الأنظمة والبيانات، وتتحمل وحدك المسؤولية القانونية عن إساءتك.', 'Egypt\'s Anti-Cybercrime Law No. 175 of 2018 sets penalties for attacks on systems and data, and you alone bear legal responsibility for misuse.')]],
+  [_l('الملكية الفكرية وحماية المحتوى', 'Intellectual property and content protection'), [
+    P('جميع حقوق الخدمات والمحتوى وتصميمها وشعاراتها وخطوطها وشيفراتها ملك لسرمد أو لمرخّصيها، ومحمية بقانون حماية حقوق الملكية الفكرية المصري رقم 82 لسنة 2002. نمنحك ترخيصًا شخصيًا محدودًا غير حصري وغير قابل للنقل لمشاهدة المحتوى الذي حصلت عليه لأغراض تعلّمك الشخصي فقط.', 'All rights in the services and Content, their design, logos, fonts and code belong to Sarmad or its licensors and are protected by Egypt\'s Intellectual Property Law No. 82 of 2002. We grant you a limited, non-exclusive, non-transferable personal licence to view the Content you have access to for your own learning only.'),
+    P('يُمنع نسخ المحتوى أو تحميله أو تسجيله أو إعادة نشره أو بيعه أو مشاركته مع غير المشتركين، أو إزالة علامات الملكية، أو الالتفاف على وسائل الحماية (منع التحديد والنسخ والتحميل والطباعة وقفل المشغّل). نحتفظ بحق تعليق الحساب واتخاذ الإجراءات القانونية عند المخالفة.', 'You may not copy, download, record, republish, sell or share Content with non-subscribers, remove ownership notices, or circumvent protection measures (text-selection, copy, download and print blocking, player locking). We may suspend the account and take legal action on breach.'),
+    P('شيفرات الأمثلة التي تكتبها أنت في مهامك تبقى لك.', 'Code you write yourself in your tasks remains yours.')]],
+  [_l('ما تكتبه وترسله إلينا', 'What you write and send us'), [
+    P('تمنحنا ترخيصًا محدودًا لاستخدام ما ترسله (رسائل، طلبات، إجابات مهام) للغرض الذي أرسلته من أجله فقط، وتضمن أنك تملك حق إرساله. لا ننشر رسائلك ولا إجاباتك علنًا دون إذنك.', 'You grant us a limited licence to use what you send (messages, requests, task answers) only for the purpose you sent it for, and you warrant you have the right to send it. We do not publish your messages or answers publicly without your permission.')]],
+  [_l('الدورات والمسارات والاختبارات', 'Courses, tracks and tests'), [
+    U(['المسار يضم دورات، والدورة تضم محاضرات، وللمحاضرة حتى 15 مهمة. نعرض مدة وصعوبة تقريبية قد تختلف من شخص لآخر.', 'A track contains courses, a course contains lectures, and a lecture has up to 15 tasks. Durations and difficulty shown are approximate and vary between people.'], ['اختبارات تحديد المستوى (البرمجة 20 سؤالًا، والأمن السيبراني والشبكات 23 سؤالًا) إرشادية وغرضها اقتراح نقطة بداية، وليست شهادة رسمية.', 'Placement tests (programming 20 questions, cybersecurity/networking 23 questions) are advisory, meant to suggest a starting point, and are not an official qualification.'], ['قد نضيف المحتوى أو نعدّله أو نخفيه أو نحدّثه. وعند إيقاف كورس مدفوع نهائيًا سنمنحك بديلًا مناسبًا أو نعيد المبلغ عن المدة غير المستفاد منها.', 'We may add, edit, hide or update content. If a paid course is permanently discontinued we will give you a suitable alternative or refund the unused portion.'], ['الدورات المعلَّمة «قريبًا» غير متاحة للشراء بعد.', 'Courses marked "Coming soon" cannot be purchased yet.'])]],
+  [_l('الباقات والأسعار', 'Plans and prices'), [
+    U(['الشراء لكل دورة على حدة، أو عبر باقة Plus (3 أشهر، 800 جنيه) أو Pro (6 أشهر، 1200 جنيه) تفتح الدورات المدفوعة طوال مدتها.', 'Buy per course, or via Plus (3 months, EGP 800) or Pro (6 months, EGP 1200), which open the paid courses for their duration.'], ['تُحسب مدة الباقة من تاريخ تأكيد الدفع، وتنتهي تلقائيًا دون تجديد تلقائي. لا نسحب منك أي مبلغ تلقائيًا.', 'A plan\'s term starts from the payment-confirmation date and ends automatically with no auto-renewal. We never charge you automatically.'], ['الأسعار بالجنيه المصري وقد تتغير للمشتريات المستقبلية، ولا تتغير للطلبات المؤكدة سابقًا. نعرض السعر النهائي قبل الدفع.', 'Prices are in Egyptian pounds and may change for future purchases, never for previously confirmed orders. The final price is shown before you pay.'])]],
+  [_l('الدفع عبر بوابة «تم»', 'Payment through the "Tam" gateway'), [
+    P('«تم» بوابة سرمد الخاصة لمشاريعها فقط، ولا تفرض رسوم ربط. الدفع الحالي بالتحويل البنكي (IPAN):', '"Tam" is Sarmad\'s own gateway for its own projects only, with no integration fee. Payment is currently by bank transfer (IPAN):'),
+    U(['تحوّل المبلغ المعروض ثم ترفع صورة واضحة للإيصال، فيُنشأ طلب بحالة «بانتظار المراجعة».', 'You transfer the displayed amount then upload a clear receipt image, creating an order with status "pending".'], ['لا يُفتح الوصول المدفوع إلا بعد أن يراجع المشرف الإيصال ويؤكد الطلب، وقد يستغرق ذلك مدة معقولة. وتظهر علامة الصح بعد التأكيد.', 'Paid access opens only after the admin reviews the receipt and confirms the order, which may take a reasonable time. A checkmark shows after confirmation.'], ['نرفض الطلب إن كان المبلغ ناقصًا أو الإيصال غير واضح أو لا يطابق الحساب أو مشكوكًا في صحته، وتُخطَر بذلك.', 'We reject an order if the amount is short, the receipt is unclear, does not match the account or is suspected to be false, and you will be notified.'], ['أنت مسؤول عن صحة التحويل ورسومه البنكية. تأكّد من اسم المستفيد قبل التحويل.', 'You are responsible for the accuracy of the transfer and any bank fees. Verify the beneficiary name before transferring.'], ['تقديم إيصال مزوّر مخالفة جسيمة تُوجب إغلاق الحساب والمساءلة القانونية.', 'Submitting a forged receipt is a serious breach leading to account closure and legal liability.'])]],
+  [_l('أكواد الخصم والعروض', 'Discount codes and offers'), [
+    U(['الكود يمنح خصمًا بنسبة أو مبلغ ثابت، وقد يرتبط بكورس أو باقة معيّنة وبتاريخ انتهاء. ولا يُصرف نقدًا.', 'A code grants a percentage or fixed discount, may be tied to a specific course or plan and an expiry date, and has no cash value.'], ['يخضع الخصم لمراجعة المشرف مع الإيصال، وقد نرفض الخصم أو الطلب عند الاستخدام الخاطئ أو إساءة استخدام الكود أو عدم مطابقة المبلغ المحوَّل للمبلغ بعد الخصم.', 'The discount is checked by the admin against the receipt, and we may refuse the discount or order for wrong use, abuse, or if the transferred amount does not match the discounted amount.'], ['نحتفظ بحق إيقاف أي كود في أي وقت دون أثر رجعي على الطلبات المؤكدة.', 'We may disable any code at any time without retroactive effect on confirmed orders.'])]],
+  [_l('الإلغاء والاسترداد', 'Cancellation and refunds'), [
+    U(['وفق قانون حماية المستهلك رقم 181 لسنة 2018 وطبيعة المحتوى الرقمي الذي يُتاح فور فتحه، يحق لك طلب الاسترداد خلال 7 أيام من تأكيد الدفع بشرط ألا تتجاوز نسبة ما أنجزته من الكورس أو الباقة 20%.', 'In line with Consumer Protection Law No. 181 of 2018 and the nature of digital content that is available as soon as it is opened, you may request a refund within 7 days of payment confirmation provided your progress in the course or plan does not exceed 20%.'], ['يُستثنى من الاسترداد: ما صدرت عنه شهادة، والحسابات المغلقة لمخالفة الشروط، والمنح المجانية.', 'Excluded from refunds: anything for which a certificate was issued, accounts closed for breach of terms, and free grants.'], ['يُرد المبلغ بذات وسيلة الدفع المعتادة خلال 14 يوم عمل من قبول الطلب، بعد خصم رسوم التحويل البنكي إن وُجدت.', 'Refunds are made through the same usual payment method within 14 business days of acceptance, less any bank-transfer fees.'], ['لطلب الاسترداد راسلنا على contact@sarmad.qd.je مع مرجع الطلب (TAM-…).', 'To request a refund email contact@sarmad.qd.je with your order reference (TAM-…).'])]],
+  [_l('الشهادات', 'Certificates'), [
+    U(['تُصدر الشهادة بعد إتمامك الكورس بنسبة 100% وبعد مراجعة فريق سرمد واعتمادها وتوقيعها من المدير؛ فلا تظهر قبل الاعتماد. وتحمل كودًا فريدًا ورمز QR ورابط تحقق عام.', 'A certificate is issued after you complete a course at 100% and carries a unique code and a public verification link.'], ['هي شهادة إتمام من سرمد ليرننج وليست مؤهلًا أكاديميًا ولا معتمدة من جهة حكومية.', 'It is a completion certificate from Sarmad Learning, not an academic qualification nor government-accredited.'], ['يحق لنا إلغاء الشهادة عند ثبوت الغش أو المخالفة أو الإصدار بالخطأ، وتظهر عندها «ملغاة» في صفحة التحقق.', 'We may revoke a certificate on proof of cheating, breach or issuance by mistake, after which the verification page shows "revoked".'], ['يُمنع التلاعب بالشهادة أو تقديمها على غير حقيقتها.', 'Altering a certificate or misrepresenting it is prohibited.'])]],
+  [_l('سرمد بلاتفورم (المدونة)', 'Sarmad Platform (blog)'), [
+    P('المقالات للمعلومات والتثقيف العام ولا تُعد استشارة مهنية أو قانونية. قد تحتوي على روابط أو أمثلة تقنية؛ نبذل جهدنا للدقة ولا نضمن خلوها من الخطأ أو مناسبتها لحالتك. يمكنك مشاركة روابط المقالات، لكن لا يجوز نسخ نصوصها أو إعادة نشرها دون إذن.', 'Articles are for general information and education and are not professional or legal advice. They may contain links or technical examples; we strive for accuracy but do not guarantee they are error-free or suitable for your case. You may share article links, but may not copy or republish their text without permission.')]],
+  [_l('التطبيقات وروابط التحميل', 'Apps and download links'), [
+    P('قد توفّر صفحات التطبيقات روابط للتحميل أو للنسخ الإلكترونية. تُقدَّم «كما هي»، وقد تخضع لشروط ترخيص خاصة بها تظهر معها. حمّل التطبيقات من الروابط الرسمية في الموقع فقط.', 'App pages may offer download or web-version links. They are provided "as is" and may have their own licence terms shown with them. Download apps only from the official links on the site.')]],
+  [_l('خدمات التصميم والبرمجة للعملاء', 'Design and development services for clients'), [
+    P('طلب عرض السعر لا يُنشئ عقدًا. تُحدَّد التفاصيل (النطاق، السعر، المدة، التسليم، الدفعات، الملكية) في عرض مكتوب أو عقد منفصل تقبله أنت، وتسري شروطه أولًا على أي تعارض مع هذه الشروط فيما يخص ذلك المشروع.', 'A quote request does not create a contract. Details (scope, price, timeline, delivery, instalments, ownership) are set in a written offer or separate contract you accept, whose terms prevail over these in case of conflict for that project.')]],
+  [_l('الروابط والمحتوى الخارجي', 'Links and third-party content'), [
+    P('قد تحتوي الخدمات على روابط لمواقع أخرى (مثل شبكات التواصل ومواقع التحميل). لا نتحكم فيها ولا نتحمل مسؤولية محتواها أو سياساتها.', 'The services may link to other sites (such as social networks and download sites). We do not control them and are not responsible for their content or policies.')]],
+  [_l('التوافر والتعديلات', 'Availability and changes'), [
+    P('نسعى لإتاحة الخدمات باستمرار لكننا لا نضمن عملها دون انقطاع أو أخطاء، وقد نوقفها مؤقتًا للصيانة أو لأسباب خارجة عن إرادتنا (كانقطاع مزوّد الخدمة أو الإنترنت). قد نعدّل الميزات أو نضيف أو نزيل بعضها مع مراعاة ما دفعته.', 'We aim to keep the services available but do not guarantee uninterrupted or error-free operation, and may suspend them for maintenance or reasons beyond our control (such as a provider or internet outage). We may change, add or remove features, with regard to what you have paid for.')]],
+  [_l('إخلاء المسؤولية', 'Disclaimer'), [
+    P('تُقدَّم الخدمات «كما هي» و«حسب توافرها». لا نضمن نتائج تعليمية أو وظيفية محددة، ولا أن المحتوى يناسب أهدافك، ولا خلوه التام من الأخطاء، وذلك في الحدود التي يسمح بها القانون.', 'The services are provided "as is" and "as available". To the extent the law permits, we do not guarantee any specific learning or career outcome, that the Content fits your goals, or that it is entirely error-free.')]],
+  [_l('حدود المسؤولية', 'Limitation of liability'), [
+    P('في الحدود التي يسمح بها القانون، لا تتحمل سرمد مسؤولية الأضرار غير المباشرة أو التبعية أو الخسائر في الأرباح أو البيانات الناتجة عن استخدام الخدمات أو العجز عنه، ويقتصر أقصى ما نتحمله في أي حال على المبلغ الذي دفعته لنا عن الخدمة محل النزاع خلال الـ 12 شهرًا السابقة. لا يُستبعد ما لا يجوز استبعاده قانونًا، ومنه المسؤولية عن الغش أو الخطأ الجسيم، ولا تخلّ هذه الفقرة بحقوقك كمستهلك.', 'To the extent the law permits, Sarmad is not liable for indirect or consequential damages or loss of profit or data arising from use of, or inability to use, the services, and our total liability in any case is limited to the amount you paid us for the service in dispute in the preceding 12 months. Nothing excludes what cannot lawfully be excluded, including liability for fraud or gross negligence, and this clause does not affect your consumer rights.')]],
+  [_l('التعويض', 'Indemnity'), [
+    P('تتعهد بتعويض سرمد عن أي مطالبات أو خسائر تنشأ عن مخالفتك لهذه الشروط أو للقانون أو لحقوق الآخرين عبر استخدامك للخدمات.', 'You agree to indemnify Sarmad against claims or losses arising from your breach of these terms, the law or others\' rights through your use of the services.')]],
+  [_l('تعليق الحساب وإنهاؤه', 'Suspension and termination'), [
+    P('يحق لنا تعليق حسابك أو إغلاقه فورًا عند مخالفة هذه الشروط أو الاشتباه في احتيال أو إساءة استخدام أو تهديد لأمن الخدمة، مع إخطارك متى أمكن. ويحق لك إغلاق حسابك في أي وقت بطلب منك. وتبقى بنود الملكية الفكرية والمسؤولية والتعويض والقانون الواجب التطبيق سارية بعد الإنهاء.', 'We may suspend or close your account immediately for breaching these terms or suspected fraud, abuse or threat to the service, notifying you where possible. You may close your account any time on request. The intellectual property, liability, indemnity and governing-law clauses survive termination.')]],
+  [_l('الإبلاغ عن ثغرة أمنية', 'Reporting a security issue'), [
+    P('إن وجدت ثغرة فأبلغنا على contact@sarmad.qd.je بوصف كافٍ دون استغلالها أو الوصول لبيانات الآخرين أو إتلافها، ولا تنشرها قبل أن نصلحها. نقدّر الإبلاغ المسؤول ولن نلاحق من يلتزم بهذه الضوابط بحسن نية.', 'If you find a vulnerability, report it to contact@sarmad.qd.je with enough detail, without exploiting it, accessing or damaging others\' data, and do not publish it before we fix it. We value responsible disclosure and will not pursue those acting in good faith within these rules.')]],
+  [_l('الإشعارات والتواصل', 'Notices and communication'), [
+    P('نراسلك على البريد أو الهاتف المسجّلين في حسابك أو عبر إشعار داخل الموقع، وتُعد الرسالة مستلمة بإرسالها. مسؤوليتك تحديث بياناتك. ولا نرسل رسائل ترويجية إلا باشتراكك في النشرة، ويمكنك إلغاؤه في أي وقت.', 'We contact you at the email or phone on your account or via an on-site notice, and a message is deemed received when sent. Keeping your details current is your responsibility. We send promotional messages only if you subscribe to the newsletter, which you can cancel any time.')]],
+  [_l('القانون الواجب التطبيق وحل النزاعات', 'Governing law and disputes'), [
+    P('تخضع هذه الشروط لقوانين جمهورية مصر العربية. نشجّع حل أي خلاف وديًا بمراسلتنا أولًا، فإن تعذّر فيختص القضاء المصري المختص، دون الإخلال بحقك كمستهلك في اللجوء إلى جهاز حماية المستهلك أو الجهة المختصة.', 'These terms are governed by the laws of the Arab Republic of Egypt. We encourage resolving any dispute amicably by contacting us first; failing that, the competent Egyptian courts have jurisdiction, without prejudice to your right as a consumer to approach the Consumer Protection Agency or other competent body.')]],
+  [_l('أحكام عامة', 'General provisions'), [
+    U(['اتفاق كامل: هذه الشروط وسياسة الخصوصية هي الاتفاق الكامل بيننا في شأن الخدمات.', 'Entire agreement: these terms and the Privacy Policy are the whole agreement between us about the services.'], ['قابلية الفصل: إن تبيّن بطلان بند فبقية البنود سارية.', 'Severability: if a clause is invalid, the rest remain in force.'], ['عدم التنازل: عدم ممارستنا لحق لا يعني التنازل عنه.', 'No waiver: not exercising a right does not mean waiving it.'], ['التنازل عن الحقوق: لا يجوز لك التنازل عن حقوقك أو التزاماتك للغير دون موافقتنا، ويجوز لنا ذلك عند نقل الخدمة.', 'Assignment: you may not assign your rights or duties without our consent; we may on a transfer of the service.'], ['اللغة: عند اختلاف النسختين العربية والإنجليزية يُعتد بالنسخة العربية.', 'Language: if the Arabic and English versions differ, the Arabic prevails.'], ['التعديل: قد نعدّل هذه الشروط، ونغيّر تاريخ «آخر تحديث»، وللتغييرات الجوهرية نضع إشعارًا. باستمرارك بعد ذلك تقبل التعديل.', 'Changes: we may amend these terms, change the "last updated" date and post a notice for material changes. Continued use means you accept them.'])]],
+  [_l('تواصل معنا', 'Contact us'), [
+    P('لأي سؤال عن هذه الشروط: contact@sarmad.qd.je', 'For any question about these terms: contact@sarmad.qd.je')]]
+];
+
+/* additions: aid program, ID documents, invoices, uploaded media, admin-created accounts */
+LEGAL_PRIVACY.splice(-1, 0,
+  [_l('برنامج «نساعد بعض» والمستندات الشخصية', 'The "We help each other" programme and ID documents'), [
+    P('لدراسة طلب الدعم نجمع بيانات أوسع: الاسم الرباعي، الرقم القومي، العنوان، بيانات الأسرة والدخل، سبب الطلب، وصورتي وجه وظهر كارنيه الجامعة (أو بطاقة الرقم القومي إن لم يتوفر الكارنيه).', 'To review a support request we collect more data: full name, national ID number, address, family and income details, the reason, and photos of the front and back of the university ID (or the national ID card if there is no university ID).'),
+    U(['تُلتقط الصور عبر الماسح داخل الموقع أو تُرفع منك، وتُضغط وتُحفظ في قاعدة بيانات محمية ولا تُنشر على أي رابط عام.', 'Images are captured by the in-site scanner or uploaded by you, compressed and stored in a protected database, never on a public link.'], ['لا يطّلع عليها إلا المشرف المختص، وتُستخدم فقط لدراسة الطلب وللتحقق من هويتك وصفتك الدراسية.', 'Only the responsible admin can see them, and they are used only to review the request and verify your identity and student status.'], ['يُعرض رقمك القومي مخفيًا بعد التسجيل، ويُستبدل بنسخة مخفية نهائيًا عند اتخاذ القرار في الطلب (قبول أو رفض).', 'Your national ID number is shown masked after registration and is permanently replaced by a masked copy when the request is decided (accepted or rejected).'], ['تُحذف صور الهوية بعد انتهاء دراسة الطلب وإنشاء الحساب، ولك طلب حذفها فورًا بمراسلتنا.', 'ID images are deleted once the request is processed and the account is created, and you may ask us to delete them immediately.'], ['لا نستخدم هذه البيانات لأي غرض تسويقي، ولا نشاركها مع أي جهة.', 'We never use this data for marketing nor share it with anyone.']),
+    P('تقديم الطلب اختياري، ولا يؤثر قبوله أو رفضه على حقك في شراء الكورسات بشكل عادي.', 'Submitting a request is optional, and its acceptance or rejection does not affect your right to buy courses normally.')]],
+  [_l('الحسابات التي ينشئها الأدمن', 'Accounts created by the admin'), [
+    P('عند قبول طلب دعم قد ينشئ المشرف حسابًا لك بالبريد الذي كتبته، ويرسل Firebase رابط تفعيل لبريدك، ويصلك كلمة المرور المؤقتة من الفريق بوسيلة تواصل منفصلة. عند أول دخول يُلزمك الموقع بتأكيد بريدك وتغيير كلمة المرور؛ ولا يستطيع الفريق رؤية كلمة المرور الجديدة.', 'When a support request is accepted the admin may create an account for you with the email you wrote; Firebase sends an activation link to your email and the team sends you the temporary password through a separate channel. On first sign-in the site requires you to confirm your email and change the password; the team cannot see your new password.')]],
+  [_l('الفواتير والتحقق منها', 'Invoices and their verification'), [
+    P('عند تأكيد دفعك تُنشأ فاتورة إلكترونية برقم فريد ورمز QR يفتح صفحة تحقق عامة تعرض: رقم الفاتورة والبند والمبلغ وتاريخ الدفع واسمك الأول مع أول حرف من اسمك الثاني فقط، ولا تعرض بريدك أو هاتفك.', 'When your payment is confirmed an electronic invoice is created with a unique number and a QR code that opens a public verification page showing: the invoice number, item, amount, payment date and only your first name plus the initial of your second name; it never shows your email or phone.')]],
+  [_l('الملفات المرفوعة من الإدارة', 'Files uploaded by the admin'), [
+    P('قد تُخزَّن دروس الفيديو والصوت وملفات PDF في قاعدة بياناتنا على Firebase، ولا تُتاح إلا للمستخدمين المسجلين. وبعض الملفات الكبيرة تُعرض عبر روابط خارجية بحسب اختيار الإدارة.', 'Video, audio and PDF lessons may be stored in our Firebase database and are available only to signed-in users. Some large files are served through external links at the admin\'s choice.')]]
+);
+LEGAL_TERMS.splice(-1, 0,
+  [_l('برنامج «نساعد بعض»', 'The "We help each other" programme'), [
+    U(['البرنامج دعم اختياري لغير القادرين، ويخضع قبوله لتقدير فريق سرمد وفق البيانات والمستندات المقدمة، ولا يُعد التقديم التزامًا بالقبول.', 'The programme is optional support for those who cannot afford fees; acceptance is at the Sarmad team\'s discretion based on the data and documents provided, and applying is no commitment to accept.'], ['تتعهد بصحة كل البيانات والمستندات. ويُلغى الدعم ويُغلق الحساب عند اكتشاف تزوير أو معلومات مضللة، مع حفظ حقنا القانوني.', 'You warrant that all data and documents are true. Support is cancelled and the account closed if forgery or misleading information is found, with our legal rights reserved.'], ['الدعم شخصي غير قابل للتحويل أو البيع، ويقتصر على الكورسات أو الباقة التي حددها الفريق.', 'Support is personal, non-transferable and not for resale, limited to the courses or plan the team specified.'], ['عند القبول قد ينشئ الأدمن حسابًا لك، ويلزمك تأكيد بريدك وتغيير كلمة المرور المؤقتة عند أول دخول، وتحافظ على سرية الحساب كما في بند الحساب.', 'On acceptance the admin may create an account for you; you must confirm your email and change the temporary password at first sign-in and keep the account confidential as in the Account clause.'], ['نحتفظ بحق تعديل البرنامج أو إيقافه في أي وقت دون أثر على من تم قبولهم سابقًا.', 'We may change or stop the programme at any time without affecting those already accepted.'])]],
+  [_l('الفواتير', 'Invoices'), [
+    P('تصدر الفاتورة الإلكترونية بعد تأكيد الدفع فقط، وتحمل رمز QR للتحقق. هي إثبات دفع لدى سرمد، ولا تُعد فاتورة ضريبية إلا إذا نصّت على ذلك صراحة. يُحتفظ بها في حسابك لمراجعتها وطباعتها.', 'The electronic invoice is issued only after payment confirmation and carries a verification QR code. It is proof of payment with Sarmad and is not a tax invoice unless it expressly says so. It stays in your account for review and printing.')]]
+);
+
+A.legalGo = el => { const t = document.getElementById(el.dataset.v); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+function vLegal(kind) {
+  const priv = kind === 'privacy', data = priv ? LEGAL_PRIVACY : LEGAL_TERMS, pre = priv ? 'pv' : 'tm';
+  const body = data.map(([h, items], i) => `<h2 id="${pre}${i + 1}" style="scroll-margin-top:90px">${i + 1}. ${L(h)}</h2>` + items.map(b => b.p ? `<p>${L(b.p)}</p>` : b.n ? `<h3 style="margin-top:14px">${L(b.n)}</h3>` : `<ul>${b.ul.map(x => `<li>${L(x)}</li>`).join('')}</ul>`).join('')).join('');
+  const toc = data.map(([h], i) => `<li><button type="button" class="linkbtn" data-act="legalGo" data-v="${pre}${i + 1}">${L(h)}</button></li>`).join('');
+  return pageHead(priv ? T('الخصوصية', 'Privacy') : T('الشروط', 'Terms'), priv ? T('سياسة الخصوصية', 'Privacy policy') : T('شروط الاستخدام', 'Terms of use'), T('آخر تحديث: ', 'Last updated: ') + L(LEGAL_DATE))
+    + `<section class="sec" style="padding-top:0"><div class="wrap"><div class="prose">
+      <div class="callout"><b>${T('ملخص سريع', 'Quick summary')}</b><p style="margin-top:6px">${priv ? T('نجمع الحد الأدنى من بياناتك لتشغيل حسابك ودوراتك ودفعاتك، لا نبيع بياناتك ولا نعرض إعلانات مستهدفة، والتحليلات لا تعمل إلا بموافقتك، ولك حق الاطلاع والتصحيح والحذف.', 'We collect the minimum data to run your account, courses and payments. We never sell your data or show targeted ads, analytics run only with your consent, and you can access, correct and delete your data.') : T('استخدم المنصة بشكل قانوني وشخصي، المحتوى محمي ولا يُنسخ أو يُشارك، الدفع بالتحويل ويُفتح الوصول بعد مراجعة الإيصال، الاسترداد خلال 7 أيام بشروط، والشهادات شهادات إتمام من سرمد.', 'Use the platform lawfully and personally; content is protected and may not be copied or shared; payment is by transfer and access opens after receipt review; refunds within 7 days under conditions; certificates are Sarmad completion certificates.')}</p></div>
+      <h2>${T('المحتويات', 'Contents')}</h2><ol class="legal-toc" style="columns:2;column-gap:28px">${toc}</ol>
+      ${body}
+      <div class="callout">${T('هذه الوثيقة صيغت بحسن نية لتعكس عمل الخدمات الحالي، وينبغي أن يراجعها محامٍ مرخّص قبل الإطلاق الرسمي، خاصة بنود الاسترداد والمدد والمسؤولية.', 'This document was drafted in good faith to reflect how the services currently work, and should be reviewed by a licensed lawyer before the official launch, especially the refund, retention-period and liability clauses.')}</div>
+    </div></div></section>`;
+}
+ROUTE.privacy = () => vLegal('privacy'); ROUTE.terms = () => vLegal('terms');
 
 </script>
 </body>
