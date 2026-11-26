@@ -3319,6 +3319,20 @@ Object.assign(A, { async aiRec() {
     out.textContent = j.ok ? j.a : (r.status === 429 ? T('وصلت للحد اليومي. جرّب غدًا.', 'Daily limit reached. Try tomorrow.') : T('المساعد غير متاح الآن.', 'Assistant unavailable now.'));
   } catch (e) { out.textContent = T('تعذّر الاتصال. جرّب لاحقًا.', 'Connection failed. Try later.'); }
 } });
+AFTER.push(r => { if (r.name !== 'learn') return; const v = $('#main .view'); if (!v || $('#ailes')) return;
+  v.insertAdjacentHTML('beforeend', `<section class="sec" id="ailes" style="padding-top:0"><div class="wrap"><div class="card stack" style="gap:10px"><b>${T('لم تفهم نقطة في هذا الدرس؟ اسأل المساعد', 'Stuck on this lesson? Ask the assistant')}</b><input id="ailq" maxlength="200" placeholder="${T('اكتب سؤالك عن الدرس', 'Type your question about the lesson')}" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:10px;font:inherit;background:var(--bg);color:inherit"><button class="btn" data-act="aiLesson">${T('اسأل', 'Ask')}</button><div id="aila" class="sm muted" style="white-space:pre-wrap" aria-live="polite"></div></div></div></section>`); });
+Object.assign(A, { async aiLesson() {
+  const q = (($('#ailq') || {}).value || '').trim(), out = $('#aila'), r0 = parse(); if (q.length < 3 || !out) return;
+  out.textContent = T('جارٍ التفكير...', 'Thinking...');
+  try {
+    const c = COURSES.find(x => x.id === r0.cid); let les = null;
+    ((c && c.modules) || []).forEach(m => (m.lessons || []).forEach(l => { if (l.id === r0.lid) les = l; }));
+    const ctx = (c ? 'الكورس: ' + L(c.t) + '. ' : '') + (les ? 'الدرس: ' + L(les.t) + '.' : '');
+    const r = await fetch('https://sarmad-bot.khaledahmedelbrbary80.workers.dev/ai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: q.slice(0, 200), c: ctx }) });
+    const j = await r.json();
+    out.textContent = j.ok ? j.a : (r.status === 429 ? T('وصلت للحد اليومي. جرّب غدًا.', 'Daily limit reached. Try tomorrow.') : T('المساعد غير متاح الآن.', 'Assistant unavailable now.'));
+  } catch (e) { out.textContent = T('تعذّر الاتصال. جرّب لاحقًا.', 'Connection failed. Try later.'); }
+} });
 AFTER.push(r => { if (r.name !== 'learn') { const el = $('#tm'); if (el) el.remove(); document.body.classList.remove('has-timer'); } });
 /* course reviews (admin-moderated) */
 A.revSend = async el => {
