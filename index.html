@@ -3307,6 +3307,18 @@ Object.assign(A, {
   tmReset() { TM.run = false; clearInterval(TM.iv); TM.left = (TM.mode === 'focus' ? 25 : 5) * 60; renderTimer(); },
   tmMode() { TM.mode = TM.mode === 'focus' ? 'break' : 'focus'; A.tmReset(); }
 });
+AFTER.push(r => { if (r.name !== 'learning') return; const v = $('#main .view'); if (!v || $('#airec')) return;
+  v.insertAdjacentHTML('afterbegin', `<section class="sec" id="airec" style="padding-bottom:0"><div class="wrap"><div class="card stack" style="gap:10px"><b>${T('لا تعرف من أين تبدأ؟ اسأل المساعد الذكي', 'Not sure where to start? Ask the smart assistant')}</b><input id="airq" maxlength="200" placeholder="${T('اكتب هدفك، مثال: أريد أن أصبح مطور مواقع', 'Type your goal, e.g. I want to become a web developer')}" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:10px;font:inherit;background:var(--bg);color:inherit"><button class="btn primary" data-act="aiRec">${T('اقترح لي كورس', 'Suggest a course')}</button><div id="aira" class="sm muted" style="white-space:pre-wrap" aria-live="polite"></div></div></div></section>`); });
+Object.assign(A, { async aiRec() {
+  const q = (($('#airq') || {}).value || '').trim(), out = $('#aira'); if (q.length < 3 || !out) return;
+  out.textContent = T('جارٍ التفكير...', 'Thinking...');
+  try {
+    const c = COURSES.filter(x => x.status !== 'soon').slice(0, 30).map(x => (x.t && (x.t.ar || x.t.en))).join('، ');
+    const r = await fetch('https://sarmad-bot.khaledahmedelbrbary80.workers.dev/ai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: 'هدفي: ' + q.slice(0, 200) + '. اقترح كورسًا أو اثنين من القائمة فقط مع سبب قصير.', c }) });
+    const j = await r.json();
+    out.textContent = j.ok ? j.a : (r.status === 429 ? T('وصلت للحد اليومي. جرّب غدًا.', 'Daily limit reached. Try tomorrow.') : T('المساعد غير متاح الآن.', 'Assistant unavailable now.'));
+  } catch (e) { out.textContent = T('تعذّر الاتصال. جرّب لاحقًا.', 'Connection failed. Try later.'); }
+} });
 AFTER.push(r => { if (r.name !== 'learn') { const el = $('#tm'); if (el) el.remove(); document.body.classList.remove('has-timer'); } });
 /* course reviews (admin-moderated) */
 A.revSend = async el => {
