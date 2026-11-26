@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="canonical" href="https://www.sarmad.qd.je/">
+<meta property="og:url" content="https://www.sarmad.qd.je/">
 <meta name="theme-color" content="#fbf7ec">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Sarmad"><meta property="og:title" content="سرمد Sarmad"><meta property="og:description" content="سرمد: تصميم برمجي، واجهات أمامية وخلفية، أمن سيبراني، وبوابة الدفع تم"><meta name="twitter:card" content="summary">
 <title>سرمد Sarmad</title>
@@ -1981,7 +1983,24 @@ async function drawPdf() {
 function authSide() {
   return `<div class="auth-side"><span class="logo" style="--lw:150px"></span><div class="stack"><h2 class="h2">${T('حساب واحد لكل بوابات سرمد', 'One account for every Sarmad portal')}</h2>${checks([T('سرمد بلاتفورم: احفظ مقالاتك', 'Sarmad Platform: save your articles'), T('سرمد ليرننج: كورساتك وتقدمك', 'Sarmad Learning: your courses and progress'), T('تم: مدفوعاتك وإيصالاتك', 'Tam: your payments and receipts')]).replace(/var\(--accent\)/g, 'var(--accent)')}</div><span class="mono" style="opacity:.6">sarmad id</span></div>`;
 }
-const googleBtn = k => `<button class="btn gbtn block" type="button" data-act="google" data-k="${k}"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.9-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>${T('المتابعة عبر جوجل', 'Continue with Google')}</span></button><div class="or"><span>${T('أو', 'or')}</span></div>`;
+const googleBtn0 = k => `<button class="btn gbtn block" type="button" data-act="google" data-k="${k}"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.9-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.9l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>${T('المتابعة عبر جوجل', 'Continue with Google')}</span></button><div class="or"><span>${T('أو', 'or')}</span></div>`;
+
+const TG_API = 'https://sarmad-bot.khaledahmedelbrbary80.workers.dev', TG_BOT = 'sarmad_site_bot';
+const googleBtn = k => googleBtn0(k) + `<button class="btn block" type="button" data-act="tgLogin" data-k="${k}" style="gap:8px">${icon('send2')} ${T('الدخول عبر تيليجرام', 'Continue with Telegram')}</button>`;
+Object.assign(DB, {
+  async tgSignIn(r) {
+    const em = r.email, pw = r.password;
+    try { await fbAuth.signInWithEmailAndPassword(em, pw); }
+    catch (e) {
+      if (!/user-not-found|invalid-credential|invalid-login/.test(e.code || '')) throw e;
+      const cred = await fbAuth.createUserWithEmailAndPassword(em, pw);
+      try { await cred.user.updateProfile({ displayName: (r.name || 'Telegram').slice(0, 60) }); } catch (x) { }
+    }
+    await ensureUserDoc(fbAuth.currentUser); return this.me();
+  }
+});
+let _tgPoll = 0;
+function tgClose() { _tgPoll++; const o = document.getElementById('tgov'); if (o) o.remove(); }
 const STAGES = () => [['primary', T('ابتدائي', 'Primary school')], ['prep', T('إعدادي', 'Preparatory school')], ['secondary', T('ثانوي', 'Secondary school')], ['university', T('جامعي', 'University')], ['graduate', T('خريج', 'Graduate')], ['other', T('آخر', 'Other')]];
 const yearOpts = (st, sel) => { const n = { primary: 6, prep: 3, secondary: 3, university: 6 }[st] || 0; return Array.from({ length: n }, (_, i) => `<option value="${i + 1}" ${+sel === i + 1 ? 'selected' : ''}>${st === 'university' ? T('الفرقة ', 'Year ') : T('الصف ', 'Grade ')}${i + 1}</option>`).join(''); };
 const instLabel = st => (st === 'university' || st === 'graduate' ? T('اسم الجامعة', 'University name') : T('اسم المدرسة', 'School name')) + ' *';
@@ -3476,6 +3495,27 @@ function vLegal(kind) {
 }
 ROUTE.privacy = () => vLegal('privacy'); ROUTE.terms = () => vLegal('terms');
 
+Object.assign(A, {
+  tgLogin(el) {
+    const k = el.dataset.k || 'main', A32 = 'abcdefghijklmnopqrstuvwxyz0123456789', code = Array.from(crypto.getRandomValues(new Uint8Array(24)), x => A32[x % 36]).join(''), url = 'https://t.me/' + TG_BOT + '?start=login_' + code;
+    tgClose(); const my = _tgPoll;
+    const o = document.createElement('div'); o.id = 'tgov'; o.setAttribute('role', 'dialog'); o.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(10,30,24,.6);display:grid;place-items:center;padding:20px';
+    o.innerHTML = `<div class="card stack" style="max-width:420px;text-align:center;justify-items:center;padding:28px"><h2 class="h2" style="margin:0">${T('الدخول عبر تيليجرام', 'Sign in with Telegram')}</h2><p class="muted" id="tgmsg">${T('افتح بوت سرمد في تيليجرام واضغط Start. هترجع هنا تلقائيًا.', 'Open the Sarmad bot in Telegram and press Start. You will be signed in here automatically.')}</p><a class="btn primary" id="tgopen" href="${url}" target="_blank" rel="noopener">${T('افتح تيليجرام', 'Open Telegram')}</a><div class="spin" style="margin:6px auto"></div><button class="chip" type="button" id="tgcancel">${T('إلغاء', 'Cancel')}</button></div>`;
+    document.body.appendChild(o); o.querySelector('#tgcancel').onclick = tgClose;
+    try { window.open(url, '_blank', 'noopener'); } catch (e) { }
+    const t0 = Date.now(), fail = m => { const x = document.getElementById('tgmsg'); if (x) x.textContent = m; };
+    (async function loop() {
+      while (_tgPoll === my && Date.now() - t0 < 300000) {
+        await new Promise(r => setTimeout(r, 2000)); if (_tgPoll !== my) return;
+        try {
+          const r = await (await fetch(TG_API + '/tglogin?code=' + code, { cache: 'no-store' })).json();
+          if (r && r.s === 'ok') { try { await DB.tgSignIn(r); tgClose(); await afterAuth(k, T('أهلًا بيك', 'Welcome')); } catch (e) { fail(T('تعذر تسجيل الدخول. حاول مرة أخرى.', 'Could not sign in. Try again.')); } return; }
+        } catch (e) { }
+      }
+      if (_tgPoll === my) fail(T('انتهت المهلة. اضغط إلغاء وحاول مرة أخرى.', 'Timed out. Cancel and try again.'));
+    })();
+  }
+});
 </script>
 </body>
 </html>
