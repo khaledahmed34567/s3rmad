@@ -703,6 +703,7 @@ html[lang=en] .cert2{direction:ltr}
 .sup-fab{width:54px;height:54px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 8px 24px rgba(15,60,45,.28);cursor:pointer}
 .sup-fab svg{width:24px;height:24px}
 .sup-p{width:min(320px,calc(100vw - 32px));background:var(--bg);border:1px solid var(--line2);border-radius:20px;padding:16px;display:grid;gap:10px;box-shadow:0 16px 44px rgba(15,60,45,.22)}
+.ai-box{display:grid;gap:6px}.ai-box textarea{width:100%;border:1px solid var(--line2);border-radius:12px;padding:8px;font:inherit;background:var(--bg);color:inherit;resize:none}#aia{white-space:pre-wrap;max-height:160px;overflow:auto}
 .sup-p p{margin:0}.btn.block{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;text-align:center}
 body.has-timer #sup{bottom:76px}
 @media(max-width:760px){#sup{bottom:calc(78px + env(safe-area-inset-bottom,0px))}#tm{bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:101;border-top:0;border-radius:16px 16px 0 0;box-shadow:0 -6px 20px rgba(0,0,0,.12)}body.has-timer #sup{bottom:calc(138px + env(safe-area-inset-bottom,0px))}body.has-timer{padding-bottom:calc(140px + env(safe-area-inset-bottom,0px))}}
@@ -3139,10 +3140,23 @@ const colList = async (name, q) => { let r = fbDb.collection(name); if (q) r = r
 const ago = ms => fmtDate(ms);
 
 /* ---------- MAIN 1: support widget + Telegram bot ---------- */
+const AIST = { t: '' };
+Object.assign(A, { async aiAsk() {
+  const q = ($('#aiq') || {}).value || ''; if (q.trim().length < 3) return;
+  const out = $('#aia'); out.textContent = T('جارٍ التفكير...', 'Thinking...'); AIST.t = out.textContent;
+  try {
+    const c = COURSES.filter(x => x.status !== 'soon').slice(0, 30).map(x => (x.t && (x.t.ar || x.t.en)) + (x.price ? ' (' + x.price + ')' : ' (مجاني)')).join('، ');
+    const r = await fetch('https://sarmad-bot.khaledahmedelbrbary80.workers.dev/ai', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: q.slice(0, 400), c }) });
+    const j = await r.json();
+    AIST.t = j.ok ? j.a : (r.status === 429 ? T('وصلت للحد اليومي من الأسئلة. جرّب غدًا أو اكتب لنا من نموذج التواصل.', 'Daily question limit reached. Try tomorrow or use the contact form.') : T('المساعد غير متاح الآن، جرّب لاحقًا.', 'Assistant unavailable now, try later.'));
+  } catch (e) { AIST.t = T('تعذّر الاتصال. جرّب لاحقًا.', 'Connection failed. Try later.'); }
+  const o2 = $('#aia'); if (o2) o2.textContent = AIST.t;
+} });
 function renderSupport() {
   let el = $('#sup'); if (!el) { el = document.createElement('div'); el.id = 'sup'; document.body.appendChild(el); }
   const open = el.dataset.open === '1', sid = S.user && S.user.sid;
   el.innerHTML = `${open ? `<div class="sup-p" role="dialog" aria-label="${T('الدعم الفني', 'Support')}"><b>${T('الدعم الفني', 'Support')}</b><p class="sm muted">${T('اسأل بوت سرمد على تيليجرام وسيوصل الفريق باستفسارك.', 'Ask the Sarmad bot on Telegram and the team will get your question.')}</p>
+    <div class="ai-box"><b class="sm">${T('اسأل المساعد الذكي', 'Ask the smart assistant')}</b><textarea id="aiq" rows="2" maxlength="400" placeholder="${T('مثال: من أين أبدأ تعلم البرمجة؟', 'e.g. where do I start learning to code?')}"></textarea><button class="btn block" data-act="aiAsk">${T('اسأل', 'Ask')}</button><div id="aia" class="sm muted" aria-live="polite">${esc(AIST.t)}</div></div>
     <a class="btn primary block" href="${tgLink(sid)}" target="_blank" rel="noopener">${icon('send2')} ${T('بوت الدعم على تيليجرام', 'Telegram support bot')}</a>
     <a class="btn block" href="#contact" data-act="supClose">${icon('chat')} ${T('نموذج التواصل وطلب عرض سعر', 'Contact / quote form')}</a>
     <a class="btn block" href="mailto:${esc(SITE.contact.email)}">${esc(SITE.contact.email)}</a>
