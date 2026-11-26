@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbf7ec">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Sarmad"><meta property="og:title" content="سرمد Sarmad"><meta property="og:description" content="سرمد: تصميم برمجي، واجهات أمامية وخلفية، أمن سيبراني، وبوابة الدفع تم"><meta name="twitter:card" content="summary">
 <title>سرمد Sarmad</title>
 <meta name="description" content="سرمد: تصميم برمجي، واجهات أمامية وخلفية، أمن سيبراني، وبوابة الدفع تم">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -281,6 +282,7 @@ video,audio{width:100%;border-radius:var(--r-sm);background:#000} audio{backgrou
 .ftr{background:var(--inv-bg);color:var(--inv-fg);--muted:var(--inv-muted);--line:var(--inv-line);padding-top:72px;overflow:hidden}
 .ftr-grid{display:grid;grid-template-columns:1.4fr repeat(4,minmax(0,1fr));gap:36px;padding-bottom:56px}
 @media(max-width:940px){.ftr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ftr-grid>:first-child{grid-column:1/-1}}
+@media(max-width:600px){.ftr-grid{gap:28px 18px}.ftr li,.ftr li a,.ftr .mono{overflow-wrap:anywhere;word-break:break-word;font-size:.86rem}}
 .ftr h4{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:16px;font-weight:500}
 .ftr ul{list-style:none;padding:0;margin:0;display:grid;gap:10px} .ftr a:hover{color:var(--accent)}
 .ftr .field input{background:transparent;border-color:var(--line);color:var(--inv-fg)}
@@ -465,6 +467,7 @@ mark.hl{background:var(--hl);color:inherit;padding:.05em .3em;border-radius:5px}
 .lxnav .wrap{display:flex;gap:6px;align-items:center;overflow-x:auto;padding-block:8px;scrollbar-width:none}
 .lxnav a{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;font-size:.9rem;white-space:nowrap;color:var(--muted)}
 .lxnav a.on{background:var(--accent-soft);color:var(--accent)}.lxnav .sp{flex:1}.lxnav .who{color:var(--fg)}
+@media(max-width:600px){.lxnav{position:static}.lxnav .wrap{flex-wrap:wrap;overflow:visible;gap:8px;padding-block:12px}.lxnav .sp{display:none}.lxnav a{flex:1 1 calc(50% - 8px);justify-content:center;padding:10px 8px;font-size:.84rem;background:var(--bg2)}.lxnav a.on{background:var(--accent-soft)}.lxnav .who{flex-basis:100%}}
 .lx-hero{position:relative;overflow:hidden;background:var(--inv-bg);color:var(--inv-fg);padding-block:clamp(44px,7vw,96px)}
 .lx-hero .shapes,.lx-side .shapes{position:absolute;inset:0;pointer-events:none}
 .shapes i{position:absolute;border-radius:50%;background:var(--gold);opacity:.12;animation:float 9s ease-in-out infinite}
@@ -682,6 +685,7 @@ html[lang=en] .cert2{direction:ltr}
 .sup-p{width:min(320px,calc(100vw - 32px));background:var(--bg);border:1px solid var(--line2);border-radius:20px;padding:16px;display:grid;gap:10px;box-shadow:0 16px 44px rgba(15,60,45,.22)}
 .sup-p p{margin:0}.btn.block{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;text-align:center}
 body.has-timer #sup{bottom:76px}
+@media(max-width:760px){#sup{bottom:calc(78px + env(safe-area-inset-bottom,0px))}#tm{bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:101;border-top:0;border-radius:16px 16px 0 0;box-shadow:0 -6px 20px rgba(0,0,0,.12)}body.has-timer #sup{bottom:calc(138px + env(safe-area-inset-bottom,0px))}body.has-timer{padding-bottom:calc(140px + env(safe-area-inset-bottom,0px))}}
 .bell{position:relative}.bell .bdg{position:absolute;top:-2px;inset-inline-end:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:var(--gold-ink);font:700 .7rem/18px var(--mono);text-align:center;font-style:normal;padding:0 4px}
 #rp{position:fixed;top:0;inset-inline:0;height:3px;z-index:80;background:transparent}#rp i{display:block;height:100%;width:0;background:var(--gold)}
 .toc{display:grid;gap:6px;padding:10px 0;border-top:1px solid var(--line);margin-top:10px}.toc a{font-size:.88rem;color:var(--muted);text-decoration:none}.toc a.sub{padding-inline-start:14px}.toc a:hover{color:var(--accent)}
@@ -3006,6 +3010,31 @@ function renderSupport() {
 }
 Object.assign(A, { supToggle() { const el = $('#sup'); el.dataset.open = el.dataset.open === '1' ? '0' : '1'; renderSupport(); }, supClose() { const el = $('#sup'); el.dataset.open = '0'; renderSupport(); } });
 AFTER.push(r => { if (r.name === 'contact') { const v = $('#main .view'); if (v) v.insertAdjacentHTML('beforeend', `<section class="sec" style="padding-top:0"><div class="wrap"><div class="note">${icon('send2')}<span><b>${T('تحتاج رد أسرع؟', 'Need a faster answer?')}</b> ${T('تحدث مع بوت الدعم الفني على تيليجرام: ', 'Chat with the support bot on Telegram: ')}<a class="link" href="${tgLink(S.user && S.user.sid)}" target="_blank" rel="noopener">@sarmad_site_bot</a></span></div></div></section>`); } });
+
+/* ---------- brand icon and home-screen manifest (generated, no extra files) ---------- */
+(function brandMeta() {
+  try {
+    const head = document.head, add = (tag, attrs) => { const e = document.createElement(tag); Object.keys(attrs).forEach(k => e.setAttribute(k, attrs[k])); head.appendChild(e); return e; };
+    const m = (getComputedStyle(document.documentElement).getPropertyValue('--logo') || '').match(/url\(["']?(data:image[^"')]+)["']?\)/);
+    const origin = location.origin + '/';
+    add('meta', { name: 'mobile-web-app-capable', content: 'yes' }); add('meta', { name: 'apple-mobile-web-app-title', content: 'Sarmad' });
+    if (!m) return;
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const draw = (n, pad) => { const c = document.createElement('canvas'); c.width = c.height = n; const x = c.getContext('2d'); x.fillStyle = '#0f6b52'; x.fillRect(0, 0, n, n);
+          const t = document.createElement('canvas'); t.width = t.height = n; const tx = t.getContext('2d'); const w = n - pad * 2, h = w * img.naturalHeight / img.naturalWidth; tx.drawImage(img, pad, (n - h) / 2, w, h); tx.globalCompositeOperation = 'source-in'; tx.fillStyle = '#fbf7ec'; tx.fillRect(0, 0, n, n);
+          x.drawImage(t, 0, 0); return c.toDataURL('image/png'); };
+        const i32 = draw(64, 6), i192 = draw(192, 18), i512 = draw(512, 48);
+        document.querySelectorAll('link[rel~=icon]').forEach(e => e.remove());
+        add('link', { rel: 'icon', type: 'image/png', href: i32 }); add('link', { rel: 'apple-touch-icon', href: i192 });
+        const man = { name: 'سرمد Sarmad', short_name: 'سرمد', start_url: origin, scope: origin, display: 'standalone', dir: 'rtl', lang: 'ar', background_color: '#fbf7ec', theme_color: '#0f6b52', icons: [{ src: i192, sizes: '192x192', type: 'image/png' }, { src: i512, sizes: '512x512', type: 'image/png' }] };
+        add('link', { rel: 'manifest', href: URL.createObjectURL(new Blob([JSON.stringify(man)], { type: 'application/manifest+json' })) });
+      } catch (e) { }
+    };
+    img.src = m[1];
+  } catch (e) { }
+})();
 
 /* ---------- MAIN 2: accessibility panel ---------- */
 const A11Y = () => ls.get('a11y', { fs: 100, hc: false, rm: false, lh: false, dys: false });
