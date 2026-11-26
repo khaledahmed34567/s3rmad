@@ -658,7 +658,7 @@ html[lang=en] .cert2{direction:ltr}
 .inv-s{display:flex;justify-content:flex-end;margin-top:14px}.inv-sum{width:min(100%,340px)}.inv-r.tot{border-bottom:0;border-top:2px solid #0f6b52;margin-top:6px;padding-top:10px;font-size:1.15rem;color:#0f6b52}
 .inv-f{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid #eee3c2}.inv-qr{display:flex;gap:14px;align-items:center}.inv-qr>svg{flex:none;border:1px solid #e3d6ad;border-radius:10px}
 @media(max-width:640px){.inv{padding:18px}.inv-g{grid-template-columns:1fr}.inv-f{flex-direction:column;align-items:flex-start}.inv-qr{flex-direction:column;align-items:flex-start}}
-@media print{body.printable .inv{box-shadow:none;border:0;padding:0}}
+@media print{body.printable .inv{box-shadow:none;border:0;padding:0}body.printable .inv,body.printable .inv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}body.printable .inv .logo{background:#0f6b52!important}body.printable #tabbar,body.printable #tm,body.printable [class*=chat-fab],body.printable [id*=sup]{display:none!important}}
 .mp-pct{position:absolute;inset:auto 0 46%;text-align:center;font-weight:700;pointer-events:none;text-shadow:0 1px 6px #000}
 .mp-audio .mp-pct{inset:6px 14px auto auto;font-size:.8rem}
 .lec-cover{margin:0 0 18px;border-radius:20px;overflow:hidden;border:1px solid var(--line2);aspect-ratio:16/6;background:var(--bg2)}.lec-cover img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
@@ -688,9 +688,9 @@ body.has-timer #sup{bottom:76px}
 .btn.accent{background:var(--accent);color:var(--accent-ink)}
 .stars{display:inline-flex;gap:2px;direction:ltr}.stars i{font-style:normal;color:var(--line2)}.stars i.on{color:var(--gold)}
 .rate-in{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:4px;direction:ltr;width:max-content}.rate-in input{position:absolute;opacity:0;pointer-events:none}.rate-in label{font-size:1.8rem;color:var(--line2);cursor:pointer}.rate-in input:checked~label,.rate-in label:hover,.rate-in label:hover~label{color:var(--gold)}
-.xp-strip{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-bottom:22px}.xp-strip>div:first-child{min-width:200px;flex:1}
+.xp-strip{display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:0;padding:14px 18px;position:static}.xp-strip .stat b{font-size:1.1rem}.xp-strip>div:first-child{min-width:200px;flex:1}
 .bar{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
-.xp-strip .stat{text-align:center;display:grid}.xp-strip .stat b{font-size:1.3rem}
+.xp-strip .stat{text-align:center;display:grid;border:0!important;padding:0!important;min-width:70px;background:none!important}.xp-strip .stat b{font-size:1.3rem}
 .badges{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%}.badge{font-size:.78rem;padding:4px 10px;border-radius:999px;border:1px dashed var(--line2);color:var(--muted)}.badge.on{border-style:solid;background:var(--accent-soft);color:var(--fg)}
 .qa{padding:10px 12px;border-radius:12px;background:var(--bg2)}
 #tm{position:fixed;bottom:0;inset-inline:0;z-index:55;background:var(--bg);border-top:1px solid var(--line2);padding:8px 12px}.tm-in{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.tm-in b{font-size:1.15rem}
@@ -703,7 +703,7 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
 html.lh body{line-height:2!important}html.lh p,html.lh li{line-height:2!important}
 html.dys body{letter-spacing:.06em;word-spacing:.18em}
 
-img.art{width:100%;height:100%;object-fit:cover;display:block}
+img.art{width:100%;height:100%;object-fit:cover;display:block}img.art.ov{position:absolute;inset:0}.post-art,.rc-cover,.cover{position:relative}
 
 </style>
 </head>
@@ -1214,7 +1214,8 @@ const OSIC = { web: 'globe', windows: 'windows', mac: 'apple', linux: 'terminal'
 
 /* ---------- covers ---------- */
 function coverArt(i, it) {
-  if (it && typeof it.cover === 'string' && /^https:\/\//.test(it.cover)) return { svg: `<img class="art" src="${String(it.cover).replace(/"/g, '&quot;')}" alt="" draggable="false" loading="lazy">`, ink: '#fbf3dc' };
+  i = Math.abs(parseInt(i, 10) || 0);
+  const ext = it && typeof it.cover === 'string' && /^https:\/\//.test(it.cover) ? `<img class="art ov" src="${String(it.cover).replace(/"/g, '&quot;')}" alt="" draggable="false" referrerpolicy="no-referrer" decoding="async" onerror="this.remove()">` : '';
   const [bg, a, b] = COVER_COLORS[i % COVER_COLORS.length];
   const shapes = [
     `<circle cx="228" cy="86" r="74" fill="${a}"/><circle cx="228" cy="86" r="36" fill="${bg}"/><rect x="292" y="0" width="14" height="150" fill="${b}"/><rect x="24" y="22" width="60" height="8" fill="${b}"/>`,
@@ -1222,7 +1223,7 @@ function coverArt(i, it) {
     `<rect x="190" y="20" width="22" height="120" fill="${a}"/><rect x="224" y="52" width="22" height="88" fill="${b}"/><rect x="258" y="84" width="22" height="56" fill="${a}"/><rect x="0" y="146" width="320" height="6" fill="${b}"/>`,
     `<path d="M200 0h40L150 200h-40z" fill="${a}"/><path d="M262 0h24L196 200h-24z" fill="${b}"/><circle cx="64" cy="58" r="26" fill="${a}"/>`
   ];
-  return { svg: `<svg class="art" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="320" height="200" fill="${bg}"/>${shapes[i % 4]}</svg>`, ink: i % 4 === 3 ? '#14312a' : i % 4 === 1 ? '#0f3a30' : '#fbf3dc' };
+  return { svg: `<svg class="art" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="320" height="200" fill="${bg}"/>${shapes[i % 4]}</svg>${ext}`, ink: i % 4 === 3 ? '#14312a' : i % 4 === 1 ? '#0f3a30' : '#fbf3dc' };
 }
 
 /* ---------- Firebase (Auth + Firestore) ---------- */
@@ -3089,9 +3090,9 @@ const _saveLesson = saveLesson;
 saveLesson = async function (cid, lid, patch) { const before = S.prog[cid] && S.prog[cid].lessons[lid]; await _saveLesson(cid, lid, patch); try { if (patch.done === true && !(before && before.done)) await award(20, cid + '_' + lid, 'lec'); else if (patch.quiz && !(before && before.quiz)) await award(10, cid + '_' + lid, 'quiz'); } catch (e) { } };
 const lvl = xp => Math.floor(xp / 100) + 1;
 AFTER.push(async r => {
-  if (r.name !== 'learning' || !S.user) return; const s = await loadStats(), v = $('#main .wrap'); if (!s || !v || parse().name !== 'learning') return;
+  if (r.name !== 'learning' || !S.user) return; const s = await loadStats(), v = $('#main .view'); if (!s || !v || parse().name !== 'learning') return;
   const rs = ls.get('resume', null), c = rs && COURSES.find(x => x.id === rs.c);
-  v.insertAdjacentHTML('afterbegin', `<div class="card xp-strip"><div><b class="h3" style="margin:0">${T('المستوى', 'Level')} ${lvl(s.xp)}</b><div class="bar" style="margin-top:6px"><i style="width:${s.xp % 100}%"></i></div><span class="xs muted">${s.xp} XP · ${T('التالي بعد', 'next in')} ${100 - s.xp % 100}</span></div><div class="stat"><b>🔥 ${s.last === dkey() || s.last === dkey(new Date(Date.now() - 864e5)) ? s.streak : 0}</b><span class="xs muted">${T('أيام متتالية', 'day streak')}</span></div><div class="stat"><b>${s.doneKeys.length}</b><span class="xs muted">${T('محاضرة مكتملة', 'lectures done')}</span></div><div class="badges">${BADGES.map(([id, a, e]) => `<span class="badge ${s.badges.includes(id) ? 'on' : ''}" title="${lang === 'ar' ? a : e}">${s.badges.includes(id) ? '🏅' : '○'} ${lang === 'ar' ? a : e}</span>`).join('')}</div>${c ? `<a class="btn primary sm" href="#${esc(rs.h)}">${T('أكمل من حيث توقفت', 'Resume where you left')}: ${esc(L(c.t))}</a>` : ''}</div>`);
+  if (v.querySelector('.xp-strip')) return; v.insertAdjacentHTML('afterbegin', `<section class="sec" style="padding-block:14px 0"><div class="wrap"><div class="card xp-strip"><div><b class="h3" style="margin:0">${T('المستوى', 'Level')} ${lvl(s.xp)}</b><div class="bar" style="margin-top:6px"><i style="width:${s.xp % 100}%"></i></div><span class="xs muted">${s.xp} XP · ${T('التالي بعد', 'next in')} ${100 - s.xp % 100}</span></div><div class="stat"><b>🔥 ${s.last === dkey() || s.last === dkey(new Date(Date.now() - 864e5)) ? s.streak : 0}</b><span class="xs muted">${T('أيام متتالية', 'day streak')}</span></div><div class="stat"><b>${s.doneKeys.length}</b><span class="xs muted">${T('محاضرة مكتملة', 'lectures done')}</span></div><details class="badges-d" style="flex-basis:100%"><summary class="xs muted" style="cursor:pointer">${T('الشارات', 'Badges')}</summary><div class="badges" style="margin-top:8px">${BADGES.map(([id, a, e]) => `<span class="badge ${s.badges.includes(id) ? 'on' : ''}" title="${lang === 'ar' ? a : e}">${s.badges.includes(id) ? '🏅' : '○'} ${lang === 'ar' ? a : e}</span>`).join('')}</div></details>${c ? `<a class="btn primary sm" href="#${esc(rs.h)}">${T('أكمل من حيث توقفت', 'Resume where you left')}: ${esc(L(c.t))}</a>` : ''}</div></div></section>`);
 });
 const noteT = { t: 0 };
 AFTER.push(async r => {
