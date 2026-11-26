@@ -649,6 +649,23 @@ html[lang=en] .cert2{direction:ltr}
 .cert2-qr{display:grid;justify-items:center;gap:2px}.cert2-qr .qrbox{padding:5px;background:#fff;border:1px solid #e3d6ad;border-radius:10px;line-height:0}.cert2-qr b{font-size:.78rem;letter-spacing:.04em}
 .cert2-rev{position:absolute;inset:0;display:grid;place-items:center;font-size:6rem;font-weight:800;color:rgba(130,90,0,.28);transform:rotate(-18deg);pointer-events:none}
 .cert2.rev{filter:grayscale(.6)}
+/* cert v3 dark */
+.cert2{background:linear-gradient(100deg,#9c7424,#f6e3a1 50%,#9c7424);color:#fff;padding:12px;border-radius:6px}
+.cert2-bd{background:#031a15;padding:6px;border-radius:2px}
+.cert2-in{background:radial-gradient(ellipse at 50% 38%,#0a5240,#031a15 75%);border:1.5px solid #c9a24a;border-radius:0;padding:26px 56px 20px}
+.cert2-in .cc{border-color:#e8c872;width:34px;height:34px}
+.cert2-wm{color:#c9a24a;opacity:.05}
+.cert2-h{justify-content:center;color:#f6e3a1}.cert2-h .logo{filter:brightness(0) invert(1) sepia(1) saturate(2.5) hue-rotate(5deg) brightness(1.1)}.cert2-tag{display:none}
+.cert2-k{font-size:4.2rem;color:#e8c872;margin:6px 0 0}
+.cert2-s{color:#cfe6dc;font-size:1.15rem}
+.cert2-n{font-size:4.4rem;color:#fff}
+.cert2-ln{color:#e8c872}
+.cert2-c{font-size:2.5rem;color:#e8c872;font-weight:800}
+.cert2-m{color:#cfe6dc;font-size:1.15rem}
+.cert2-sg i{background:#c9a24a;height:1.5px}.cert2-sg b{color:#fff}.cert2-sg span{color:#cfe6dc}.cert2-sg img{background:#fbf6e6;border-radius:8px;padding:4px}
+.cert2-seal{width:112px;height:112px;color:#4a3408;box-shadow:0 0 0 5px #031a15,0 0 0 8px #e8c872}.cert2-seal small{color:#4a3408;font-weight:800}
+.cert2-qr .qrbox{padding:8px;border:3px solid #e8c872;border-radius:12px}.cert2-qr .xs,.cert2-qr b{color:#cfe6dc}.cert2-qr b{color:#fff}
+
 .vres{border:1px solid var(--line,#e4e8e2);border-radius:18px;overflow:hidden;background:var(--card,#fff)}.vres-h{display:flex;gap:14px;align-items:center;padding:22px}.vres.ok .vres-h{background:#d9f0e5}.vres.bad .vres-h{background:#fbe3e0}.vres-i{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.3rem;color:#fff;background:#0f6b52}.vres.bad .vres-i{background:#b3261e}.vres-i svg{width:24px;height:24px}.vres-b{padding:8px 22px 18px}.vres-b .inv-r{padding:10px 0;border-bottom:1px dashed var(--line,#e4e8e2)}
 .cert2-ver{max-width:560px;margin:16px auto 0;text-align:center;padding:10px 16px;border-radius:99px;font-weight:700;display:flex;gap:8px;justify-content:center;align-items:center}.cert2-ver.ok{background:#d9f0e5;color:#0f6b52}
 @page cert{size:A4 landscape;margin:6mm}
@@ -2798,29 +2815,31 @@ function _txt(x, s, px, py, font, size, color, align, maxW) { x.fillStyle = colo
 function _rr(x, a, b, w, h, r) { x.beginPath(); x.roundRect ? x.roundRect(a, b, w, h, r) : x.rect(a, b, w, h); }
 const _F = '#px Incise, Tahoma, sans-serif', _FB = '700 #px Incise, Tahoma, sans-serif', _FT = '#px Tafkir, Incise, serif';
 async function drawCert(c, k) {
-  await (document.fonts && document.fonts.ready); const W = 1000, H = 707, [cv, x] = _canvas(W, H, k), ar = lang === 'ar';
-  x.fillStyle = '#0f6b52'; _rr(x, 0, 0, W, H, 14); x.fill();
-  x.fillStyle = '#fcf8ec'; _rr(x, 8, 8, W - 16, H - 16, 9); x.fill(); x.strokeStyle = '#c9a24a'; x.lineWidth = 2; _rr(x, 10, 10, W - 20, H - 20, 8); x.stroke();
-  x.lineWidth = 3; [[26, 26, 1, 1], [W - 26, 26, -1, 1], [26, H - 26, 1, -1], [W - 26, H - 26, -1, -1]].forEach(([a, b, sx, sy]) => { x.beginPath(); x.moveTo(a, b + 46 * sy); x.lineTo(a, b); x.lineTo(a + 46 * sx, b); x.stroke(); });
-  x.save(); x.globalAlpha = .07; x.strokeStyle = '#c9a24a'; x.lineWidth = 2; x.translate(W / 2, H / 2); for (let i = 0; i < 2; i++) { x.rotate(Math.PI / 4 * i); x.strokeRect(-150, -150, 300, 300); } x.beginPath(); x.arc(0, 0, 150, 0, 7); x.stroke(); x.beginPath(); x.arc(0, 0, 70, 0, 7); x.stroke(); x.restore();
-  const lg = await _logoTinted('#0f6b52', 170); if (lg) x.drawImage(lg, ar ? W - 60 - 170 : 60, 52, 170, 170 / 4.861);
-  x.strokeStyle = '#c9a24a'; x.lineWidth = 1; const tg = T('سرمد ليرننج', 'Sarmad Learning'); x.font = _FB.replace('#', 15); const tw = x.measureText(tg).width + 30; _rr(x, ar ? 60 : W - 60 - tw, 56, tw, 30, 15); x.stroke(); _txt(x, tg, ar ? 60 + tw / 2 : W - 60 - tw / 2, 77, _FB, 15, '#8a6a1c');
-  _txt(x, T('شهادة إتمام', 'Certificate of Completion'), W / 2, 150, _FT, 56, '#0f6b52');
-  _txt(x, T('تشهد سرمد ليرننج بأن', 'Sarmad Learning proudly certifies that'), W / 2, 200, _F, 19, '#5d6a5f');
-  _txt(x, c.name || '—', W / 2, 268, _FT, 58, '#8a6a1c', 'center', 800);
-  x.strokeStyle = '#c9a24a'; x.lineWidth = 2; x.beginPath(); x.moveTo(250, 292); x.lineTo(470, 292); x.moveTo(530, 292); x.lineTo(750, 292); x.stroke(); _txt(x, '◆', W / 2, 298, _F, 16, '#c9a24a');
-  _txt(x, T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course'), W / 2, 335, _F, 19, '#5d6a5f');
-  _txt(x, ar ? c.courseAr : c.courseEn, W / 2, 388, _FB, 34, '#12352c', 'center', 820);
+  await (document.fonts && document.fonts.ready); const W = 1000, H = 707, [cv, x] = _canvas(W, H, k), ar = lang === 'ar', GOLD = '#e8c872', GOLD2 = '#c9a24a', SOFT = '#cfe6dc';
+  let g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#031a15'); g.addColorStop(.55, '#07382c'); g.addColorStop(1, '#042a21'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.save(); x.strokeStyle = GOLD2; x.globalAlpha = .1; x.lineWidth = 1.2; for (let i = 0; i * 70 < W + 70; i++) for (let j = 0; j * 70 < H + 70; j++) { x.save(); x.translate(i * 70, j * 70); x.strokeRect(-18, -18, 36, 36); x.rotate(Math.PI / 4); x.strokeRect(-18, -18, 36, 36); x.restore(); } x.restore();
+  g = x.createRadialGradient(W / 2, 300, 40, W / 2, 300, 520); g.addColorStop(0, 'rgba(10,80,60,.85)'); g.addColorStop(1, 'rgba(3,26,21,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  g = x.createLinearGradient(0, 0, W, 0); g.addColorStop(0, '#9c7424'); g.addColorStop(.5, '#f6e3a1'); g.addColorStop(1, '#9c7424');
+  x.strokeStyle = g; x.lineWidth = 5; x.strokeRect(16, 16, W - 32, H - 32); x.lineWidth = 1.5; x.strokeRect(30, 30, W - 60, H - 60);
+  x.fillStyle = g; [[30, 30], [W - 30, 30], [30, H - 30], [W - 30, H - 30]].forEach(([a, b]) => { x.save(); x.translate(a, b); x.rotate(Math.PI / 4); x.fillRect(-14, -14, 28, 28); x.fillStyle = '#031a15'; x.fillRect(-8, -8, 16, 16); x.fillStyle = g; x.fillRect(-4, -4, 8, 8); x.restore(); });
+  const lg = await _logoTinted('#f6e3a1', 200); if (lg) x.drawImage(lg, W / 2 - 100, 52, 200, 200 / 4.861);
+  _txt(x, T('شهادة إتمام', 'Certificate of Completion'), W / 2, 178, _FT, 74, GOLD);
+  _txt(x, T('تشهد سرمد ليرننج بأن', 'Sarmad Learning proudly certifies that'), W / 2, 226, _F, 21, SOFT);
+  _txt(x, c.name || '—', W / 2, 304, _FT, 72, '#ffffff', 'center', 820);
+  x.strokeStyle = GOLD2; x.lineWidth = 2; x.beginPath(); x.moveTo(190, 332); x.lineTo(465, 332); x.moveTo(535, 332); x.lineTo(810, 332); x.stroke(); x.fillStyle = GOLD; x.save(); x.translate(W / 2, 332); x.rotate(Math.PI / 4); x.fillRect(-7, -7, 14, 14); x.restore();
+  _txt(x, T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course'), W / 2, 372, _F, 21, SOFT);
+  _txt(x, ar ? c.courseAr : c.courseEn, W / 2, 428, _FB, 42, GOLD, 'center', 840);
   const d = new Date(c.approvedAt || c.at).toLocaleDateString(ar ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-  _txt(x, (c.hours ? T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours') + '  ·  ' : '') + d, W / 2, 428, _F, 18, '#5d6a5f');
-  const sg = c.sig || {}, sx = 200, qx = W - 200;
-  if (sg.img) { try { const im = await _loadImg(sg.img), h = 56, w = Math.min(180, im.width * h / im.height); x.drawImage(im, sx - w / 2, 520 - h, w, h); } catch (e) { } }
-  x.strokeStyle = '#12352c'; x.lineWidth = 1; x.beginPath(); x.moveTo(sx - 90, 526); x.lineTo(sx + 90, 526); x.stroke(); _txt(x, sg.name || '', sx, 548, _FB, 16, '#12352c'); _txt(x, sg.title || '', sx, 568, _F, 14, '#5d6a5f');
-  const g = x.createRadialGradient(W / 2 - 12, 482, 4, W / 2, 500, 48); g.addColorStop(0, '#f2dc94'); g.addColorStop(1, '#c9a24a'); x.fillStyle = g; x.beginPath(); x.arc(W / 2, 515, 46, 0, 7); x.fill(); x.strokeStyle = '#8a6a1c'; x.lineWidth = 2; x.beginPath(); x.arc(W / 2, 515, 38, 0, 7); x.stroke();
-  x.strokeStyle = '#fff'; x.lineWidth = 5; x.lineCap = 'round'; x.beginPath(); x.moveTo(W / 2 - 15, 513); x.lineTo(W / 2 - 4, 525); x.lineTo(W / 2 + 17, 501); x.stroke(); _txt(x, T('معتمدة', 'Approved'), W / 2, 585, _FB, 14, '#8a6a1c');
-  const q = await _qrImg(certUrl(c.id), 100); x.fillStyle = '#fff'; x.fillRect(qx - 56, 440, 112, 112); x.strokeStyle = '#e6dcc0'; x.strokeRect(qx - 56, 440, 112, 112); if (q) x.drawImage(q, qx - 50, 446, 100, 100);
-  _txt(x, T('رمز التحقق', 'Verification code'), qx, 572, _F, 13, '#5d6a5f'); _txt(x, c.id, qx, 592, '700 #px ui-monospace, Menlo, monospace', 15, '#12352c');
-  _txt(x, certUrl(c.id).replace(/^https?:\/\//, ''), W / 2, H - 34, '#px ui-monospace, Menlo, monospace', 12, '#8a8f86');
+  _txt(x, (c.hours ? T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours') + '  ·  ' : '') + d, W / 2, 466, _F, 21, SOFT);
+  const sg = c.sig || {}, sx = 190, qx = W - 190;
+  if (sg.img) { try { const im = await _loadImg(sg.img), h = 58, w = Math.min(170, im.width * h / im.height); x.fillStyle = '#fbf6e6'; _rr(x, sx - w / 2 - 10, 538 - h - 6, w + 20, h + 12, 8); x.fill(); x.drawImage(im, sx - w / 2, 538 - h, w, h); } catch (e) { } }
+  x.strokeStyle = GOLD2; x.lineWidth = 1.5; x.beginPath(); x.moveTo(sx - 95, 556); x.lineTo(sx + 95, 556); x.stroke(); _txt(x, sg.name || '', sx, 584, _FB, 19, '#fff'); _txt(x, sg.title || '', sx, 606, _F, 16, SOFT);
+  const cx = W / 2, cy = 580; x.save(); x.translate(cx, cy); const sp = 18; g = x.createRadialGradient(-14, -16, 4, 0, 0, 62); g.addColorStop(0, '#fff3c4'); g.addColorStop(.5, '#e0b650'); g.addColorStop(1, '#8e6a1c'); x.fillStyle = g; x.beginPath(); for (let i = 0; i < sp * 2; i++) { const r = i % 2 ? 54 : 62, an = Math.PI * i / sp; x.lineTo(Math.cos(an) * r, Math.sin(an) * r); } x.closePath(); x.fill();
+  x.strokeStyle = '#6b4c10'; x.lineWidth = 2; x.beginPath(); x.arc(0, 0, 44, 0, 7); x.stroke(); x.strokeStyle = '#fff3c4'; x.lineWidth = 1.5; x.beginPath(); x.arc(0, 0, 49, 0, 7); x.stroke();
+  x.strokeStyle = '#4a3408'; x.lineWidth = 7; x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.moveTo(-18, 2); x.lineTo(-5, 15); x.lineTo(20, -14); x.stroke(); x.restore();
+  _txt(x, T('معتمدة', 'Approved'), cx, 668, _FB, 16, GOLD);
+  const q = await _qrImg(certUrl(c.id), 112); x.fillStyle = '#fff'; _rr(x, qx - 66, 500, 132, 132, 12); x.fill(); x.strokeStyle = GOLD; x.lineWidth = 3; _rr(x, qx - 66, 500, 132, 132, 12); x.stroke(); if (q) x.drawImage(q, qx - 56, 510, 112, 112);
+  _txt(x, T('رمز التحقق', 'Verification code'), qx, 654, _F, 15, SOFT); _txt(x, c.id, qx, 676, '700 #px ui-monospace, Menlo, monospace', 17, '#fff');
   return cv;
 }
 async function drawInvoice(o, u, k) {
