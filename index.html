@@ -703,6 +703,8 @@ html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition
 html.lh body{line-height:2!important}html.lh p,html.lh li{line-height:2!important}
 html.dys body{letter-spacing:.06em;word-spacing:.18em}
 
+img.art{width:100%;height:100%;object-fit:cover;display:block}
+
 </style>
 </head>
 <body>
@@ -1211,7 +1213,8 @@ const icon = (n, c = '') => `<svg class="ico ${c}" viewBox="0 0 24 24" fill="non
 const OSIC = { web: 'globe', windows: 'windows', mac: 'apple', linux: 'terminal', android: 'android' };
 
 /* ---------- covers ---------- */
-function coverArt(i) {
+function coverArt(i, it) {
+  if (it && typeof it.cover === 'string' && /^https:\/\//.test(it.cover)) return { svg: `<img class="art" src="${String(it.cover).replace(/"/g, '&quot;')}" alt="" draggable="false" loading="lazy">`, ink: '#fbf3dc' };
   const [bg, a, b] = COVER_COLORS[i % COVER_COLORS.length];
   const shapes = [
     `<circle cx="228" cy="86" r="74" fill="${a}"/><circle cx="228" cy="86" r="36" fill="${bg}"/><rect x="292" y="0" width="14" height="150" fill="${b}"/><rect x="24" y="22" width="60" height="8" fill="${b}"/>`,
@@ -1654,7 +1657,7 @@ function appCard(a) {
   return `<article class="app" id="app-${a.id}"><div class="app-top"><div class="app-ico ${a.c}">${a.letter}</div><div style="min-width:0;flex:1"><div class="row" style="gap:8px;justify-content:space-between"><h3 class="h3"><a href="#app-${a.id}">${L(a.name)}</a></h3><span class="tag">v${a.version}</span></div><p class="muted sm" style="margin-top:6px">${L(a.d)}</p></div></div><div class="dl">${btns}</div><div class="row" style="margin-top:10px">${shareBtn('app-' + a.id, L(a.name))}</div></article>`;
 }
 function courseCard(c) {
-  const art = coverArt(c.art), soon = c.status === 'soon', enrolled = !!S.enr[c.id];
+  const art = coverArt(c.art, c), soon = c.status === 'soon', enrolled = !!S.enr[c.id];
   const pr = courseProgress(c);
   return `<a class="course" href="#course-${c.id}"><div class="cover" style="color:${art.ink}">${art.svg}<span class="tag ${soon ? 'soon' : c.price === 0 ? 'free' : ''}">${soon ? T('قريبًا', 'Soon') : c.price === 0 ? T('مجاني', 'Free') : T('مدفوع', 'Paid')}</span><b>${L(c.t)}</b></div>
     <p class="muted sm">${L(c.d)}</p>
@@ -1662,7 +1665,7 @@ function courseCard(c) {
     ${enrolled ? `<div class="bar"><i style="width:${pr}%"></i></div><span class="xs muted">${pr}% ${T('مكتمل', 'complete')}</span>` : `<div class="price">${soon ? '—' : fmtMoney(c.price)}</div>`}</a>`;
 }
 function postCard(p, big = false) {
-  const art = coverArt(p.art);
+  const art = coverArt(p.art, p);
   return `<a class="post" href="#post-${p.id}"><div class="post-art" style="${big ? 'aspect-ratio:16/8' : ''}">${art.svg}</div><div class="row xs muted" style="gap:10px"><span class="tag">${L(POST_CATS[p.cat])}</span><span>${fmtDate(p.date)}</span><span>${p.min} ${T('د قراءة', 'min read')}</span></div><h3 class="${big ? 'h2' : 'h3'}">${L(p.t)}</h3><p class="muted sm">${L(p.ex)}</p></a>`;
 }
 function faqBlock(n = 99) { return `<div class="acc">${FAQ.slice(0, n).map(f => `<details><summary>${L(f.q)}</summary><div>${L(f.a)}</div></details>`).join('')}</div>`; }
@@ -1826,7 +1829,7 @@ const renderBlocks = bs => (bs || []).map(b => b.h ? `<h2>${esc(b.h)}</h2>` : b.
 const allLessons = c => c.modules.flatMap(m => m.lessons);
 const lessonDone = (c, l) => !!(S.prog[c.id] && S.prog[c.id].lessons && S.prog[c.id].lessons[l.id] && S.prog[c.id].lessons[l.id].done);
 function courseProgress(c) { const ls_ = allLessons(c); return ls_.length ? Math.round(ls_.filter(l => lessonDone(c, l)).length / ls_.length * 100) : 0; }
-const canAccess = (c, l) => !!(l.free || S.enr[c.id]);
+const canAccess = (c, l) => !!(l.free || S.enr[c.id]) && !(typeof seqLocked === 'function' && seqLocked(c, l));
 const lessonKinds = l => [l.video && ['video', T('فيديو', 'Video')], l.audio && ['headphones', T('صوت', 'Audio')], l.body && ['book', T('نص', 'Text')], l.pdf && ['file', 'PDF'], l.quiz && ['help', T('اختبار', 'Quiz')], l.tasks && ['task', T('مهام', 'Tasks')]].filter(Boolean);
 const nextLesson = c => { const ls_ = allLessons(c); return (ls_.find(l => !lessonDone(c, l)) || ls_[0]); };
 
@@ -1845,7 +1848,7 @@ function vPlatform() {
 }
 function vPost(r) {
   const p = POSTS.find(x => x.id === r.id); if (!p) return v404();
-  const art = coverArt(p.art), saved = S.saved.includes(p.id), rel = POSTS.filter(x => x.id !== p.id).slice(0, 2);
+  const art = coverArt(p.art, p), saved = S.saved.includes(p.id), rel = POSTS.filter(x => x.id !== p.id).slice(0, 2);
   return `<section class="sec" style="padding-bottom:24px"><div class="wrap"><div class="crumb"><a href="#platform">${T('سرمد بلاتفورم', 'Sarmad Platform')}</a>${icon('chev')}<span>${L(POST_CATS[p.cat])}</span></div>
     <h1 class="h1" style="max-width:22ch">${L(p.t)}</h1><p class="lead" style="margin-top:18px">${L(p.ex)}</p>
     <div class="row muted xs" style="margin-top:22px;gap:16px"><span>${T('فريق سرمد', 'Sarmad team')}</span><span>${fmtDate(p.date)}</span><span>${p.min} ${T('د قراءة', 'min read')}</span></div></div></section>
@@ -1872,7 +1875,7 @@ function courseCta(c) {
   return `<button class="btn accent block" data-act="buy" data-c="${c.id}">${icon('card')} ${T('اشترِ عبر تم', 'Buy with Tam')}</button><span class="xs muted" style="text-align:center">${T('أو اشترك في باقة Plus أو Pro من صفحة ليرننج.', 'Or get a Plus or Pro plan from the Learning page.')}</span>`;
 }
 function vCourse(r) {
-  const c = COURSES.find(x => x.id === r.id); if (!c) return v404(); const art = coverArt(c.art);
+  const c = COURSES.find(x => x.id === r.id); if (!c) return v404(); const art = coverArt(c.art, c);
   const outline = c.modules.length ? c.modules.map(m => `<div><div class="mod" style="margin-inline:0">${L(m.t)}</div><div class="list" style="border-top:0">${m.lessons.map(l => {
     const ok = canAccess(c, l), done = lessonDone(c, l);
     return `<div style="padding:12px 0"><a ${ok ? `href="#learn-${c.id}-${l.id}"` : 'data-act="locked"'} class="row" style="gap:12px;flex:1;min-width:0;${ok ? '' : 'opacity:.6;cursor:pointer'}"><span class="les st" style="width:26px;height:26px;border-radius:50%;border:1.5px solid ${done ? 'var(--ok)' : 'var(--line2)'};display:grid;place-items:center;${done ? 'background:var(--ok);color:#fff' : ''}">${done ? icon('check') : ok ? icon('play') : icon('lock')}</span><span style="flex:1;min-width:0"><b>${L(l.t)}</b><br><span class="xs muted row" style="gap:10px">${lessonKinds(l).map(([i, n]) => `<span>${icon(i)} ${n}</span>`).join('')}<span>${l.min} ${T('د', 'min')}</span></span></span></a>${l.free && !S.enr[c.id] ? `<span class="tag free">${T('معاينة', 'Preview')}</span>` : ''}</div>`;
@@ -2076,7 +2079,7 @@ const _renderHeader = renderHeader;
 renderHeader = function () { _renderHeader(); renderTabbar(); };
 
 function phoneSection() {
-  const minis = COURSES.slice(0, 2).map(c => { const a = coverArt(c.art); return `<div class="mini" style="color:${a.ink}">${a.svg}<b>${L(c.t)}</b></div>`; }).join('');
+  const minis = COURSES.slice(0, 2).map(c => { const a = coverArt(c.art, c); return `<div class="mini" style="color:${a.ink}">${a.svg}<b>${L(c.t)}</b></div>`; }).join('');
   return `<section class="sec alt phone-sec"><div class="wrap">
     <div><span class="eyebrow">${T('تجربة التطبيق', 'The app experience')}</span>
       <h2 class="h2">${T('تعلّم وادفع وتابع تقدمك من هاتفك', 'Learn, pay and track your progress from your phone')}</h2>
@@ -2144,7 +2147,7 @@ const A = {
   },
   fcat(el) { S.filter.cat = el.dataset.v; render(); }, fplat(el) { S.filter.plat = el.dataset.v; render(); },
   fpcat(el) { S.filter.pcat = el.dataset.v; render(); }, flf(el) { S.filter.lf = el.dataset.v; render(); },
-  locked() { toast(T('سجّل في الكورس لفتح هذا الدرس', 'Enroll in the course to unlock this lesson')); },
+  locked() { toast(T('الدرس مقفل: سجّل في الكورس أو حقّق النسبة المطلوبة في اختبار المحاضرة السابقة', 'Locked: enroll in the course or reach the required score in the previous lecture quiz')); },
   async enroll(el) {
     if (!S.user) return needAuth(); if (needStudy()) return;
     await DB.enroll(el.dataset.c); await autoLink('learning'); await loadState(); toast(T('تم تسجيلك في الكورس', 'You are enrolled')); render();
@@ -2331,7 +2334,7 @@ function testCard(id) {
     ${last ? `<div class="row" style="gap:10px"><span class="tag ok">${last.score}/${last.total}</span><span class="sm">${L(LEVELS[last.level])}</span></div>` : ''}<span class="link" style="margin-top:auto;align-self:start">${last ? T('أعد الاختبار', 'Retake') : T('ابدأ الاختبار', 'Start the test')} ${arrow()}</span></a>`;
 }
 function trackCard(t) {
-  const st = trackStats(t), art = coverArt(t.art);
+  const st = trackStats(t), art = coverArt(t.art, t);
   return `<a class="card hov track" href="#track-${t.id}"><div class="row" style="justify-content:space-between;align-items:flex-start"><div class="trk-ico" style="color:${art.ink}">${art.svg}<span>${icon(t.icon)}</span></div>${ring(st.pct, 62)}</div><h3 class="h3">${L(t.t)}</h3><p class="muted sm">${L(t.d)}</p><div class="meta"><span>${icon('layers')} ${st.cs.length} ${T('دورات', 'courses')}</span><span>${icon('task')} ${st.lec} ${T('محاضرة', 'lectures')}</span><span>${icon('clock')} ${st.hours} ${T('ساعات', 'hrs')}</span></div></a>`;
 }
 function vHub() {
@@ -2360,22 +2363,37 @@ function learnerCard(u) {
 /* ---------- track page (roadmap) ---------- */
 function vTrack(r) {
   const t = TRACKS.find(x => x.id === r.id); if (!t) return v404();
-  const st = trackStats(t), art = coverArt(t.art);
+  const st = trackStats(t), art = coverArt(t.art, t);
   return learnNav() + `<section class="sec" style="padding-bottom:32px"><div class="wrap"><div class="crumb"><a href="#learning">${T('سرمد ليرننج', 'Sarmad Learning')}</a>${icon('chev')}<span>${T('المسارات', 'Tracks')}</span></div>
     <div class="trk-head"><div class="trk-art" style="color:${art.ink}">${art.svg}</div><div class="stack"><div class="row" style="justify-content:space-between"><span class="tag">${L(LEVELS[t.level])}</span>${shareBtn('track-' + t.id, L(t.t))}</div><h1 class="h1">${L(t.t)}</h1><p class="lead">${L(t.d)}</p><div class="row">${ring(st.pct, 76)}<div class="meta" style="display:grid;gap:4px"><span>${icon('book')} ${st.cs.length} ${T('دورات', 'courses')}</span><span>${icon('task')} ${st.lec} ${T('محاضرة', 'lectures')} · ${st.done} ${T('مكتملة', 'done')}</span><span>${icon('clock')} ${st.hours} ${T('ساعات', 'hours')}</span></div></div></div></div></div></section>
   <section class="sec" style="padding-top:8px"><div class="wrap"><h2 class="h2" style="font-size:1.6rem;margin-bottom:28px">${T('خريطة المسار', 'Roadmap')}</h2><div class="road stagger">${t.courses.map((id, i) => {
-    const c = courseOf(id); if (!c) return ''; const pct = courseProgress(c), soon = c.status === 'soon', a = coverArt(c.art);
+    const c = courseOf(id); if (!c) return ''; const pct = courseProgress(c), soon = c.status === 'soon', a = coverArt(c.art, c);
     return `<div class="road-it"><span class="node ${pct === 100 ? 'ok' : ''}">${pct === 100 ? icon('check') : i + 1}</span><a class="card hov road-card" href="#course-${c.id}"><div class="rc-cover" style="color:${a.ink}">${a.svg}</div><div class="stack" style="gap:8px;min-width:0"><div class="row" style="gap:8px"><h3 class="h3">${L(c.t)}</h3>${soon ? `<span class="tag soon">${T('قريبًا', 'Soon')}</span>` : c.price === 0 ? `<span class="tag free">${T('مجاني', 'Free')}</span>` : `<span class="tag">${fmtMoney(c.price)}</span>`}</div><p class="muted sm">${L(c.d)}</p><div class="meta"><span>${icon('task')} ${lecturesOf(c)} ${T('محاضرة', 'lectures')}</span><span>${icon('clock')} ${c.hours} ${T('ساعات', 'hrs')}</span><span>${L(LEVELS[c.level])}</span></div>${S.enr[c.id] ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ''}</div></a></div>`;
   }).join('')}</div></div></section>`;
 }
 
 /* ---------- lecture with up to 15 tasks ---------- */
 const STEPI = {};
+const isQStep = s => s.type === 'choose' || s.type === 'complete';
+const triesOf = s => Math.max(1, +s.tries || 2), passOf = l => (l.pass == null || l.pass === '' ? 60 : +l.pass), roundsOf = l => (l.rounds == null || l.rounds === '' ? 1 : +l.rounds);
+const usedOf = (P, i) => (P.tr && P.tr[i]) || ((P.sq || {})[i] ? ((P.sq || {})[i].n || 1) : 0);
+const qFinished = (s, P, i) => { const a = (P.sq || {})[i]; return !!a && (a.ok || usedOf(P, i) >= triesOf(s)); };
+function quizStat(l, P) { const sq = P.sq || {}, q = l.steps.map((s, i) => [s, i]).filter(([s]) => isQStep(s)), right = q.filter(([, i]) => sq[i] && sq[i].ok).length; return { n: q.length, right, pct: q.length ? Math.round(right / q.length * 100) : 100 }; }
+const hasQuiz = l => !!(l.steps && l.steps.some(isQStep));
+/* the next lecture stays locked until the previous quiz lecture is passed */
+function seqLocked(c, l) { const ls_ = allLessons(c), i = ls_.indexOf(l); if (i <= 0) return false; const pv = ls_[i - 1]; return hasQuiz(pv) && !lessonDone(c, pv); }
 async function saveStepPatch(cid, lid, mut) {
   const c = courseOf(cid), l = allLessons(c).find(x => x.id === lid), P = lessonP(cid, lid);
-  const next = { steps: { ...(P.steps || {}) }, sq: { ...(P.sq || {}) } }; mut(next);
-  const all = l.steps.every((s, k) => next.steps[k]);
-  await saveLesson(cid, lid, { steps: next.steps, sq: next.sq, ...(all ? { done: true } : {}) });
+  const next = { steps: { ...(P.steps || {}) }, sq: { ...(P.sq || {}) }, tr: { ...(P.tr || {}) }, round: P.round || 0 }; mut(next);
+  const all = l.steps.every((s, k) => next.steps[k]), st = quizStat(l, next), pass = all && st.pct >= passOf(l);
+  await saveLesson(cid, lid, { steps: next.steps, sq: next.sq, tr: next.tr, round: next.round, ...(pass ? { done: true } : {}) });
+}
+const ans0 = (c, l, i) => { const P = lessonP(c, l); return !!((P.sq || {})[i]); };
+function triesHint(s, cid, lid, i) { const P = lessonP(cid, lid), left = triesOf(s) - usedOf(P, i); return T('المحاولات المتبقية: ', 'Attempts left: ') + Math.max(0, left) + '/' + triesOf(s); }
+function retryHtml(c, l, s, i, ans) {
+  if (ans.ok) return '';
+  const P = lessonP(c.id, l.id), left = triesOf(s) - usedOf(P, i);
+  return left > 0 ? `<button class="btn sm" style="margin-top:12px" data-act="stepRetry" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${T('أعد المحاولة', 'Try again')} (${left})</button>` : `<p class="xs muted" style="margin-top:12px">${T('استُنفدت محاولات هذا السؤال.', 'No attempts left for this question.')}</p>`;
 }
 function stepContent(c, l, s, i, sq) {
   const ans = sq && sq[i];
@@ -2387,15 +2405,16 @@ function stepContent(c, l, s, i, sq) {
   if (s.type === 'pdf') return head + `<div class="pdf-box" data-pdf="${esc(s.src)}"><div class="pdf-bar"><span class="xs muted" id="pdf-info">${T('جارٍ التحميل…', 'Loading…')}</span><span class="row" style="gap:6px"><button class="chip" data-act="pdfZoom" data-v="-0.15" aria-label="zoom out">−</button><button class="chip" data-act="pdfZoom" data-v="0.15" aria-label="zoom in">+</button></span></div><div class="pdf-pages" id="pdf-pages"></div></div>`;
   if (s.type === 'choose') {
     const order = permute(s.o.length, c.id + l.id + i);
-    return head + `<p class="lead" style="color:var(--fg);margin-bottom:16px">${esc(L(s.q))}</p><div class="stack" style="gap:10px">${order.map(k => `<button class="opt ${ans ? (k === s.a ? 'good' : ans.v === k ? 'bad' : '') : ''}" ${ans ? 'disabled' : ''} data-act="stepPick" data-c="${c.id}" data-l="${l.id}" data-i="${i}" data-v="${k}">${ans ? (k === s.a ? icon('check') : ans.v === k ? icon('x') : '') : ''}<span>${esc(LSx(s.o[k]))}</span></button>`).join('')}</div>${ans ? `<div class="callout" style="margin-top:16px">${ans.ok ? T('إجابة صحيحة.', 'Correct.') : T('إجابة غير صحيحة.', 'Not quite.')} ${s.x ? esc(L(s.x)) : ''}</div><button class="btn sm" style="margin-top:12px" data-act="stepRetry" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${T('أعد المحاولة', 'Try again')}</button>` : ''}`;
+    return head + `<p class="lead" style="color:var(--fg);margin-bottom:16px">${esc(L(s.q))}</p><div class="stack" style="gap:10px">${order.map(k => `<button class="opt ${ans ? (k === s.a ? 'good' : ans.v === k ? 'bad' : '') : ''}" ${ans ? 'disabled' : ''} data-act="stepPick" data-c="${c.id}" data-l="${l.id}" data-i="${i}" data-v="${k}">${ans ? (k === s.a ? icon('check') : ans.v === k ? icon('x') : '') : ''}<span>${esc(LSx(s.o[k]))}</span></button>`).join('')}</div>${ans ? `<div class="callout" style="margin-top:16px">${ans.ok ? T('إجابة صحيحة.', 'Correct.') : T('إجابة غير صحيحة.', 'Not quite.')} ${s.x ? esc(L(s.x)) : ''}</div>${retryHtml(c, l, s, i, ans)}` : `<p class="xs muted" style="margin-top:12px">${triesHint(s, c.id, l.id, i)}</p>`}`;
   }
   if (s.type === 'complete') {
     const parts = esc(L(s.q)).split('___');
     const inp = `<input id="st-in" class="blank ${ans ? (ans.ok ? 'good' : 'bad') : ''}" ${ans ? 'readonly' : ''} value="${esc(ans ? ans.txt : '')}" dir="ltr" autocomplete="off" aria-label="blank">`;
-    return head + `<p class="lead" style="color:var(--fg);margin-bottom:16px;line-height:2.4">${parts.join(inp)}</p>${ans ? `<div class="callout">${ans.ok ? T('إجابة صحيحة.', 'Correct.') : T('الإجابة الصحيحة: ', 'Correct answer: ') + `<b dir="ltr">${esc(s.ans[0])}</b>`} ${s.x ? esc(L(s.x)) : ''}</div><button class="btn sm" style="margin-top:12px" data-act="stepRetry" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${T('أعد المحاولة', 'Try again')}</button>` : `<button class="btn primary" data-act="stepCheck" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${T('تحقق', 'Check')}</button>`}`;
+    return head + `<p class="lead" style="color:var(--fg);margin-bottom:16px;line-height:2.4">${parts.join(inp)}</p>${ans ? `<div class="callout">${ans.ok ? T('إجابة صحيحة.', 'Correct.') : T('الإجابة الصحيحة: ', 'Correct answer: ') + `<b dir="ltr">${esc(s.ans[0])}</b>`} ${s.x ? esc(L(s.x)) : ''}</div>${retryHtml(c, l, s, i, ans)}` : `<button class="btn primary" data-act="stepCheck" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${T('تحقق', 'Check')}</button><p class="xs muted" style="margin-top:10px">${triesHint(s, c.id, l.id, i)}</p>`}`;
   }
   return head;
 }
+function lockedLecture(c, l, side) { const pv = allLessons(c)[allLessons(c).indexOf(l) - 1]; return `<div class="learn">${side}<div class="learn-main"><div class="empty" style="margin-top:20px">${icon('lock', '')}<h2 class="h3">${T('هذه المحاضرة مقفلة', 'This lecture is locked')}</h2><p class="muted">${T('حقّق النسبة المطلوبة في اختبار المحاضرة السابقة لفتحها.', 'Reach the required score in the previous lecture’s quiz to unlock it.')}</p><a class="btn primary" href="#learn-${c.id}-${pv.id}">${T('العودة للمحاضرة السابقة', 'Back to the previous lecture')}</a></div></div></div>`; }
 function vLecture(c, l) {
   const ls_ = allLessons(c), idx = ls_.indexOf(l), P = lessonP(c.id, l.id), sd = P.steps || {}, sq = P.sq || {}, key = c.id + '.' + l.id;
   let i = STEPI[key]; if (i == null || i >= l.steps.length) { i = l.steps.findIndex((s, k) => !sd[k]); if (i < 0) i = 0; STEPI[key] = i; }
@@ -2403,37 +2422,52 @@ function vLecture(c, l) {
   const side = `<aside class="learn-side"><a class="crumb" href="#course-${c.id}">${icon('arrow')} ${T('تفاصيل الكورس', 'Course details')}</a><b style="display:block;line-height:1.4">${L(c.t)}</b><div class="bar" style="margin:14px 0 4px"><i style="width:${courseProgress(c)}%"></i></div><span class="xs muted">${courseProgress(c)}% ${T('مكتمل', 'complete')}</span>
     ${c.modules.map(m => `<div class="mod">${L(m.t)}</div>${m.lessons.map(x => { const ok = canAccess(c, x), dn = lessonDone(c, x); return `<a class="les ${x.id === l.id ? 'on' : ''} ${dn ? 'done' : ''} ${ok ? '' : 'lock'}" ${ok ? `href="#learn-${c.id}-${x.id}"` : 'data-act="locked"'}><span class="st">${dn ? icon('check') : ok ? '' : icon('lock')}</span><span style="min-width:0"><span class="sm" style="line-height:1.4;display:block">${L(x.t)}</span><small class="xs">${x.steps ? x.steps.length + ' ' + T('مهمة', 'tasks') : lessonKinds(x).map(k => k[1]).join(' · ')}</small></span></a>`; }).join('')}`).join('')}</aside>`;
   const pills = l.steps.map((st, k) => `<button class="pill ${k === i ? 'on' : ''} ${sd[k] ? 'ok' : ''}" data-act="stepGo" data-c="${c.id}" data-l="${l.id}" data-i="${k}" aria-label="${T('المهمة', 'Task')} ${k + 1}">${sd[k] ? icon('check') : k + 1}</button>`).join('');
-  const last = i === l.steps.length - 1, answered = !isQ || sq[i];
+  const last = i === l.steps.length - 1, answered = !!sd[i] || (!S.user && !isQ);
+  if (seqLocked(c, l)) return learnNav() + lockedLecture(c, l, side);
+  const st = quizStat(l, P), allDone = l.steps.every((x, k) => sd[k]), pass = passOf(l), lecDone = lessonDone(c, l), leftR = roundsOf(l) - (P.round || 0);
+  const canDone = !!S.user && !sd[i] && (!isQ || qFinished(s, P, i));
+  const result = last && allDone && hasQuiz(l) && !lecDone ? `<div class="callout" style="margin-top:20px"><b>${T('لم تحقق النتيجة المطلوبة', 'Required score not reached')}</b><br>${T('نتيجتك', 'Your score')} ${st.pct}% — ${T('المطلوب', 'required')} ${pass}%.<br>${leftR > 0 ? `<button class="btn primary sm" style="margin-top:10px" data-act="quizRetake" data-c="${c.id}" data-l="${l.id}">${T('إعادة الاختبار', 'Retake quiz')} (${leftR})</button>` : `${T('استُنفدت مرات الإعادة. تواصل مع الدعم لفتح المحاضرة التالية.', 'No retakes left. Contact support to unlock the next lecture.')} <a class="link" target="_blank" rel="noopener" href="${tgLink('quiz_' + c.id + '_' + l.id)}">${T('الدعم', 'Support')}</a>`}</div>` : (last && lecDone && hasQuiz(l) ? `<div class="callout" style="margin-top:20px">${T('نجحت بنتيجة', 'Passed with')} ${st.pct}% ✓</div>` : '');
   return learnNav() + `<div class="learn">${side}<div class="learn-main"><div class="crumb"><a href="#learning">${T('سرمد ليرننج', 'Sarmad Learning')}</a>${icon('chev')}<a href="#course-${c.id}">${L(c.t)}</a>${icon('chev')}<span>${T('محاضرة', 'Lecture')} ${idx + 1}/${ls_.length}</span></div><div class="row" style="margin:-6px 0 14px">${shareBtn('learn-' + c.id + '-' + l.id, L(l.t), 'chip', T('مشاركة المحاضرة', 'Share lecture'))}${shareBtn('learn-' + c.id + '-' + l.id + '-' + (i + 1), L(l.t) + ' · ' + T('مهمة ', 'Task ') + (i + 1), 'chip', T('مشاركة المهمة', 'Share task'))}</div>
     ${l.cover && /^https:\/\//.test(l.cover) ? `<figure class="lec-cover"><img src="${esc(l.cover)}" alt="" draggable="false"></figure>` : ''}<h1 class="h1" style="font-size:clamp(1.7rem,3.4vw,2.5rem);margin-bottom:18px">${L(l.t)}</h1>
     <div class="steps-bar"><div class="row" style="justify-content:space-between;margin-bottom:10px"><span class="sm muted">${doneN}/${l.steps.length} ${T('مهمة مكتملة', 'tasks done')}</span><span class="sm muted">${pct}%</span></div><div class="bar"><i style="width:${pct}%"></i></div><div class="pills">${pills}</div></div>
-    <div class="stp" key="${i}">${stepContent(c, l, s, i, sq)}</div>
+    <div class="stp" key="${i}">${stepContent(c, l, s, i, sq)}${sd[i] ? `<p class="tag free" style="margin-top:18px">${icon('check')} ${T('تمت هذه المهمة', 'Task completed')}</p>` : canDone ? `<button class="btn accent" style="margin-top:22px" data-act="stepDone" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${icon('check')} ${T('إتمام المهمة', 'Complete task')}</button>` : ''}${result}</div>
     <div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:22px;margin-top:30px"><button class="btn ghost" data-act="stepPrev" data-c="${c.id}" data-l="${l.id}" ${i === 0 ? 'disabled' : ''}>${icon('arrow')} ${T('السابق', 'Previous')}</button>
-      <div class="row">${!answered ? `<span class="xs muted">${T('أجب لتتابع', 'Answer to continue')}</span>` : ''}<button class="btn primary" data-act="stepNext" data-c="${c.id}" data-l="${l.id}" ${answered ? '' : 'disabled'}>${last ? T('إنهاء المحاضرة', 'Finish lecture') : T('التالي', 'Next')} ${arrow()}</button></div></div></div></div>`;
+      <div class="row">${!answered ? `<span class="xs muted">${T('أتمم المهمة لتتابع', 'Complete the task to continue')}</span>` : ''}<button class="btn primary" data-act="stepNext" data-c="${c.id}" data-l="${l.id}" ${answered ? '' : 'disabled'}>${last ? T('إنهاء المحاضرة', 'Finish lecture') : T('التالي', 'Next')} ${arrow()}</button></div></div></div></div>`;
 }
 Object.assign(A, {
-  stepGo(el) { STEPI[el.dataset.c + '.' + el.dataset.l] = +el.dataset.i; render(); },
+  stepGo(el) { const lec = allLessons(courseOf(el.dataset.c)).find(x => x.id === el.dataset.l), P = lessonP(el.dataset.c, el.dataset.l), k = +el.dataset.i; if (!lec.steps.slice(0, k).every((x, j) => (P.steps || {})[j])) return toast(T('أتمم المهام السابقة أولًا.', 'Complete the previous tasks first.')); STEPI[el.dataset.c + '.' + el.dataset.l] = k; render(); },
   stepPrev(el) { const k = el.dataset.c + '.' + el.dataset.l; STEPI[k] = Math.max(0, (STEPI[k] || 0) - 1); render(); },
   async stepNext(el) {
     const { c, l } = el.dataset, course = courseOf(c), lec = allLessons(course).find(x => x.id === l), k = c + '.' + l, i = STEPI[k] || 0;
-    if (S.user && !lessonP(c, l).steps?.[i]) await saveStepPatch(c, l, n => { n.steps[i] = true; });
+    if (S.user && !lessonP(c, l).steps?.[i]) return toast(T('اضغط «إتمام المهمة» أولًا.', 'Press “Complete task” first.'));
     if (i < lec.steps.length - 1) { STEPI[k] = i + 1; render(); return; }
+    if (S.user && !lessonDone(course, lec)) { render(); return toast(T('لم تحقق النتيجة المطلوبة بعد.', 'You have not reached the required score yet.')); }
     toast(T('أحسنت! انتهت المحاضرة', 'Great! Lecture finished'));
     const ls_ = allLessons(course), nx = ls_[ls_.indexOf(lec) + 1]; go(nx ? `learn-${c}-${nx.id}` : `course-${c}`);
   },
   async stepPick(el) {
     if (!S.user) return needAuth();
     const { c, l } = el.dataset, i = +el.dataset.i, v = +el.dataset.v, s = allLessons(courseOf(c)).find(x => x.id === l).steps[i];
-    await saveStepPatch(c, l, n => { n.sq[i] = { v, ok: v === s.a }; n.steps[i] = true; }); render();
+    if (ans0(c, l, i)) return; await saveStepPatch(c, l, n => { const k = (n.tr[i] || 0) + 1; n.tr[i] = k; n.sq[i] = { v, ok: v === s.a, n: k }; }); render();
   },
   async stepCheck(el) {
     if (!S.user) return needAuth();
     const { c, l } = el.dataset, i = +el.dataset.i, s = allLessons(courseOf(c)).find(x => x.id === l).steps[i], txt = ($('#st-in').value || '').trim();
     if (!txt) { toast(T('اكتب إجابتك أولًا', 'Type your answer first')); return; }
     const ok = s.ans.some(a => a.toLowerCase() === txt.toLowerCase());
-    await saveStepPatch(c, l, n => { n.sq[i] = { txt, ok }; n.steps[i] = true; }); render();
+    if (ans0(c, l, i)) return; await saveStepPatch(c, l, n => { const k = (n.tr[i] || 0) + 1; n.tr[i] = k; n.sq[i] = { txt, ok, n: k }; }); render();
   },
-  async stepRetry(el) { const { c, l } = el.dataset, i = +el.dataset.i; await saveStepPatch(c, l, n => { delete n.sq[i]; delete n.steps[i]; }); render(); }
+  async stepRetry(el) { const { c, l } = el.dataset, i = +el.dataset.i, s = allLessons(courseOf(c)).find(x => x.id === l).steps[i], P = lessonP(c, l), a = (P.sq || {})[i]; if (!a || a.ok || usedOf(P, i) >= triesOf(s) || (P.steps || {})[i]) return; await saveStepPatch(c, l, n => { delete n.sq[i]; }); render(); },
+  async stepDone(el) {
+    if (!S.user) return needAuth(); const { c, l } = el.dataset, i = +el.dataset.i, s = allLessons(courseOf(c)).find(x => x.id === l).steps[i], P = lessonP(c, l);
+    if (isQStep(s) && !qFinished(s, P, i)) return toast(T('أجب عن السؤال أولًا.', 'Answer the question first.'));
+    await saveStepPatch(c, l, n => { n.steps[i] = true; }); const nl = lessonP(c, l); toast(T('تم إتمام المهمة ✓', 'Task completed ✓')); render();
+  },
+  async quizRetake(el) {
+    const { c, l } = el.dataset, lec = allLessons(courseOf(c)).find(x => x.id === l), P = lessonP(c, l); if ((P.round || 0) >= roundsOf(lec)) return toast(T('استُنفدت مرات الإعادة.', 'No retakes left.'));
+    await saveStepPatch(c, l, n => { n.round = (n.round || 0) + 1; lec.steps.forEach((s, k) => { if (isQStep(s)) { delete n.sq[k]; delete n.tr[k]; delete n.steps[k]; } }); });
+    STEPI[c + '.' + l] = lec.steps.findIndex(isQStep); render();
+  }
 });
 
 /* ---------- placement tests ---------- */
@@ -2562,7 +2596,7 @@ function plansSection() {
 const _vLearn = vLearn, _vCourse = vCourse;
 ROUTE.learning = vHub;
 ROUTE.course = r => learnNav() + _vCourse(r);
-ROUTE.learn = r => { const c = courseOf(r.cid); if (!c || !c.modules.length) return v404(); const l = allLessons(c).find(x => x.id === r.lid) || allLessons(c)[0]; if (l.steps) return canAccess(c, l) ? vLecture(c, l) : learnNav() + _vLearn(r); return learnNav() + _vLearn(r); };
+ROUTE.learn = r => { const c = courseOf(r.cid); if (!c || !c.modules.length) return v404(); const l = allLessons(c).find(x => x.id === r.lid) || allLessons(c)[0]; if (l.steps) return (l.free || S.enr[c.id]) ? vLecture(c, l) : learnNav() + _vLearn(r); return learnNav() + _vLearn(r); };
 Object.assign(ROUTE, { track: vTrack, test: vTest, lxlogin: vLxLogin, lxsignup: vLxSignup, lxcomplete: vLxComplete });
 const _searchIndex = searchIndex;
 searchIndex = function () {
