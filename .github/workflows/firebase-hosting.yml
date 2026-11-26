@@ -33,8 +33,10 @@ jobs:
           rm -rf public
           mkdir public
           cp index.html public/index.html
-          test "$(find public -type f | wc -l)" -eq 1
-          test "$(find public -type f)" = public/index.html
+          cp robots.txt public/robots.txt
+          cp sitemap.xml public/sitemap.xml
+          test "$(find public -type f | wc -l)" -eq 3
+          test "$(find public -type f | sort)" = "$(printf 'public/index.html\npublic/robots.txt\npublic/sitemap.xml')"
           test ! -L public/index.html
       - name: Deploy Hosting only
         run: npx --yes firebase-tools@15.37.0 deploy --only hosting --project saemad-8a204 --non-interactive
