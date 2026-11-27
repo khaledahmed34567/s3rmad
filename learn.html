@@ -38,6 +38,9 @@ button{font-family:inherit}
 .lact{display:flex;align-items:center;gap:8px}
 .qin{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;width:220px}
 .qin:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
+.sel,.ta{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;font-size:14.5px;font-family:inherit;color:var(--ink);outline:none}
+.sel:focus,.ta:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
+.ta{resize:vertical;min-height:84px}
 .chip{font-size:12px;color:var(--ink2);background:#f1ebdc;border-radius:999px;padding:5px 11px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ghost{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
 .ghost:hover{border-color:var(--green2);color:var(--green)}
@@ -148,6 +151,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       <button class="on" data-v="home" id="nvHome">لوحتي</button>
       <button data-v="cat" id="nvCat">الدورات</button>
       <button data-v="paths" id="nvPaths">المسارات</button>
+      <button data-v="disc" id="nvDisc">النقاشات</button>
       <button data-v="courses" id="nvCourses">كورساتي</button>
       <button data-v="labs" id="nvLabs">المعمل</button>
       <button data-v="ai" id="nvAi">الذكاء الاصطناعي</button>
@@ -221,6 +225,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       <div class="grid">
         <div class="tile" data-go="cat"><b id="tCat">الدورات</b><span id="tCatd">كل الدورات المتاحة، مسجّل فيها أو لأ</span></div>
         <div class="tile" data-go="paths"><b id="tPa">المسارات</b><span id="tPad">مسارات مرتبة تأخذك من الأساس للاحتراف</span></div>
+        <div class="tile" data-go="disc"><b id="tDi">النقاشات</b><span id="tDid">اسأل وناقش في دوراتك</span></div>
         <div class="tile" data-go="courses"><b id="tC">كورساتي</b><span id="tCd">الكورسات اللي انت مسجل فيها وتقدمك</span></div>
         <div class="tile" data-go="labs"><b id="tL">المعمل</b><span id="tLd">تجارب عملية تقدر تفتحها وتشتغل عليها</span></div>
         <div class="tile" data-go="ai"><b id="tA">الذكاء الاصطناعي</b><span id="tAd">مهام تساعدنا نحسّن المنصة</span></div>
@@ -237,6 +242,23 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   <!-- paths -->
   <div id="v-paths" class="hidden">
     <div class="sec"><h2 id="paT">المسارات</h2><div id="pathList"></div></div>
+  </div>
+
+  <!-- discussions -->
+  <div id="v-disc" class="hidden">
+    <div class="sec"><h2 id="diT">النقاشات</h2>
+      <div class="card2" style="margin-bottom:14px">
+        <label id="diLbl">اختار الدورة</label>
+        <select class="sel" id="diSel"></select>
+      </div>
+      <div id="discList"></div>
+      <div class="card2" style="margin-top:14px">
+        <label id="diNew">شارك في النقاش</label>
+        <textarea class="ta" id="diText" maxlength="600" placeholder="اكتب سؤالك أو ملاحظتك"></textarea>
+        <button class="primary" id="diSend">إرسال</button>
+        <div class="msg" id="diMsg"></div>
+      </div>
+    </div>
   </div>
 
   <!-- search -->
@@ -304,7 +326,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       expired:"الكود انتهت صلاحيته. اطلب كود جديد.", noAcct:"مفيش حساب بالإيميل ده. اتأكد من الإيميل أو كلّم الدعم.",
       net:"حصلت مشكلة في الاتصال. جرب تاني.", slow:"استنى لحظة قبل ما تطلب كود جديد.",
       pwBad:"الإيميل أو كلمة السر غلط.", pwNo:"مفيش حساب بالإيميل ده.", resendIn:"إعادة الإرسال بعد ", sec:"ث",
-      nvHome:"لوحتي", nvCourses:"كورساتي", nvLabs:"المعمل", nvAi:"الذكاء الاصطناعي", nvAch:"إنجازاتي", nvCat:"الدورات", nvPaths:"المسارات",
+      nvHome:"لوحتي", nvCourses:"كورساتي", nvLabs:"المعمل", nvAi:"الذكاء الاصطناعي", nvAch:"إنجازاتي", nvCat:"الدورات", nvPaths:"المسارات", nvDisc:"النقاشات", tDid:"اسأل وناقش في دوراتك",
+      diLbl:"اختار الدورة", diNew:"شارك في النقاش", diSend:"إرسال", diPh:"اكتب سؤالك أو ملاحظتك",
+      diEmpty:"مفيش نقاشات في الدورة دي لسه. ابدأ إنت.", diShort:"اكتب 3 حروف على الأقل.", diSent:"تم إرسال تعليقك، هيظهر بعد المراجعة.",
+      diErr:"تعذر تحميل النقاشات دلوقتي.", diSignin:"سجّل الدخول عشان تشارك.",
       tCatd:"كل الدورات المتاحة، مسجّل فيها أو لأ", tPad:"مسارات مرتبة تأخذك من الأساس للاحتراف",
       beginner:"مبتدئ", inter:"متوسط", hoursU:"ساعة", free:"مجاني", soon:"قريبًا", joinedB:"مسجل", startC:"ابدأ",
       trackCourses:"كورسات المسار", trackProg:"اتقدمت",
@@ -333,7 +358,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       expired:"That code has expired. Request a new one.", noAcct:"No account with that email. Check it or contact support.",
       net:"Connection problem. Try again.", slow:"Please wait a moment before requesting a new code.",
       pwBad:"Wrong email or password.", pwNo:"No account with that email.", resendIn:"Resend in ", sec:"s",
-      nvHome:"Dashboard", nvCourses:"My courses", nvLabs:"The lab", nvAi:"AI tasks", nvAch:"Achievements", nvCat:"Courses", nvPaths:"Paths",
+      nvHome:"Dashboard", nvCourses:"My courses", nvLabs:"The lab", nvAi:"AI tasks", nvAch:"Achievements", nvCat:"Courses", nvPaths:"Paths", nvDisc:"Discussions", tDid:"Ask and discuss in your courses",
+      diLbl:"Pick a course", diNew:"Join the discussion", diSend:"Send", diPh:"Write your question or note",
+      diEmpty:"No discussions here yet. Start one.", diShort:"Write at least 3 characters.", diSent:"Your comment was sent and will appear after review.",
+      diErr:"Could not load discussions right now.", diSignin:"Sign in to take part.",
       tCatd:"Every course available, joined or not", tPad:"Ordered paths from basics to advanced",
       beginner:"Beginner", inter:"Intermediate", hoursU:"hours", free:"Free", soon:"Coming soon", joinedB:"Joined", startC:"Start",
       trackCourses:"Courses in this path", trackProg:"progress",
@@ -379,7 +407,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("lCourses").textContent = t("sCourses"); $("lLessons").textContent = t("sLessons");
     $("lLabs").textContent = t("sLabs"); $("lSub").textContent = t("sSub");
     $("hCont").textContent = t("hCont"); $("hGo").textContent = t("hGo");
-    $("nvCat").textContent = t("nvCat"); $("nvPaths").textContent = t("nvPaths");
+    $("nvCat").textContent = t("nvCat"); $("nvPaths").textContent = t("nvPaths"); $("nvDisc").textContent = t("nvDisc");
+    $("diT").textContent = t("nvDisc"); $("diLbl").textContent = t("diLbl"); $("diNew").textContent = t("diNew");
+    $("diSend").textContent = t("diSend"); $("diText").placeholder = t("diPh");
+    $("tDi").textContent = t("nvDisc"); $("tDid").textContent = t("tDid");
     $("catT").textContent = t("nvCat"); $("paT").textContent = t("nvPaths");
     $("tCat").textContent = t("nvCat"); $("tCatd").textContent = t("tCatd");
     $("tPa").textContent = t("nvPaths"); $("tPad").textContent = t("tPad");
@@ -404,7 +435,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   var TAB = "home";
   function goTab(v){
     TAB = v;
-    ["home","cat","paths","courses","labs","ai","ach","search"].forEach(function(k){
+    ["home","cat","paths","disc","courses","labs","ai","ach","search"].forEach(function(k){
       $("v-" + k).classList.toggle("hidden", k !== v);
     });
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){
@@ -513,7 +544,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("q").classList.remove("hidden");
     $("dEmail2").textContent = u.email || "";
     var hash = (location.hash || "").replace("#", "");
-    goTab(["home","cat","paths","courses","labs","ai","ach","search"].indexOf(hash) >= 0 ? hash : "home");
+    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hash) >= 0 ? hash : "home");
     load(u);
   }
 
@@ -556,6 +587,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       DATA = { d:d, enr:enr, prog:prog, orders:orders, certs:certs, labs:labs, myLabs:myLabs, tasks:tasks, myTasks:myTasks,
                ids:ids, lessons:lessons, labsDone:labsDone, aiDone:aiDone, sub:sub };
       render();
+      fillDiscSelect(); loadDisc($("diSel").value);
     }).catch(function(){
       $("homeCourses").innerHTML = '<div class="empty">' + esc(t("loadErr")) + '</div>';
     });
@@ -727,6 +759,60 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     row.appendChild(a);
     return row;
   }
+
+  /* ---- discussions ---- */
+  var DI = { id: "", loaded: false };
+  function fillDiscSelect(){
+    var sel = $("diSel"); sel.innerHTML = "";
+    var ids = Object.keys(COURSES);
+    ids.forEach(function(id){
+      var o = document.createElement("option"); o.value = id;
+      o.textContent = (lang === "ar" ? COURSES[id].ar : COURSES[id].en);
+      sel.appendChild(o);
+    });
+    if (DATA && DATA.ids.length) { sel.value = DATA.ids[0]; }
+    DI.id = sel.value;
+  }
+  function loadDisc(id){
+    DI.id = id; DI.loaded = true;
+    var box = $("discList"); box.innerHTML = '<div class="empty">' + esc(lang === "ar" ? "جارٍ التحميل..." : "Loading...") + '</div>';
+    var db = firebase.firestore();
+    db.collection("comments").where("postId", "==", id).limit(40).get().then(function(s){
+      var rows = [];
+      s.forEach(function(d){ var v = d.data(); if (v.status === "approved" || v.status === "ok") rows.push(v); });
+      rows.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+      box.innerHTML = "";
+      if (!rows.length){ box.appendChild(el("div","empty", esc(t("diEmpty")))); return; }
+      rows.forEach(function(v){
+        var row = el("div","item");
+        row.appendChild(el("div","ic","💬"));
+        var tt = el("div","tt");
+        tt.appendChild(el("b", null, esc(v.name || (lang === "ar" ? "طالب" : "Student"))));
+        tt.appendChild(el("span", null, esc(String(v.text || "").slice(0, 400))));
+        row.appendChild(tt);
+        box.appendChild(row);
+      });
+    }).catch(function(){ box.innerHTML = '<div class="empty">' + esc(t("diErr")) + '</div>'; });
+  }
+  $("diSel").addEventListener("change", function(){ loadDisc($("diSel").value); });
+  $("diSend").addEventListener("click", function(){
+    var u = firebase.auth().currentUser;
+    var msg = $("diMsg"); msg.className = "msg"; msg.textContent = "";
+    if (!u){ msg.className = "msg err"; msg.textContent = t("diSignin"); return; }
+    var v = ($("diText").value || "").trim();
+    if (v.length < 3){ msg.className = "msg err"; msg.textContent = t("diShort"); return; }
+    if (v.length > 600) v = v.slice(0, 600);
+    var btn = $("diSend"); btn.disabled = true;
+    firebase.firestore().collection("comments").add({
+      postId: DI.id, userId: u.uid, name: (DATA && DATA.d && DATA.d.name) || (u.email || "").split("@")[0],
+      text: v, status: "pending", at: Date.now()
+    }).then(function(){
+      $("diText").value = ""; btn.disabled = false;
+      msg.className = "msg ok"; msg.textContent = t("diSent");
+    }).catch(function(){
+      btn.disabled = false; msg.className = "msg err"; msg.textContent = t("diErr");
+    });
+  });
 
   /* ---- search ---- */
   function doSearch(){
