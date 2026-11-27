@@ -3369,6 +3369,10 @@ Object.assign(A, { async aiLesson() {
     out.textContent = j.ok ? j.a : (r.status === 429 ? T('وصلت للحد اليومي. جرّب غدًا.', 'Daily limit reached. Try tomorrow.') : T('المساعد غير متاح الآن.', 'Assistant unavailable now.'));
   } catch (e) { out.textContent = T('تعذّر الاتصال. جرّب لاحقًا.', 'Connection failed. Try later.'); }
 } });
+AFTER.push(r => { if (r.name !== 'learn') return; const q = $('#ailq'); if (!q || $('#ailchips')) return;
+  const ch = [[T('بسّط الدرس', 'Simplify'), 'بسّط لي هذا الدرس بكلمات سهلة مع مثال'], [T('اختبرني', 'Quiz me'), 'اختبرني بثلاثة أسئلة قصيرة على هذا الدرس مع الإجابات'], [T('مثال عملي', 'Practical example'), 'أعطني مثالًا عمليًا أو تمرينًا صغيرًا على هذا الدرس'], [T('لخّص', 'Summarize'), 'لخّص هذا الدرس في خمس نقاط']];
+  q.insertAdjacentHTML('beforebegin', `<div id="ailchips" class="row" style="gap:6px;flex-wrap:wrap">${ch.map((x, i) => `<button type="button" class="btn sm" data-ailc="${i}">${x[0]}</button>`).join('')}</div>`);
+  document.querySelectorAll('[data-ailc]').forEach(b => b.addEventListener('click', () => { q.value = ch[+b.dataset.ailc][1]; A.aiLesson(); })); });
 AFTER.push(r => { if (r.name !== 'learn') { const el = $('#tm'); if (el) el.remove(); document.body.classList.remove('has-timer'); } });
 /* course reviews (admin-moderated) */
 A.revSend = async el => {
