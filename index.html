@@ -1278,6 +1278,65 @@ try {
 const tsNow = () => firebase.firestore.FieldValue.serverTimestamp();
 const toMs = v => (v && v.toMillis ? v.toMillis() : typeof v === 'number' ? v : Date.now());
 const cu = () => { if (!fbAuth || !fbAuth.currentUser) throw new Error('auth'); return fbAuth.currentUser; };
+/* ---------- activation gate (OTP) ---------- */
+const OTPW = 'https://sarmad-bot.khaledahmedelbrbary80.workers.dev';
+const GATE = { until: 0, uid: '', after: null };
+async function gateActive() {
+  const u = fbAuth && fbAuth.currentUser; if (!u) return false;
+  if (GATE.uid === u.uid && GATE.until > Date.now()) return true;
+  try {
+    const t = await u.getIdToken();
+    const r = await fetch(OTPW + '/otpstate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t }) });
+    const j = await r.json();
+    if (j && j.ok && j.active) { GATE.until = Date.now() + 300000; GATE.uid = u.uid; return true; }
+  } catch (e) { }
+  return false;
+}
+function gateModal(msg) {
+  const b = openModal(`<div class="modal-h"><b>${T('تفعيل الحساب مطلوب', 'Activation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${msg}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-otp="tg">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-otp="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="otp-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="otp-code" inputmode="numeric" maxlength="6" dir="ltr" autocomplete="one-time-code"></div><div class="err" id="otp-err"></div><button class="btn primary block" id="otp-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px">${T('الكود صالح 10 دقائق، وبحد أقصى 3 رسائل في الساعة.', 'The code is valid for 10 minutes, at most 3 per hour.')}</p></div>`);
+  const err = m => { const e = $('#otp-err'); if (e) e.textContent = m; };
+  b.querySelectorAll('[data-otp]').forEach(btn => btn.addEventListener('click', async () => {
+    const ch = btn.dataset.otp; btn.disabled = true; err(T('جارٍ الإرسال...', 'Sending...'));
+    try {
+      const t = await fbAuth.currentUser.getIdToken();
+      const r = await fetch(OTPW + '/otpstart', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, ch }) });
+      const j = await r.json();
+      if (j && j.ok) err(ch === 'tg' ? T('بعتنالك الكود على تيليجرام.', 'Code sent on Telegram.') : T('بعتنالك الكود على بريدك.', 'Code sent to your email.'));
+      else if (j && j.why === 'notg') err(T('مفيش حساب تيليجرام مربوط. اربطه من البوت بالأمر /link أو اختار البريد.', 'No Telegram linked. Link it with /link in the bot, or choose email.'));
+      else if (j && j.why === 'noemail') err(T('إرسال البريد غير متاح حاليًا. اختار تيليجرام.', 'Email delivery is not available yet. Choose Telegram.'));
+      else if (j && j.why === 'limit') err(T('وصلت للحد على القناة دي (3 رسائل في الساعة). جرّب القناة التانية أو بعد شوية.', 'This channel hit its limit (3 codes per hour). Try the other channel, or later.'));
+      else err(T('تعذر إرسال الكود. حاول تاني.', 'Could not send the code. Try again.'));
+    } catch (e) { err(T('تعذر إرسال الكود. حاول تاني.', 'Could not send the code. Try again.')); }
+    btn.disabled = false;
+  }));
+  const go = async () => {
+    const el = $('#otp-code'), code = ((el && el.value) || '').replace(/\D/g, '');
+    if (code.length !== 6) return err(T('اكتب 6 أرقام.', 'Enter 6 digits.'));
+    const btn = $('#otp-go'); if (btn) btn.disabled = true; err(T('جارٍ التأكيد...', 'Verifying...'));
+    try {
+      const t = await fbAuth.currentUser.getIdToken();
+      const r = await fetch(OTPW + '/otpcheck', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, code }) });
+      const j = await r.json();
+      if (j && j.ok) {
+        GATE.until = Date.now() + 300000; GATE.uid = fbAuth.currentUser.uid; closeModal(); toast(T('تم تفعيل حسابك', 'Your account is activated'));
+        const f = GATE.after; GATE.after = null; if (f) setTimeout(f, 50); return;
+      }
+      if (j && j.why === 'wrong') err(T('الكود غلط. المحاولات الباقية: ', 'Wrong code. Attempts left: ') + (j.left || 0));
+      else if (j && j.why === 'expired') err(T('الكود انتهت صلاحيته. اطلب كود جديد.', 'The code expired. Request a new one.'));
+      else if (j && j.why === 'locked') err(T('محاولات كتير. اطلب كود جديد.', 'Too many attempts. Request a new one.'));
+      else err(T('تعذر التأكيد. حاول تاني.', 'Could not verify. Try again.'));
+    } catch (e) { err(T('تعذر التأكيد. حاول تاني.', 'Could not verify. Try again.')); }
+    if (btn) btn.disabled = false;
+  };
+  const gb = $('#otp-go'); if (gb) gb.addEventListener('click', go);
+  const ic = $('#otp-code'); if (ic) ic.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+  return b;
+}
+async function needActive(msg, after) {
+  if (await gateActive()) return true;
+  GATE.after = after || null; gateModal(msg); return false;
+}
+
 const udoc = uid => fbDb.collection('users').doc(uid);
 const sortDesc = a => a.sort((x, y) => y.at - x.at);
 const DEFAULT_LINKS = { platform: false, learning: false, tam: false };
@@ -1327,11 +1386,16 @@ const DB = {
   },
   async google() {
     const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' });
-    try { await fbAuth.signInWithPopup(p); }
+    let cred = null;
+    try { cred = await fbAuth.signInWithPopup(p); }
     catch (e) {
       if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') { await fbAuth.signInWithRedirect(p); return null; }
       if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') throw new Error('cancel');
       throw new Error('fail');
+    }
+    if (cred && cred.additionalUserInfo && cred.additionalUserInfo.isNewUser) {
+      try { await cred.user.delete(); } catch (e2) { try { await fbAuth.signOut(); } catch (e3) { } }
+      throw new Error('newacc');
     }
     await ensureUserDoc(fbAuth.currentUser); return this.me();
   },
@@ -2201,17 +2265,21 @@ const A = {
   locked() { toast(T('الدرس مقفل: سجّل في الكورس أو حقّق النسبة المطلوبة في اختبار المحاضرة السابقة', 'Locked: enroll in the course or reach the required score in the previous lecture quiz')); },
   async enroll(el) {
     if (!S.user) return needAuth(); if (needStudy()) return;
+    if (!(await needActive(T('لازم تفعّل حسابك قبل ما تبدأ الكورس.', 'Activate your account before starting the course.'), () => A.enroll(el)))) return;
     await DB.enroll(el.dataset.c); await autoLink('learning'); await loadState(); toast(T('تم تسجيلك في الكورس', 'You are enrolled')); render();
   },
-  buy(el) { if (!S.user) return needAuth(); if (needStudy()) return; const c = COURSES.find(x => x.id === el.dataset.c); openCheckout({ title: c.t, amount: c.price, courseId: c.id }); },
-  buyPlan(el) { if (!S.user) return needAuth(); if (needStudy()) return; const p = LEARN_PLANS.find(x => x.id === el.dataset.p); openCheckout({ title: p.name, amount: p.price, plan: p.id }); },
+  async buy(el) { if (!S.user) return needAuth(); if (needStudy()) return; if (!(await needActive(T('لازم تفعّل حسابك قبل الاشتراك.', 'Activate your account before subscribing.'), () => A.buy(el)))) return; const c = COURSES.find(x => x.id === el.dataset.c); openCheckout({ title: c.t, amount: c.price, courseId: c.id }); },
+  async buyPlan(el) { if (!S.user) return needAuth(); if (needStudy()) return; if (!(await needActive(T('لازم تفعّل حسابك قبل الاشتراك.', 'Activate your account before subscribing.'), () => A.buyPlan(el)))) return; const p = LEARN_PLANS.find(x => x.id === el.dataset.p); openCheckout({ title: p.name, amount: p.price, plan: p.id }); },
   ckPay: runPay,
   share(el) { doShare(el.dataset.r, el.dataset.t); },
   ordersTab() { S.tab = 'payments'; closeModal(); },
   async google(el) {
     const k = el.dataset.k || 'main'; el.disabled = true;
     try { const u = await DB.google(); if (u) { if (k === 'lx') S.user = await DB.setLink('learning', true); await afterAuth(k, T('أهلًا بك', 'Welcome')); } }
-    catch (e) { if (e.message !== 'cancel') { const er = $('#auth-err'); if (er) er.textContent = T('تعذر الدخول عبر جوجل. حاول مرة أخرى.', 'Google sign-in failed. Please try again.'); else toast(T('تعذر الدخول عبر جوجل', 'Google sign-in failed')); } }
+    catch (e) {
+      if (e.message === 'newacc') { const er = $('#auth-err'); const m = T('الدخول بجوجل للحسابات الموجودة فقط. اعمل حسابك أولًا بالبريد وكلمة المرور، وبعدها تقدر تدخل بجوجل.', 'Google sign-in is for existing accounts only. Create your account with email and password first, then you can sign in with Google.'); if (er) er.textContent = m; else toast(m); }
+      else if (e.message !== 'cancel') { const er = $('#auth-err'); if (er) er.textContent = T('تعذر الدخول عبر جوجل. حاول مرة أخرى.', 'Google sign-in failed. Please try again.'); else toast(T('تعذر الدخول عبر جوجل', 'Google sign-in failed')); }
+    }
     if (el.isConnected) el.disabled = false;
   },
   forgot() {
@@ -2797,6 +2865,7 @@ Object.assign(A, {
   async getCert(el) {
     const c = COURSES.find(x => x.id === el.dataset.c); if (!c || !S.user) return needAuth();
     if (courseProgress(c) < 100) return toast(T('أكمل الكورس أولًا.', 'Finish the course first.'));
+    if (!(await needActive(T('لازم تفعّل حسابك قبل طلب الشهادة.', 'Activate your account before requesting the certificate.'), () => A.getCert(el)))) return;
     el.disabled = true; try { const code = await DB.makeCert(c); go('cert-' + code); } catch (e) { el.disabled = false; toast(T('تعذر إرسال الطلب.', 'Could not send the request.')); }
   }
 });
@@ -3141,6 +3210,7 @@ FORMS.aid = async f => {
   if (!AID.img.front || !AID.img.back) return bad(T('امسح وجه وظهر المستند.', 'Scan both sides of the document.'));
   if (!d.get('truth') || !d.get('consent') || !d.get('commit')) return bad(T('وافق على الإقرارات الثلاثة.', 'Accept the three declarations.'));
   err.textContent = '';
+  if (!(await gateActive())) { needActive(T('لازم تفعّل حسابك قبل ما تبعت طلب المساعدة.', 'Activate your account before sending the aid request.')); return; }
   const aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null });
   try { fetch(KYCN, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: aidId, kind: d.get('dockind') === 'nid' ? 'nid' : 'univ', fields: Object.assign({ _who: name.join(' ') }, AID.fields || {}) }) }); } catch (e) { }
   AID.fields = {};
@@ -3176,10 +3246,11 @@ Object.assign(A, {
 });
 FORMS.setup = async f => {
   const d = new FormData(f), err = $('#su-err'), old = d.get('old'), pw = d.get('pw'), pw2 = d.get('pw2'), u = fbAuth.currentUser;
-  if (!u.emailVerified) { err.textContent = T('أكّد بريدك أولًا.', 'Confirm your email first.'); return; }
+  if (!u.emailVerified && !(await needActive(T('أكّد بريدك أولًا، أو فعّل حسابك بكود من تيليجرام أو البريد.', 'Confirm your email first, or activate your account with a code from Telegram or email.')))) { return; }
   if (pw.length < 10 || !/[A-Za-z]/.test(pw) || !/\d/.test(pw)) { err.textContent = T('كلمة المرور 10 أحرف على الأقل وتحتوي حروفًا وأرقامًا.', 'Password must be 10+ characters with letters and numbers.'); return; }
   if (pw !== pw2) { err.textContent = T('كلمتا المرور غير متطابقتين.', 'Passwords do not match.'); return; }
   if (pw === old) { err.textContent = T('اختر كلمة مرور مختلفة عن المؤقتة.', 'Choose a password different from the temporary one.'); return; }
+  if (!(await needActive(T('لازم تفعّل حسابك قبل تغيير كلمة المرور.', 'Activate your account before changing the password.')))) return;
   try {
     await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, old));
     await u.updatePassword(pw);
