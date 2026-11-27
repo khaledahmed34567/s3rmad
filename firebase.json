@@ -28,6 +28,12 @@
           }
         ]
       }
+    ],
+    "rewrites": [
+      {
+        "source": "/learn",
+        "destination": "/learn.html"
+      }
     ]
   }
 }
