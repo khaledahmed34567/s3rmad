@@ -2517,9 +2517,9 @@ function openAITask(t) {
   if (!u) { location.hash = '#login'; return; }
   const min = Math.min(3600, Math.max(10, +(t.min || 30)));
   AIT.sid = ''; AIT.hist = []; AIT.start = Date.now(); AIT.on = 0; AIT.off = 0;
-  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(t.title) || t.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;text-align:start">${T('الموضوعات المسموحة:', 'Allowed topics:')} ${esc(String(t.topics || ''))}</p><div id="ai-chat" dir="auto" style="max-height:44vh;overflow:auto;display:grid;gap:8px;margin:10px 0"></div><div class="field"><label for="ai-q">${T('اكتب رسالتك', 'Your message')}</label><input id="ai-q" autocomplete="off" maxlength="400" dir="auto" style="background:#fff;color:#161615"></div><div class="err" id="ai-err"></div><button class="btn primary block" id="ai-send">${T('إرسال', 'Send')}</button><button class="btn ghost block" id="ai-done" style="margin-top:8px">${T('إنهاء المهمة', 'Finish task')}</button><p class="muted sm" id="ai-prog"></p></div>`);
+  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(t.title) || t.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;text-align:start">${T('الموضوعات المسموحة:', 'Allowed topics:')} ${esc(String(t.topics || ''))}</p><div id="ai-chat" dir="auto" style="max-height:44vh;overflow:auto;display:grid;gap:8px;margin:10px 0"></div><div class="field"><label for="ai-q">${T('اكتب رسالتك', 'Your message')}</label><input id="ai-q" autocomplete="off" maxlength="400" dir="auto" placeholder="اكتب هنا..."></div><div class="err" id="ai-err"></div><button class="btn primary block" id="ai-send">${T('إرسال', 'Send')}</button><button class="btn ghost block" id="ai-done" style="margin-top:8px">${T('إنهاء المهمة', 'Finish task')}</button><p class="muted sm" id="ai-prog"></p></div>`, 'ai-modal');
   const err = m => { const e = $('#ai-err'); if (e) e.textContent = m; };
-  const add = (who, txt) => { const c = $('#ai-chat'); if (!c) return; const d = document.createElement('div'); d.style.cssText = (who === 'me' ? 'justify-self:end;background:#dff3ea;' : 'justify-self:start;background:#f1ece0;') + 'padding:8px 10px;border-radius:12px;max-width:85%;color:#161615;unicode-bidi:plaintext;text-align:start;overflow-wrap:anywhere'; d.textContent = txt; c.appendChild(d); c.scrollTop = c.scrollHeight; };
+  const add = (who, txt) => { const c = $('#ai-chat'); if (!c) return; const d = document.createElement('div'); d.className = who === 'me' ? 'ai-b ai-me' : 'ai-b'; d.style.justifySelf = who === 'me' ? 'end' : 'start'; d.textContent = txt; c.appendChild(d); c.scrollTop = c.scrollHeight; };
   const prog = () => { const p = $('#ai-prog'); if (!p) return; const mins = Math.floor((Date.now() - AIT.start) / 60000); p.textContent = T('المدة: ' + mins + ' من ' + min + ' دقيقة، وردود في الموضوع: ' + AIT.on, 'Time: ' + mins + ' of ' + min + ' min, on-topic replies: ' + AIT.on); };
   prog();
   const post = async body => { const idt = await u.getIdToken(); const r = await fetch(OTPW + '/aitsess', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ t: idt }, body)) }); return await r.json(); };
@@ -3938,5 +3938,24 @@ Object.assign(A, {
   }
 });
 </script>
+<style id="ai-modal-css">
+.ai-b{padding:8px 10px;border-radius:12px;max-width:85%;background:#f1ece0;color:#161615;unicode-bidi:plaintext;text-align:start;overflow-wrap:anywhere;line-height:1.6}
+.ai-b.ai-me{background:#dff3ea}
+#ai-q{background:#fff;color:#161615}
+#ai-q::placeholder{color:#6b7a71}
+html[data-theme="dark"] .modal.ai-modal,html.dark .modal.ai-modal{background:#12291f;border-color:#305245;color:#f4ecd6}
+html[data-theme="dark"] .modal.ai-modal .modal-h,html.dark .modal.ai-modal .modal-h{background:#0d1f1b;border-bottom-color:#1f3a31;color:#f4ecd6}
+html[data-theme="dark"] .modal.ai-modal .modal-h b,html.dark .modal.ai-modal .modal-h b{color:#f4ecd6}
+html[data-theme="dark"] .modal.ai-modal .ib,html.dark .modal.ai-modal .ib{background:#183429;color:#f4ecd6;border-color:#305245}
+html[data-theme="dark"] .ai-b,html.dark .ai-b{background:#183429;color:#f4ecd6;border:1px solid #26493c}
+html[data-theme="dark"] .ai-b.ai-me,html.dark .ai-b.ai-me{background:#1d5544;color:#f0faf4;border-color:#2c6d58}
+html[data-theme="dark"] #ai-q,html.dark #ai-q{background:#0d1f1b;color:#f4ecd6;border:1px solid #305245;border-radius:12px;padding:12px 14px}
+html[data-theme="dark"] #ai-q::placeholder,html.dark #ai-q::placeholder{color:#8fa294}
+html[data-theme="dark"] .modal.ai-modal .muted,html.dark .modal.ai-modal .muted{color:#a9b3a3}
+html[data-theme="dark"] .modal.ai-modal .field label,html.dark .modal.ai-modal .field label{color:#a9b3a3}
+html[data-theme="dark"] .modal.ai-modal .btn.primary,html.dark .modal.ai-modal .btn.primary{background:#1f6b52;color:#f4ecd6;border-color:#2c7d61}
+html[data-theme="dark"] .modal.ai-modal .btn.ghost,html.dark .modal.ai-modal .btn.ghost{background:transparent;color:#f4ecd6;border-color:#305245}
+html[data-theme="dark"] .modal.ai-modal .err,html.dark .modal.ai-modal .err{color:#f2a7a0}
+</style>
 </body>
 </html>
