@@ -3233,7 +3233,10 @@ FORMS.aid = async f => {
 function vSetup() {
   if (!S.user) { setTimeout(needAuth, 0); return ''; }
   if (!S.user.mustChange) { setTimeout(() => go('account'), 0); return ''; }
-  const cu_ = fbAuth && fbAuth.currentUser, ver = !!(cu_ && cu_.emailVerified);
+  const cu_ = fbAuth && fbAuth.currentUser;
+  const gateOk = !!(cu_ && GATE.uid === cu_.uid && GATE.until > Date.now());
+  const ver = !!(cu_ && cu_.emailVerified) || gateOk;
+  if (cu_ && !ver) setTimeout(async () => { try { if (await gateActive()) render(); } catch (e) { } }, 0);
   return pageHead(T('تفعيل الحساب', 'Activate your account'), T('خطوتان قبل أن تبدأ', 'Two steps before you start'), T('أنشأ لك فريق سرمد هذا الحساب. لأمانك، أكّد بريدك الإلكتروني ثم اختر كلمة مرور خاصة بك.', 'The Sarmad team created this account for you. For your security, confirm your email and then choose your own password.'))
     + `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:640px"><div class="stack" style="gap:16px">
       <div class="card stack" style="gap:12px"><h2 class="h3" style="margin:0"><span class="aid-n">1</span> ${T('تفعيل الحساب بكود', 'Activate with a code')} ${ver ? `<span class="tag ok">${T('تم', 'Done')}</span>` : ''}</h2>
@@ -3248,7 +3251,7 @@ function vSetup() {
 }
 ROUTE.setup = vSetup;
 Object.assign(A, {
-  async setupCheck() { const m = $('#su-msg'); try { if (await gateActive()) { render(); return; } if (m) m.textContent = T('لسه ما اتفعّلش. اكتب الكود اللي وصلك.', 'Not activated yet. Enter the code you received.'); await needActive(T('اكتب كود التفعيل اللي وصلك على البريد أو تيليجرام.', 'Enter the activation code from your email or Telegram.')); } catch (e) { if (m) m.textContent = T('تعذر التحقق الآن.', 'Could not check now.'); } },
+  async setupCheck() { const m = $('#su-msg'); try { if (await gateActive()) { render(); return; } if (m) m.textContent = T('لسه ما اتفعّلش. اكتب الكود اللي وصلك.', 'Not activated yet. Enter the code you received.'); await needActive(T('اكتب كود التفعيل اللي وصلك على البريد أو تيليجرام.', 'Enter the activation code from your email or Telegram.'), () => render()); } catch (e) { if (m) m.textContent = T('تعذر التحقق الآن.', 'Could not check now.'); } },
   async setupResend() { const m = $('#su-msg'); const j = await otpSend('email'); if (j && j.ok) { if (m) m.textContent = T('بعتنالك كود تفعيل جديد على بريدك، وممكن ياخد دقيقتين.', 'Sent a new activation code to your email; it may take a couple of minutes.'); } else if (j && j.why === 'limit') { if (m) m.textContent = T('وصلت للحد على البريد (3 في الساعة). جرّب تيليجرام أو بعد شوية.', 'Email limit reached (3 per hour). Try Telegram or later.'); } else { if (m) m.textContent = T('تعذر الإرسال الآن. جرّب تيليجرام أو حاول بعد شوية.', 'Could not send now. Try Telegram or later.'); } }
 });
 FORMS.setup = async f => {
