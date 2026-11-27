@@ -1363,7 +1363,7 @@ const DB = {
   async cert(code) { const d = await fbDb.collection('certs').doc(code).get(); return d.exists ? { id: d.id, ...d.data(), at: toMs(d.data().at) } : null; },
   async submitAid(d) {
     const u = fbAuth && fbAuth.currentUser, { idFront, idBack, ...main } = d, ref = fbDb.collection('aid').doc(), b = fbDb.batch();
-    b.set(ref, { ...main, status: 'new', userId: u ? u.uid : null, at: tsNow() }); b.set(ref.collection('docs').doc('front'), { d: idFront }); b.set(ref.collection('docs').doc('back'), { d: idBack }); await b.commit();
+    b.set(ref, { ...main, status: 'new', userId: u ? u.uid : null, at: tsNow() }); b.set(ref.collection('docs').doc('front'), { d: idFront }); b.set(ref.collection('docs').doc('back'), { d: idBack }); await b.commit(); return ref.id;
   },
   async resubmitOrder(id, receipt) { await fbDb.collection('orders').doc(id).update({ receipt, status: 'pending', resubAt: tsNow() }); },
   async orders() { const u = cu(), s = await fbDb.collection('orders').where('userId', '==', u.uid).get(), a = []; s.forEach(d => a.push({ id: d.id, ...d.data(), at: toMs(d.data().at), paidAt: d.data().paidAt ? toMs(d.data().paidAt) : 0 })); return sortDesc(a); },
@@ -3012,7 +3012,7 @@ function vAid() {
       ${sec(5, T('المستندات (مسح ضوئي بالكاميرا)', 'Documents (camera scan)'), `<div class="field"><label>${T('نوع المستند', 'Document type')}</label><div class="seg"><label class="chip chk"><input type="radio" name="dockind" value="univ" checked data-change="aidKind"><span>${T('كارنيه الجامعة', 'University ID')}</span></label><label class="chip chk"><input type="radio" name="dockind" value="nid" data-change="aidKind"><span>${T('ليس لدي كارنيه: بطاقة الرقم القومي', 'No university ID: national ID card')}</span></label></div></div>
         <div class="aid-slots">${aidSlot('front')}${aidSlot('back')}</div><p class="xs muted">${T('ضع المستند على سطح مضاء داخل الإطار ثم التقط الصورة. نحوّلها لصورة ممسوحة واضحة. لا ترسلها لأحد غيرنا.', 'Place the document on a lit surface inside the frame, then capture. We turn it into a clean scan. Do not send it to anyone else.')}</p>`)}
       <div class="card stack" style="gap:12px"><label class="chk-row"><input type="checkbox" name="truth"><span>${T('أقر بأن كل البيانات والمستندات المرفقة صحيحة، وأن تقديم بيانات مضللة يلغي الطلب.', 'I confirm all data and documents are true; false information voids the request.')}</span></label>
-        <label class="chk-row"><input type="checkbox" name="consent"><span>${T('أوافق على معالجة بياناتي ومستنداتي لدى سرمد لغرض دراسة الطلب وفق ', 'I consent to Sarmad processing my data and documents to review this request, per the ')}<a class="link" href="#privacy">${T('سياسة الخصوصية', 'Privacy Policy')}</a>.</span></label>
+        <label class="chk-row"><input type="checkbox" name="consent"><span>${T('أوافق على معالجة بياناتي ومستنداتي لدى سرمد لغرض دراسة الطلب وفق ', 'I consent to Sarmad processing my data and documents to review this request, per the ')}<a class="link" href="#privacy">${T('سياسة الخصوصية', 'Privacy Policy')}</a>${T('، وأن صورة المستند تُقرأ آليًا (ذكاء اصطناعي) لاستخراج بياناتها، وتُحذف الصور والبيانات المستخرجة عند تفعيل حسابي.', ', and that the document image is read automatically (AI) to extract its fields, and the images and extracted fields are deleted when my account is activated.')}</span></label>
         <label class="chk-row"><input type="checkbox" name="commit"><span>${T('أتعهد بالالتزام بإتمام الكورسات وبمساعدة غيري مستقبلًا بما أستطيع.', 'I commit to finishing the courses and to helping others in the future as I can.')}</span></label>
         <div class="err" id="aid-err" role="alert"></div><button class="btn primary lg" type="submit">${T('إرسال الطلب', 'Submit request')}</button></div>
     </form></div></section>`;
@@ -3022,6 +3022,26 @@ ROUTE.aid = vAid;
 /* ----- scanner ----- */
 const SCAN = { stream: null, side: null, facing: 'environment', raw: null, mode: 'color' };
 function stopScan() { if (SCAN.stream) { SCAN.stream.getTracks().forEach(t => t.stop()); SCAN.stream = null; } }
+/* ----- AI document read (Worker + Workers AI, free) ----- */
+const KYCW = 'https://sarmad-bot.khaledahmedelbrbary80.workers.dev/kyc', KYCN = 'https://sarmad-bot.khaledahmedelbrbary80.workers.dev/kycnotify';
+const KYC_FA = { nid: [['name', 'الاسم'], ['nationalId', 'الرقم القومي'], ['address', 'العنوان'], ['birth', 'تاريخ الميلاد'], ['gender', 'النوع'], ['issueDate', 'تاريخ الإصدار'], ['expiry', 'تاريخ الانتهاء']], univ: [['name', 'الاسم'], ['university', 'الجامعة'], ['faculty', 'الكلية'], ['department', 'القسم'], ['studentId', 'الرقم الجامعي'], ['year', 'الفرقة'], ['academicYear', 'العام الدراسي'], ['nationalId', 'الرقم القومي'], ['expiry', 'تاريخ الانتهاء']] };
+const KYC_AUTO = ['nationalId', 'birth', 'studentId', 'expiry', 'academicYear'];
+async function kycRead(side) {
+  const img = AID.img[side]; if (!img) return;
+  const kind = AID.kind === 'nid' ? 'nid' : 'univ';
+  try {
+    const r = await fetch(KYCW, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind, img }) });
+    const j = await r.json();
+    if (!j || !j.ok) { if (j && (j.why === 'limit' || j.why === 'busy' || j.why === 'ai')) toast(T('قراءة المستند غير متاحة الآن، اكتب البيانات يدويًا.', 'Document reading is unavailable now, please type the details.')); return; }
+    AID.fields = Object.assign(AID.fields || {}, j.fields || {});
+    kycSheet(kind, j.fields || {});
+  } catch (e) { }
+}
+function kycSheet(kind, f) {
+  const rows = (KYC_FA[kind] || []).filter(function (kv) { return f[kv[0]]; });
+  if (!rows.length) return;
+  openModal('<div class="modal-h"><b>' + T('بيانات مقروءة من المستند', 'Fields read from the document') + '</b><button class="ib" data-act="kycClose" aria-label="close">' + icon('x') + '</button></div><div class="modal-b stack" style="gap:10px"><p class="xs muted">' + T('اقرأها وصحّح أي خطأ. الذكاء الاصطناعي قد يخطئ في الأسماء العربية، فراجعها قبل الاستخدام.', 'Read them and fix any mistake. AI can misread Arabic names, so check before using.') + '</p>' + rows.map(function (kv) { return '<label class="chk-row" style="align-items:flex-start"><input type="checkbox" data-kyc="' + kv[0] + '" ' + (KYC_AUTO.indexOf(kv[0]) >= 0 ? 'checked' : '') + '><span style="flex:1">' + kv[1] + '<input class="kyc-in" data-kycv="' + kv[0] + '" value="' + esc(f[kv[0]]) + '" style="width:100%;margin-top:4px" dir="auto"></span></label>'; }).join('') + '<button class="btn primary" data-act="kycUse">' + T('استخدم المحدد في النموذج', 'Use the selected fields') + '</button></div>', 'kyc-modal');
+}
 async function startCam() {
   stopScan(); const v = $('#scan-v'), t = $('#scan-t'); if (!v) return;
   try {
@@ -3068,7 +3088,25 @@ Object.assign(A, {
   scanMode(el) { SCAN.mode = el.dataset.v; scanPreview(); },
   scanOk() {
     const u = toJpeg(SCAN.res); if (!u) return toast(T('تعذّر ضغط الصورة، جرّب صورة أوضح.', 'Could not compress the image, try another.'));
-    AID.img[SCAN.side] = u; const s = $('#slot-' + SCAN.side); if (s) s.outerHTML = aidSlot(SCAN.side); stopScan(); closeModal();
+    AID.img[SCAN.side] = u; const s = $('#slot-' + SCAN.side); if (s) s.outerHTML = aidSlot(SCAN.side); stopScan(); closeModal(); kycRead(SCAN.side);
+  },
+  kycClose() { closeModal(); },
+  kycUse() {
+    const put = function (sel, val) { const el = $(sel); if (el) { el.value = val; el.dispatchEvent(new Event('input', { bubbles: true })); } };
+    document.querySelectorAll('[data-kyc]').forEach(function (cb) {
+      if (!cb.checked) return;
+      const k = cb.dataset.kyc, inp = document.querySelector('[data-kycv="' + k + '"]'), v = inp ? inp.value.trim() : '';
+      if (!v) return;
+      AID.fields = Object.assign(AID.fields || {}, { [k]: v });
+      if (k === 'name') put('#a-name', v);
+      else if (k === 'nationalId') { put('#a-nid', v.replace(/[^0-9]/g, '')); const el = $('#a-nid'); if (el && CH.aidNid) CH.aidNid(el); }
+      else if (k === 'birth') put('#a-birth', v);
+      else if (k === 'address') put('#a-addr', v);
+      else if (k === 'university') put('#st-inst', v);
+      else if (k === 'faculty') put('#st-fac', v);
+      else if (k === 'department') put('#st-maj', v);
+    });
+    closeModal(); toast(T('تم نقل البيانات المحددة', 'Selected fields filled in'));
   }
 });
 Object.assign(CH, {
@@ -3098,7 +3136,9 @@ FORMS.aid = async f => {
   if (!AID.img.front || !AID.img.back) return bad(T('امسح وجه وظهر المستند.', 'Scan both sides of the document.'));
   if (!d.get('truth') || !d.get('consent') || !d.get('commit')) return bad(T('وافق على الإقرارات الثلاثة.', 'Accept the three declarations.'));
   err.textContent = '';
-  await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back });
+  const aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null });
+  try { fetch(KYCN, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: aidId, kind: d.get('dockind') === 'nid' ? 'nid' : 'univ', fields: Object.assign({ _who: name.join(' ') }, AID.fields || {}) }) }); } catch (e) { }
+  AID.fields = {};
   ls.set('aidSent', Date.now()); const masked = maskNid(nid.n); AID.img = {};
   f.outerHTML = `<div class="card stack" style="text-align:center;justify-items:center;padding:34px 22px"><span class="done-check" role="img"></span><h2 class="h2">${T('وصلنا طلبك', 'We received your request')}</h2>
     <p class="muted" style="max-width:56ch">${T('الرقم القومي المسجّل: ', 'Registered national ID: ')}<b class="mono" dir="ltr" data-keep>${masked}</b> ${T('(أُخفي لحمايتك)', '(masked for your protection)')}</p>
@@ -3583,7 +3623,7 @@ const LEGAL_TERMS = [
 LEGAL_PRIVACY.splice(-1, 0,
   [_l('برنامج «نساعد بعض» والمستندات الشخصية', 'The "We help each other" programme and ID documents'), [
     P('لدراسة طلب الدعم نجمع بيانات أوسع: الاسم الرباعي، الرقم القومي، العنوان، بيانات الأسرة والدخل، سبب الطلب، وصورتي وجه وظهر كارنيه الجامعة (أو بطاقة الرقم القومي إن لم يتوفر الكارنيه).', 'To review a support request we collect more data: full name, national ID number, address, family and income details, the reason, and photos of the front and back of the university ID (or the national ID card if there is no university ID).'),
-    U(['تُلتقط الصور عبر الماسح داخل الموقع أو تُرفع منك، وتُضغط وتُحفظ في قاعدة بيانات محمية ولا تُنشر على أي رابط عام.', 'Images are captured by the in-site scanner or uploaded by you, compressed and stored in a protected database, never on a public link.'], ['لا يطّلع عليها إلا المشرف المختص، وتُستخدم فقط لدراسة الطلب وللتحقق من هويتك وصفتك الدراسية.', 'Only the responsible admin can see them, and they are used only to review the request and verify your identity and student status.'], ['يُعرض رقمك القومي مخفيًا بعد التسجيل، ويُستبدل بنسخة مخفية نهائيًا عند اتخاذ القرار في الطلب (قبول أو رفض).', 'Your national ID number is shown masked after registration and is permanently replaced by a masked copy when the request is decided (accepted or rejected).'], ['تُحذف صور الهوية بعد انتهاء دراسة الطلب وإنشاء الحساب، ولك طلب حذفها فورًا بمراسلتنا.', 'ID images are deleted once the request is processed and the account is created, and you may ask us to delete them immediately.'], ['لا نستخدم هذه البيانات لأي غرض تسويقي، ولا نشاركها مع أي جهة.', 'We never use this data for marketing nor share it with anyone.']),
+    U(['تُلتقط الصور عبر الماسح داخل الموقع أو تُرفع منك، وتُضغط وتُحفظ في قاعدة بيانات محمية ولا تُنشر على أي رابط عام.', 'Images are captured by the in-site scanner or uploaded by you, compressed and stored in a protected database, never on a public link.'], ['لا يطّلع عليها إلا المشرف المختص، وتُستخدم فقط لدراسة الطلب وللتحقق من هويتك وصفتك الدراسية.', 'Only the responsible admin can see them, and they are used only to review the request and verify your identity and student status.'], ['يُعرض رقمك القومي مخفيًا بعد التسجيل، ويُستبدل بنسخة مخفية نهائيًا عند اتخاذ القرار في الطلب (قبول أو رفض).', 'Your national ID number is shown masked after registration and is permanently replaced by a masked copy when the request is decided (accepted or rejected).'], ['تُقرأ صورة المستند آليًا (ذكاء اصطناعي) لاستخراج بياناتها، وتُحذف صور الهوية والبيانات المستخرجة تلقائيًا عند قبول الطلب وتفعيل الحساب، ولك طلب حذفها فورًا بمراسلتنا.', 'ID images are deleted once the request is processed and the account is created, and you may ask us to delete them immediately.'], ['لا نستخدم هذه البيانات لأي غرض تسويقي، ولا نشاركها مع أي جهة.', 'We never use this data for marketing nor share it with anyone.']),
     P('تقديم الطلب اختياري، ولا يؤثر قبوله أو رفضه على حقك في شراء الكورسات بشكل عادي.', 'Submitting a request is optional, and its acceptance or rejection does not affect your right to buy courses normally.')]],
   [_l('الحسابات التي ينشئها الأدمن', 'Accounts created by the admin'), [
     P('عند قبول طلب دعم قد ينشئ المشرف حسابًا لك بالبريد الذي كتبته، ويرسل Firebase رابط تفعيل لبريدك، ويصلك كلمة المرور المؤقتة من الفريق بوسيلة تواصل منفصلة. عند أول دخول يُلزمك الموقع بتأكيد بريدك وتغيير كلمة المرور؛ ولا يستطيع الفريق رؤية كلمة المرور الجديدة.', 'When a support request is accepted the admin may create an account for you with the email you wrote; Firebase sends an activation link to your email and the team sends you the temporary password through a separate channel. On first sign-in the site requires you to confirm your email and change the password; the team cannot see your new password.')]],
