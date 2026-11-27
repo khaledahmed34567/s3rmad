@@ -264,6 +264,15 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       <div id="homeCourses"></div>
     </div>
     <div class="sec">
+      <h2 id="prT">بياناتي</h2>
+      <div class="card2">
+        <label id="prNameLbl">الاسم اللي يظهر في المنصة</label>
+        <input id="prName" type="text" maxlength="60" style="max-width:320px">
+        <div style="margin-top:10px"><button class="ghost" id="prSave">حفظ الاسم</button> <span id="prMsg" style="font-size:13px;color:var(--green)"></span></div>
+        <div style="font-size:12.5px;color:var(--ink2);margin-top:10px" id="prMail"></div>
+      </div>
+    </div>
+    <div class="sec">
       <h2 id="hGo">روح على</h2>
       <div class="grid">
         <div class="tile" data-go="cat"><b id="tCat">الدورات</b><span id="tCatd">كل الدورات المتاحة، مسجّل فيها أو لأ</span></div>
@@ -392,6 +401,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"حصلت مشكلة في الاتصال. جرب تاني.", slow:"استنى لحظة قبل ما تطلب كود جديد.",
       pwBad:"الإيميل أو كلمة السر غلط.", pwNo:"مفيش حساب بالإيميل ده.", resendIn:"إعادة الإرسال بعد ", sec:"ث",
       nvHome:"لوحتي", nvCourses:"كورساتي", nvLabs:"المعمل", nvAi:"الذكاء الاصطناعي", nvAch:"إنجازاتي", nvCat:"الدورات", nvPaths:"المسارات", nvDisc:"النقاشات", tDid:"اسأل وناقش في دوراتك",
+      prT:"بياناتي", prNameLbl:"الاسم اللي يظهر في المنصة", prSave:"حفظ الاسم", prSaved:"اتحفظ ✓", prMail:"الإيميل",
       contLbl:"كمّل من هنا", contBtn:"متابعة", share:"نسخ الرابط", shared:"اتنسخ ✓",
       actT:"نشاطك", streakL:"يوم متتالي", weekL:"أيام نشاط هذا الأسبوع",
       labCodeLbl:"الكود", labHintSum:"محتاج تلميح؟", labNoteLbl:"ملاحظاتي", labRun:"تشغيل", labCheck:"تحقّق", labReset:"الكود الأصلي", labCopy:"نسخ الرابط", labBack:"رجوع", labSaved:"اتحفظت التجربة في حسابك ✓",
@@ -427,6 +437,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"Connection problem. Try again.", slow:"Please wait a moment before requesting a new code.",
       pwBad:"Wrong email or password.", pwNo:"No account with that email.", resendIn:"Resend in ", sec:"s",
       nvHome:"Dashboard", nvCourses:"My courses", nvLabs:"The lab", nvAi:"AI tasks", nvAch:"Achievements", nvCat:"Courses", nvPaths:"Paths", nvDisc:"Discussions", tDid:"Ask and discuss in your courses",
+      prT:"My details", prNameLbl:"Name shown on the platform", prSave:"Save name", prSaved:"Saved ✓", prMail:"Email",
       contLbl:"Pick up here", contBtn:"Continue", share:"Copy link", shared:"Copied ✓",
       actT:"Your activity", streakL:"day streak", weekL:"active days this week",
       labCodeLbl:"Code", labHintSum:"Need a hint?", labNoteLbl:"My notes", labRun:"Run", labCheck:"Check", labReset:"Original code", labCopy:"Copy link", labBack:"Back", labSaved:"Lab saved to your account ✓",
@@ -479,6 +490,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("lLabs").textContent = t("sLabs"); $("lSub").textContent = t("sSub");
     $("hCont").textContent = t("hCont"); $("hGo").textContent = t("hGo");
     $("nvCat").textContent = t("nvCat"); $("nvPaths").textContent = t("nvPaths"); $("nvDisc").textContent = t("nvDisc");
+    $("prT").textContent = t("prT"); $("prNameLbl").textContent = t("prNameLbl"); $("prSave").textContent = t("prSave");
     $("contLbl").textContent = t("contLbl"); $("contBtn").textContent = t("contBtn");
     $("actT").textContent = t("actT"); $("streakL").textContent = t("streakL"); $("weekL").textContent = t("weekL");
     $("labCodeLbl").textContent = t("labCodeLbl"); $("labHintSum").textContent = t("labHintSum"); $("labNoteLbl").textContent = t("labNoteLbl");
@@ -619,6 +631,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("lact").classList.remove("hidden");
     $("q").classList.remove("hidden");
     $("dEmail2").textContent = u.email || "";
+    $("prMail").textContent = (lang === "ar" ? "الإيميل: " : "Email: ") + (u.email || "");
     var hash = (location.hash || "").replace("#", "");
     var hh = hash.indexOf("lab-") === 0 ? "labs" : hash;
     goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : "home");
@@ -673,6 +686,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   function render(){
     var D = DATA; if (!D) return;
+    $("prName").value = String(D.d.name || "");
     $("dName").textContent = t("hi") + (D.d.name || (auth.currentUser && auth.currentUser.email || "").split("@")[0] || "");
     $("sCourses").textContent = String(D.ids.length);
     $("sLessons").textContent = String(D.lessons);
@@ -840,6 +854,25 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     row.appendChild(a);
     return row;
   }
+
+  /* ---- profile ---- */
+  $("prSave").addEventListener("click", function(){
+    var u = firebase.auth().currentUser; if (!u) return;
+    var v = String($("prName").value || "").trim().slice(0, 60);
+    var msg = $("prMsg"); msg.textContent = "";
+    if (v.length < 2){ msg.style.color = "var(--red)"; msg.textContent = lang === "ar" ? "اكتب اسم من حرفين على الأقل." : "Use at least 2 characters."; return; }
+    $("prSave").disabled = true;
+    firebase.firestore().collection("users").doc(u.uid).set({ name: v }, { merge: true }).then(function(){
+      $("prSave").disabled = false;
+      if (DATA && DATA.d) DATA.d.name = v;
+      $("dName").textContent = t("hi") + v;
+      msg.style.color = "var(--green)"; msg.textContent = t("prSaved");
+      setTimeout(function(){ msg.textContent = ""; }, 1800);
+    }).catch(function(){
+      $("prSave").disabled = false;
+      msg.style.color = "var(--red)"; msg.textContent = lang === "ar" ? "تعذر الحفظ. جرب تاني." : "Could not save. Try again.";
+    });
+  });
 
   /* ---- continue where you left off ---- */
   function renderContinue(){
