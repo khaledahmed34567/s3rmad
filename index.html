@@ -1292,6 +1292,13 @@ async function gateActive() {
   } catch (e) { }
   return false;
 }
+async function otpSend(ch) {
+  try {
+    const t = await fbAuth.currentUser.getIdToken();
+    const r = await fetch(OTPW + '/otpstart', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, ch: ch || 'email' }) });
+    return (await r.json()) || {};
+  } catch (e) { return {}; }
+}
 function gateModal(msg) {
   const b = openModal(`<div class="modal-h"><b>${T('تفعيل الحساب مطلوب', 'Activation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${msg}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-otp="tg">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-otp="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="otp-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="otp-code" inputmode="numeric" maxlength="6" dir="ltr" autocomplete="one-time-code"></div><div class="err" id="otp-err"></div><button class="btn primary block" id="otp-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px">${T('الكود صالح 10 دقائق، وبحد أقصى 3 رسائل في الساعة.', 'The code is valid for 10 minutes, at most 3 per hour.')}</p></div>`);
   const err = m => { const e = $('#otp-err'); if (e) e.textContent = m; };
@@ -1377,7 +1384,7 @@ const DB = {
     catch (e) { throw new Error(e.code === 'auth/email-already-in-use' ? 'exists' : e.code === 'auth/weak-password' ? 'weak' : 'fail'); }
     await cred.user.updateProfile({ displayName: name.trim() });
     await udoc(cred.user.uid).set({ name: name.trim(), email: email.trim().toLowerCase(), phone: phone || '', profile: profile || {}, links: DEFAULT_LINKS, created: tsNow(), ...(/^SRM-[A-Z2-9]{8}$/.test(ls.get('ref', '')) ? { refBy: ls.get('ref', '') } : {}) });
-    try { await cred.user.sendEmailVerification(); } catch (e) { }
+    try { await otpSend('email'); } catch (e) { }
     return this.me();
   },
   async login({ id, password }) {
@@ -3229,9 +3236,9 @@ function vSetup() {
   const cu_ = fbAuth && fbAuth.currentUser, ver = !!(cu_ && cu_.emailVerified);
   return pageHead(T('تفعيل الحساب', 'Activate your account'), T('خطوتان قبل أن تبدأ', 'Two steps before you start'), T('أنشأ لك فريق سرمد هذا الحساب. لأمانك، أكّد بريدك الإلكتروني ثم اختر كلمة مرور خاصة بك.', 'The Sarmad team created this account for you. For your security, confirm your email and then choose your own password.'))
     + `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:640px"><div class="stack" style="gap:16px">
-      <div class="card stack" style="gap:12px"><h2 class="h3" style="margin:0"><span class="aid-n">1</span> ${T('تأكيد البريد الإلكتروني', 'Confirm your email')} ${ver ? `<span class="tag ok">${T('تم', 'Done')}</span>` : ''}</h2>
-        <p class="muted">${T('أرسلنا رابط التفعيل إلى ', 'We sent an activation link to ')}<b class="mono" dir="ltr" data-keep>${esc(S.user.email)}</b>. ${T('افتح الرسالة واضغط الرابط (راجع مجلد الرسائل غير المرغوبة) ثم ارجع واضغط «تحققت».', 'Open the message and press the link (check spam), then come back and press "I verified".')}</p>
-        ${ver ? '' : `<div class="row" style="gap:8px"><button class="btn primary" data-act="setupCheck">${T('تحققت', 'I verified')}</button><button class="btn" data-act="setupResend">${T('أعد إرسال الرابط', 'Resend link')}</button></div>`}<div class="err" id="su-msg" role="status"></div></div>
+      <div class="card stack" style="gap:12px"><h2 class="h3" style="margin:0"><span class="aid-n">1</span> ${T('تفعيل الحساب بكود', 'Activate with a code')} ${ver ? `<span class="tag ok">${T('تم', 'Done')}</span>` : ''}</h2>
+        <p class="muted">${T('بعتنالك كود تفعيل على بريدك ', 'We sent an activation code to ')}<b class="mono" dir="ltr" data-keep>${esc(S.user.email)}</b>. ${T('الكود صالح 10 دقائق. ارجع هنا واضغط «اكتب الكود» واكتبه.', 'The code is valid for 10 minutes. Come back, press "Enter the code" and type it.')}</p>
+        ${ver ? '' : `<div class="row" style="gap:8px"><button class="btn primary" data-act="setupCheck">${T('اكتب الكود', 'Enter the code')}</button><button class="btn" data-act="setupResend">${T('أعد إرسال الكود', 'Resend code')}</button></div>`}<div class="err" id="su-msg" role="status"></div></div>
       <form class="card stack" style="gap:14px;${ver ? '' : 'opacity:.5;pointer-events:none'}" data-form="setup" novalidate autocomplete="off"><h2 class="h3" style="margin:0"><span class="aid-n">2</span> ${T('تغيير كلمة المرور المؤقتة', 'Change the temporary password')}</h2>
         <div class="field"><label for="su-old">${T('كلمة المرور المؤقتة التي استلمتها', 'Temporary password you received')}</label><input id="su-old" name="old" type="password" dir="ltr" autocomplete="current-password" required></div>
         <div class="field"><label for="su-new">${T('كلمة المرور الجديدة (10 أحرف على الأقل، حروف وأرقام)', 'New password (10+ characters, letters and numbers)')}</label><input id="su-new" name="pw" type="password" dir="ltr" autocomplete="new-password" required></div>
@@ -3241,8 +3248,8 @@ function vSetup() {
 }
 ROUTE.setup = vSetup;
 Object.assign(A, {
-  async setupCheck() { const m = $('#su-msg'); try { await fbAuth.currentUser.reload(); if (fbAuth.currentUser.emailVerified) { render(); } else m.textContent = T('لم يتم التفعيل بعد. اضغط الرابط في بريدك أولًا.', 'Not confirmed yet. Press the link in your email first.'); } catch (e) { m.textContent = T('تعذر التحقق الآن.', 'Could not check now.'); } },
-  async setupResend() { const m = $('#su-msg'); try { await fbAuth.currentUser.sendEmailVerification(); m.textContent = T('أرسلنا الرابط من جديد.', 'Link sent again.'); } catch (e) { m.textContent = T('انتظر قليلًا ثم أعد المحاولة.', 'Wait a moment and try again.'); } }
+  async setupCheck() { const m = $('#su-msg'); try { if (await gateActive()) { render(); return; } if (m) m.textContent = T('لسه ما اتفعّلش. اكتب الكود اللي وصلك.', 'Not activated yet. Enter the code you received.'); await needActive(T('اكتب كود التفعيل اللي وصلك على البريد أو تيليجرام.', 'Enter the activation code from your email or Telegram.')); } catch (e) { if (m) m.textContent = T('تعذر التحقق الآن.', 'Could not check now.'); } },
+  async setupResend() { const m = $('#su-msg'); const j = await otpSend('email'); if (j && j.ok) { if (m) m.textContent = T('بعتنالك كود تفعيل جديد على بريدك، وممكن ياخد دقيقتين.', 'Sent a new activation code to your email; it may take a couple of minutes.'); } else if (j && j.why === 'limit') { if (m) m.textContent = T('وصلت للحد على البريد (3 في الساعة). جرّب تيليجرام أو بعد شوية.', 'Email limit reached (3 per hour). Try Telegram or later.'); } else { if (m) m.textContent = T('تعذر الإرسال الآن. جرّب تيليجرام أو حاول بعد شوية.', 'Could not send now. Try Telegram or later.'); } }
 });
 FORMS.setup = async f => {
   const d = new FormData(f), err = $('#su-err'), old = d.get('old'), pw = d.get('pw'), pw2 = d.get('pw2'), u = fbAuth.currentUser;
