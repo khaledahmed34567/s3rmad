@@ -1301,7 +1301,7 @@ function gateModal(msg) {
       const t = await fbAuth.currentUser.getIdToken();
       const r = await fetch(OTPW + '/otpstart', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, ch }) });
       const j = await r.json();
-      if (j && j.ok) err(ch === 'tg' ? T('بعتنالك الكود على تيليجرام.', 'Code sent on Telegram.') : T('بعتنالك الكود على بريدك.', 'Code sent to your email.'));
+      if (j && j.ok) err(ch === 'tg' ? T('بعتنالك الكود على تيليجرام.', 'Code sent on Telegram.') : T('بعتنالك الكود على بريدك، وممكن ياخد دقيقتين. لو اتأخر جرّب تيليجرام.', 'Code sent to your email; it may take a couple of minutes. If it is late, try Telegram.'));
       else if (j && j.why === 'notg') err(T('مفيش حساب تيليجرام مربوط. اربطه من البوت بالأمر /link أو اختار البريد.', 'No Telegram linked. Link it with /link in the bot, or choose email.'));
       else if (j && j.why === 'noemail') err(T('إرسال البريد غير متاح حاليًا. اختار تيليجرام.', 'Email delivery is not available yet. Choose Telegram.'));
       else if (j && j.why === 'limit') err(T('وصلت للحد على القناة دي (3 رسائل في الساعة). جرّب القناة التانية أو بعد شوية.', 'This channel hit its limit (3 codes per hour). Try the other channel, or later.'));
