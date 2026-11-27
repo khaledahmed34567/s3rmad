@@ -166,6 +166,31 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   .lgo img{height:28px}
   .lwrap{padding:18px 12px 50px}
 }
+
+  /* ---- catalog filters ---- */
+  .chipsrow{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+  .fchip{border:1px solid var(--line);background:var(--paper);color:var(--ink2);font:inherit;font-size:12.5px;padding:7px 13px;border-radius:999px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+  .fchip:hover{border-color:var(--green);color:var(--green)}
+  .fchip.on{background:var(--green);border-color:var(--green);color:#fff}
+  .catcount{font-size:12.5px;color:var(--ink2);margin:0 0 12px}
+  /* ---- certificate ---- */
+  #certModal{position:fixed;inset:0;background:rgba(10,24,16,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:80}
+  #certModal.hidden{display:none}
+  .certbox{background:#fffdf7;border:1px solid var(--line);border-radius:18px;max-width:640px;width:100%;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+  .certpaper{border:2px solid var(--green);border-radius:14px;padding:28px 22px;text-align:center;background:linear-gradient(#fffdf7,#f6f2e4)}
+  .certpaper .clogo{font-weight:900;letter-spacing:.16em;font-size:12.5px;color:var(--green)}
+  .certpaper .ctitle{font-size:13px;color:var(--ink2);margin-top:16px;letter-spacing:.06em}
+  .certpaper .cname{font-size:27px;font-weight:900;color:var(--ink);margin:8px 0 2px}
+  .certpaper .ccourse{font-size:15px;color:var(--ink);margin-top:12px}
+  .certpaper .cmeta{font-size:11.5px;color:var(--ink2);margin-top:20px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
+  .certacts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+  @media print{
+    body{background:#fff}
+    body > *{display:none !important}
+    #certModal{display:block !important;position:static;background:#fff;padding:0}
+    #certModal .certbox{box-shadow:none;border:0;max-width:none;padding:0}
+    #certModal .certacts{display:none !important}
+  }
 </style>
 </head>
 <body>
@@ -288,7 +313,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   <!-- catalog -->
   <div id="v-cat" class="hidden">
-    <div class="sec"><h2 id="catT">الدورات</h2><div id="catList"></div></div>
+    <div class="sec"><h2 id="catT">الدورات</h2><div id="catFilters" class="chipsrow"></div><div id="catCount" class="catcount"></div><div id="catList"></div></div>
   </div>
 
   <!-- paths -->
@@ -366,6 +391,15 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<div id="certModal" class="hidden">
+  <div class="certbox">
+    <div id="certBody"></div>
+    <div class="certacts">
+      <button type="button" id="certClose" class="btn done">إغلاق</button>
+      <button type="button" id="certPrint" class="btn">طباعة / حفظ PDF</button>
+    </div>
+  </div>
+</div>
 <script>
 (function(){
   "use strict";
@@ -411,6 +445,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       tCatd:"كل الدورات المتاحة، مسجّل فيها أو لأ", tPad:"مسارات مرتبة تأخذك من الأساس للاحتراف",
       beginner:"مبتدئ", inter:"متوسط", hoursU:"ساعة", free:"مجاني", soon:"قريبًا", joinedB:"مسجل", startC:"ابدأ",
       trackCourses:"كورسات المسار", trackProg:"اتقدمت",
+      catAll:"الكل", catFree:"مجاني", catPaid:"مدفوع", catBeg:"مبتدئ", catInt:"متوسط", catMine:"مسجل فيه",
+      catCountU:"دورة", catNone:"مفيش دورات في الفلتر ده.",
+      trackStart:"ابدأ المسار", trackReview:"راجع المسار",
+      certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
       out:"خروج", hi:"أهلًا، ", heroSub:"مساحتك في سرمد ليرننج: كورساتك، معملك، ومهامك.",
       sCourses:"كورسات مسجلة", sLessons:"دروس مكتملة", sLabs:"تجارب معمل مكتملة", sSub:"الاشتراك",
       hCont:"تابع من حيث وقفت", hGo:"روح على",
@@ -447,6 +485,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       tCatd:"Every course available, joined or not", tPad:"Ordered paths from basics to advanced",
       beginner:"Beginner", inter:"Intermediate", hoursU:"hours", free:"Free", soon:"Coming soon", joinedB:"Joined", startC:"Start",
       trackCourses:"Courses in this path", trackProg:"progress",
+      catAll:"All", catFree:"Free", catPaid:"Paid", catBeg:"Beginner", catInt:"Intermediate", catMine:"Joined",
+      catCountU:"courses", catNone:"No courses match this filter.",
+      trackStart:"Start path", trackReview:"Review path",
+      certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
       out:"Sign out", hi:"Hi, ", heroSub:"Your space in Sarmad Learning: courses, lab and tasks.",
       sCourses:"Courses joined", sLessons:"Lessons done", sLabs:"Lab tasks done", sSub:"Subscription",
       hCont:"Pick up where you left off", hGo:"Go to",
@@ -461,6 +503,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     }
   };
   function t(k){ return (TXT[lang] && TXT[lang][k]) || TXT.ar[k] || k; }
+  var CATF = "all";
 
   var COURSES = {"cyber1": {"ar": "أساسيات الأمن السيبراني للمطورين", "en": "Cybersecurity Essentials for Developers", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "front1": {"ar": "واجهات سريعة ومتجاوبة بالعربية والإنجليزية", "en": "Fast Bilingual Responsive Interfaces", "level": "intermediate", "hours": 5, "price": 199, "status": "open"}, "pay1": {"ar": "ربط بوابات الدفع بأمان", "en": "Integrating Payment Gateways Safely", "level": "intermediate", "hours": 4, "price": 249, "status": "soon"}, "html1": {"ar": "أساسيات HTML وCSS", "en": "HTML & CSS Fundamentals", "level": "beginner", "hours": 4, "price": 0, "status": "open"}, "js1": {"ar": "JavaScript من الصفر", "en": "JavaScript from Scratch", "level": "beginner", "hours": 6, "price": 149, "status": "open"}, "net1": {"ar": "أساسيات الشبكات", "en": "Networking Fundamentals", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "ai1": {"ar": "مدخل إلى الذكاء الاصطناعي", "en": "Introduction to Artificial Intelligence", "level": "beginner", "hours": 4, "price": 249, "status": "open"}, "ml1": {"ar": "تعلّم الآلة من الصفر", "en": "Machine Learning from Scratch", "level": "intermediate", "hours": 5, "price": 299, "status": "open"}};
   var TRACKS = [{"id": "web", "level": "beginner", "courses": ["html1", "js1", "front1"], "ar": "مسار تطوير الويب", "en": "Web Development Track"}, {"id": "cyber", "level": "beginner", "courses": ["net1", "cyber1"], "ar": "مسار الأمن السيبراني والشبكات", "en": "Cybersecurity & Networking Track"}, {"id": "pay", "level": "intermediate", "courses": ["pay1"], "ar": "مسار الخلفية والمدفوعات", "en": "Backend & Payments Track"}, {"id": "ai", "level": "beginner", "courses": ["ai1"], "ar": "مسار الذكاء الاصطناعي", "en": "Artificial Intelligence Track"}, {"id": "ml", "level": "intermediate", "courses": ["ml1"], "ar": "مسار تعلّم الآلة", "en": "Machine Learning Track"}];
@@ -633,9 +676,15 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("dEmail2").textContent = u.email || "";
     $("prMail").textContent = (lang === "ar" ? "الإيميل: " : "Email: ") + (u.email || "");
     var hash = (location.hash || "").replace("#", "");
-    var hh = hash.indexOf("lab-") === 0 ? "labs" : hash;
+    var hh = hash.indexOf("lab-") === 0 ? "labs" : (hash.indexOf("track-") === 0 ? "paths" : hash);
     goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : "home");
     if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
+    if (hash.indexOf("track-") === 0){ var trid = hash.slice(6); setTimeout(function(){
+      var cards = document.querySelectorAll("#pathList .pathcard");
+      if (DATA && DATA.ids && DATA.ids.length === 0) return;
+      var idx = -1; TRACKS.forEach(function(tr, k){ if (tr.id === trid) idx = k; });
+      if (idx >= 0 && cards[idx]){ cards[idx].scrollIntoView({ block: "center" }); cards[idx].style.boxShadow = "0 0 0 2px var(--green)"; setTimeout(function(){ cards[idx].style.boxShadow = ""; }, 2200); }
+    }, 900); }
     load(u);
   }
 
@@ -743,8 +792,20 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     renderActivity();
 
     /* catalog */
+    renderCatFilters();
     var cl2 = $("catList"); cl2.innerHTML = "";
-    Object.keys(COURSES).forEach(function(id){
+    var cids = Object.keys(COURSES).filter(function(id){
+      var c = COURSES[id];
+      if (CATF === "free") return !c.price;
+      if (CATF === "paid") return !!c.price;
+      if (CATF === "beg") return c.level === "beginner";
+      if (CATF === "int") return c.level !== "beginner";
+      if (CATF === "mine") return !!D.enr[id];
+      return true;
+    });
+    var cco = $("catCount"); if (cco) cco.textContent = cids.length + " " + t("catCountU");
+    if (!cids.length){ cl2.appendChild(el("div","empty", esc(t("catNone")))); }
+    cids.forEach(function(id){
       var c = COURSES[id], mine = !!D.enr[id], n = D.prog[id] || 0;
       var row = el("div","item");
       row.appendChild(el("div","ic", mine ? "▶" : "◆"));
@@ -784,6 +845,21 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       card.appendChild(head);
       card.appendChild(el("div", "", '<div style="font-size:12.5px;color:var(--ink2);margin-top:4px">' + esc(t("trackProg")) + " " + joined + "/" + tr.courses.length + '</div>'));
       card.appendChild(el("div","bar", '<i style="width:' + Math.round(joined / Math.max(1, tr.courses.length) * 100) + '%"></i>'));
+      var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px";
+      var nxt = null; tr.courses.forEach(function(cid){ if (!nxt && !D.enr[cid]) nxt = cid; });
+      var st2 = el("a", nxt ? "" : "done", esc(nxt ? t("trackStart") : t("trackReview")));
+      st2.href = "/#course-" + (nxt || tr.courses[0]);
+      acts.appendChild(st2);
+      var trHrs = 0; tr.courses.forEach(function(cid){ if (COURSES[cid]) trHrs += (COURSES[cid].hours || 0); });
+      acts.appendChild(el("span", "chip2 grey", esc(trHrs + " " + t("hoursU"))));
+      var sh2 = el("button", "btn done", esc(t("share"))); sh2.type = "button";
+      sh2.addEventListener("click", function(){
+        var u = location.origin + "/learn#track-" + tr.id;
+        var done = function(){ sh2.textContent = t("shared"); setTimeout(function(){ sh2.textContent = t("share"); }, 1500); };
+        try { navigator.clipboard.writeText(u).then(done, done); } catch(e){ done(); }
+      });
+      acts.appendChild(sh2);
+      card.appendChild(acts);
       var list = el("div"); list.style.marginTop = "10px";
       tr.courses.forEach(function(cid){
         var c = COURSES[cid]; if (!c) return;
@@ -838,11 +914,47 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
         try { navigator.clipboard.writeText(c.id).then(done, done); } catch(e){ done(); }
       });
       row.appendChild(cp);
+      var vb = el("button", "btn done", esc(t("certView"))); vb.type = "button";
+      vb.style.marginInlineEnd = "8px";
+      vb.addEventListener("click", function(){ openCert(c.id); });
+      row.appendChild(vb);
       var a = el("a", null, esc(t("view"))); a.href = "/#cert-" + c.id;
       row.appendChild(a);
       ce.appendChild(row);
     });
   }
+  function renderCatFilters(){
+    var box = $("catFilters"); if (!box) return;
+    box.innerHTML = "";
+    [["all","catAll"],["free","catFree"],["paid","catPaid"],["beg","catBeg"],["int","catInt"],["mine","catMine"]].forEach(function(p){
+      var b = el("button", "fchip" + (CATF === p[0] ? " on" : ""), esc(t(p[1])));
+      b.type = "button";
+      b.addEventListener("click", function(){ CATF = p[0]; render(); });
+      box.appendChild(b);
+    });
+  }
+
+  function openCert(cid){
+    var D = DATA; if (!D) return;
+    var c = null;
+    D.certs.forEach(function(x){ if (x.id === cid) c = x; });
+    if (!c) return;
+    var nm = D.d.name || ((auth.currentUser && auth.currentUser.email) || "").split("@")[0] || "";
+    var course = L({ ar: c.courseAr, en: c.courseEn }) || courseTitle(c.courseId) || "";
+    var raw = c.at || c.createdAt || c.issuedAt;
+    var when = raw && raw.seconds ? raw.seconds * 1000 : (raw ? new Date(raw).getTime() : Date.now());
+    $("certBody").innerHTML = '<div class="certpaper">'
+      + '<div class="clogo">SARMAD LEARNING</div>'
+      + '<div class="ctitle">' + esc(t("certTitle")) + '</div>'
+      + '<div class="cname">' + esc(nm) + '</div>'
+      + '<div class="ccourse">' + esc(course) + '</div>'
+      + '<div class="cmeta"><span>' + esc(t("certCode")) + ': ' + esc(c.id) + '</span><span>' + esc(fmtDate(when)) + '</span></div>'
+      + '</div>';
+    $("certModal").classList.remove("hidden");
+  }
+
+  function closeCert(){ $("certModal").classList.add("hidden"); }
+
   function courseRow(id){
     var row = el("div","item");
     row.appendChild(el("div","ic","▶"));
@@ -1147,6 +1259,11 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   /* ---- boot ---- */
   try { var sv = localStorage.getItem("sl_lang"); if (sv === "en" || sv === "ar") lang = sv; } catch(e){}
   applyLang();
+  $("certClose").addEventListener("click", closeCert);
+  $("certPrint").addEventListener("click", function(){ window.print(); });
+  $("certModal").addEventListener("click", function(e){ if (e.target === $("certModal")) closeCert(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeCert(); });
+
   auth.onAuthStateChanged(function(u){
     if (u) showApp(u); else showLogin();
   });
