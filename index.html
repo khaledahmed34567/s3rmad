@@ -2535,8 +2535,10 @@ async function loadAITasks() {
     const s = await fbDb.collection('ai_tasks').where('on', '==', true).get();
     const a = []; s.forEach(d => a.push(Object.assign({ id: d.id }, d.data())));
     SEARCH_EXTRA.tasks = a.map(x => ({ id: x.id, t: L(x.title) || x.id, x: String(x.topics || '').slice(0, 90) }));
+    let myDone = {};
+    try { const p = await fbDb.collection('users').doc(fbAuth.currentUser.uid).collection('aitasks').get(); p.forEach(d => { myDone[d.id] = d.data(); }); } catch (e) { }
     if (!a.length) { box.innerHTML = `<p class="muted">${T('مفيش مهام متاحة دلوقتي.', 'No tasks available yet.')}</p>`; return; }
-    box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3 dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</h3><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;text-align:start">${esc(String(x.topics || '').slice(0, 200))}</p><button class="btn primary" data-ait="${esc(x.id)}">${T('ابدأ المهمة', 'Start task')}</button></article>`).join('');
+    box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3 dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</h3><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;text-align:start">${esc(String(x.topics || '').slice(0, 200))}</p><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap">${myDone[x.id] && myDone[x.id].done ? `<span class="tag ok">${T('خلصتها', 'Done')}</span>` : ''}<button class="btn primary" data-ait="${esc(x.id)}">${myDone[x.id] && myDone[x.id].done ? T('افتح تاني', 'Open again') : T('ابدأ المهمة', 'Start task')}</button></div></article>`).join('');
     $$('[data-ait]', box).forEach(btn => btn.addEventListener('click', () => { const x = a.find(y => y.id === btn.dataset.ait); if (x) openAITask(x); }));
   } catch (e) { box.innerHTML = `<p class="muted">${T('تعذر تحميل المهام.', 'Could not load the tasks.')}</p>`; }
 }
@@ -2687,6 +2689,20 @@ async function labSave(x) {
 ROUTE.lab = vLab;
 
 /* ---------- student dashboard ---------- */
+function streakOf(lists) {
+  const days = new Set();
+  lists.forEach(arr => (arr || []).forEach(x => {
+    if (!x || !x.done) return;
+    const ms = toMs(x.at); if (!ms) return;
+    const d = new Date(ms);
+    days.add(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate());
+  }));
+  const key = d => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  let n = 0; const cur = new Date();
+  if (!days.has(key(cur))) cur.setDate(cur.getDate() - 1);
+  while (days.has(key(cur))) { n++; cur.setDate(cur.getDate() - 1); }
+  return n;
+}
 function vDash() {
   setTimeout(loadDash, 0);
   return `<section class="wrap sec"><div class="sec-h"><h2>${T('لوحتي', 'My dashboard')}</h2></div><div id="dash-body"><div class="spin" style="margin:40px auto"></div></div></section>`;
@@ -2716,7 +2732,7 @@ async function loadDash() {
   }).join('');
   const news = (typeof NEWS !== 'undefined' ? NEWS : []).slice(0, 3).map(n => `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b dir="auto">${esc(L(n.t))}</b><div class="muted sm" dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(n.x)).slice(0, 120)}</div></div>`).join('');
   box.innerHTML = `
-    <div class="card" style="padding:20px;margin-bottom:16px"><div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><b style="font-size:1.15rem">${T('أهلاً ' + (S.user.name || '') + ' 👋', 'Welcome ' + (S.user.name || '') + ' 👋')}</b><span class="sp"></span>${S.sub ? `<span class="tag ok">${T('اشتراك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' حتى ' + fmtDate(S.sub.until), (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan until ' + fmtDate(S.sub.until))}</span>` : `<span class="tag gold">${T('مفيش اشتراك', 'No plan')}</span><a class="btn sm" href="#learning">${T('شوف الاشتراكات', 'See plans')}</a>`}</div></div>
+    <div class="card" style="padding:20px;margin-bottom:16px"><div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><b style="font-size:1.15rem">${T('أهلاً ' + (S.user.name || '') + ' 👋', 'Welcome ' + (S.user.name || '') + ' 👋')}</b><span class="sp"></span>${(() => { const st = streakOf([myLabs, myTasks]); return st >= 1 ? `<span class="tag gold">${T('سلسلة ' + st + ' يوم 🔥', st + '-day streak 🔥')}</span>` : ''; })()}${S.sub ? `<span class="tag ok">${T('اشتراك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' حتى ' + fmtDate(S.sub.until), (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan until ' + fmtDate(S.sub.until))}</span>` : `<span class="tag gold">${T('مفيش اشتراك', 'No plan')}</span><a class="btn sm" href="#learning">${T('شوف الاشتراكات', 'See plans')}</a>`}</div></div>
     ${resumeCard()}
     <div class="grid g4" style="margin:16px 0">${stat(labsDone, T('تجربة معمل', 'Labs done'), 'lab')}${stat(tasksDone, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${stat(certs, T('شهادة', 'Certificates'), 'account')}${stat(labsOn.length ? labsDone + '/' + labsOn.length : '—', T('المعمل', 'Lab progress'), 'lab')}</div>
     <div class="card" style="padding:18px;margin-bottom:16px"><div class="row" style="align-items:center;margin-bottom:10px"><b>${T('كورساتي', 'My courses')}</b><span class="sp"></span><a class="link" href="#learning">${T('كل الكورسات', 'All courses')} ${arrow()}</a></div>${courseRows || `<p class="muted sm">${T('لسه مشترك في كورس. شوف الكورسات وابدأ.', 'No course yet. Browse the courses and start.')}</p>`}</div>
@@ -2733,9 +2749,9 @@ function vAchievements() {
 async function loadAch() {
   const box = $('#ach-body'); if (!box) return;
   if (!S.user) { box.innerHTML = `<p class="muted">${T('سجّل الدخول عشان تشوف إنجازاتك.', 'Sign in to see your achievements.')}</p>`; return; }
-  let labs = 0, tasks = 0, certs = 0;
-  try { const p = await fbDb.collection('users').doc(S.user.id).collection('labs').get(); p.forEach(d => { if (d.data().done) labs++; }); } catch (e) { }
-  try { const p = await fbDb.collection('users').doc(S.user.id).collection('aitasks').get(); p.forEach(d => { if (d.data().done) tasks++; }); } catch (e) { }
+  let labs = 0, tasks = 0, certs = 0; const _ml = [], _mt = [];
+  try { const p = await fbDb.collection('users').doc(S.user.id).collection('labs').get(); p.forEach(d => { const x = d.data(); _ml.push(x); if (x.done) labs++; }); } catch (e) { }
+  try { const p = await fbDb.collection('users').doc(S.user.id).collection('aitasks').get(); p.forEach(d => { const x = d.data(); _mt.push(x); if (x.done) tasks++; }); } catch (e) { }
   try { const q = await fbDb.collection('certs').where('userId', '==', S.user.id).get(); certs = q.size; } catch (e) { }
   const badges = [];
   if (labs >= 1) badges.push({ ar: 'أول تجربة معمل', en: 'First lab' });
@@ -2745,6 +2761,7 @@ async function loadAch() {
   if (tasks >= 3) badges.push({ ar: '3 مهام ذكاء اصطناعي', en: '3 AI tasks' });
   if (certs >= 1) badges.push({ ar: 'شهادة معتمدة', en: 'Certificate' });
   if (S.sub) badges.push({ ar: 'اشتراك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus'), en: (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan' });
+  try { const st = streakOf([_ml, _mt]); if (st >= 2) badges.push({ ar: 'سلسلة ' + st + ' يوم', en: st + '-day streak' }); } catch (e) { }
   const card = (n, l, h) => `<a class="card" href="#${h}" style="padding:18px;display:block;text-align:center"><div style="font-size:1.9rem;font-weight:800">${esc(String(n))}</div><div class="muted sm">${l}</div></a>`;
   const shareLine = T('خلصت ' + labs + ' تجربة معمل و ' + tasks + ' مهمة ذكاء اصطناعي على سرمد، وعندي ' + certs + ' شهادة. جرّب أنت كمان:', 'I finished ' + labs + ' labs and ' + tasks + ' AI tasks on Sarmad, with ' + certs + ' certificate(s). Try it too:') + ' ' + location.origin + location.pathname;
   box.innerHTML = `<div class="grid g4">${card(labs, T('تجربة معمل خلصتها', 'Labs finished'), 'lab')}${card(tasks, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${card(certs, T('شهادة', 'Certificates'), 'account')}${card(S.sub ? fmtDate(S.sub.until) : '—', S.sub ? T('اشتراكك ساري حتى', 'Plan active until') : T('مفيش اشتراك', 'No plan'), 'learning')}</div>` + `<div style="margin-top:22px"><button class="btn" id="ach-share" data-share="${esc(shareLine)}">${T('شارك إنجازك', 'Share your progress')}</button></div>` + (badges.length ? `<h3 class="h3" style="margin:26px 0 12px">${T('أوسمة', 'Badges')}</h3><div class="row" style="gap:8px;flex-wrap:wrap">${badges.map(b => `<span class="tag ok">${esc(L(b))}</span>`).join('')}</div>` : `<p class="muted" style="margin-top:22px">${T('لسه مفيش أوسمة. ابدأ بتجربة في المعمل أو مهمة ذكاء اصطناعي.', 'No badges yet. Start with a lab or an AI task.')}</p>`);
