@@ -38,6 +38,15 @@ button{font-family:inherit}
 .lact{display:flex;align-items:center;gap:8px}
 .qin{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;width:220px}
 .qin:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
+.labwrap{display:grid;grid-template-columns:1fr;gap:12px}
+.labhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.labhead b{font-size:16px;font-weight:500}
+.code{width:100%;min-height:190px;border:1px solid var(--line);border-radius:12px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6;background:#fff;color:var(--ink);direction:ltr;text-align:left;outline:none}
+.code:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
+.labframe{width:100%;height:210px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.labres{font-size:13px}
+.labres .ok{color:#0f6b52}
+.labres .no{color:var(--red)}
 .sel,.ta{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;font-size:14.5px;font-family:inherit;color:var(--ink);outline:none}
 .sel:focus,.ta:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
 .ta{resize:vertical;min-height:84px}
@@ -273,7 +282,29 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   <!-- labs -->
   <div id="v-labs" class="hidden">
-    <div class="sec"><h2 id="lbT">المعمل</h2><div id="labList"></div></div>
+    <div class="sec"><h2 id="lbT">المعمل</h2>
+      <div id="labProgress" style="margin-bottom:12px"></div>
+      <div id="labList"></div>
+    </div>
+    <div class="sec hidden" id="labPanel">
+      <div class="card2">
+        <div class="labhead"><b id="labTitle"></b><span class="sp" style="flex:1"></span><button class="ghost" id="labClose">رجوع</button></div>
+        <p id="labBrief" style="font-size:13px;color:var(--ink2);margin:6px 0 12px;white-space:pre-wrap"></p>
+        <details id="labHintWrap" style="margin-bottom:10px"><summary style="cursor:pointer;font-size:13px;color:var(--green)" id="labHintSum">محتاج تلميح؟</summary><p id="labHint" style="font-size:13px;color:var(--ink2);margin:8px 0 0;white-space:pre-wrap"></p></details>
+        <label id="labCodeLbl">الكود</label>
+        <textarea class="code" id="labCode" spellcheck="false"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+          <button class="primary" id="labRun" style="width:auto;padding:9px 18px;margin:0">تشغيل</button>
+          <button class="ghost" id="labCheck">تحقّق</button>
+          <button class="ghost" id="labReset">الكود الأصلي</button>
+          <button class="ghost" id="labCopy">نسخ الرابط</button>
+        </div>
+        <div class="labres" id="labRes"></div>
+        <iframe class="labframe" id="labFrame" sandbox="allow-scripts" style="margin-top:10px"></iframe>
+        <label style="margin-top:14px" id="labNoteLbl">ملاحظاتي</label>
+        <textarea class="ta" id="labNote" rows="3" placeholder="اكتب ملاحظة لنفسك عن التجربة"></textarea>
+      </div>
+    </div>
   </div>
 
   <!-- ai -->
@@ -327,6 +358,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"حصلت مشكلة في الاتصال. جرب تاني.", slow:"استنى لحظة قبل ما تطلب كود جديد.",
       pwBad:"الإيميل أو كلمة السر غلط.", pwNo:"مفيش حساب بالإيميل ده.", resendIn:"إعادة الإرسال بعد ", sec:"ث",
       nvHome:"لوحتي", nvCourses:"كورساتي", nvLabs:"المعمل", nvAi:"الذكاء الاصطناعي", nvAch:"إنجازاتي", nvCat:"الدورات", nvPaths:"المسارات", nvDisc:"النقاشات", tDid:"اسأل وناقش في دوراتك",
+      labCodeLbl:"الكود", labHintSum:"محتاج تلميح؟", labNoteLbl:"ملاحظاتي", labRun:"تشغيل", labCheck:"تحقّق", labReset:"الكود الأصلي", labCopy:"نسخ الرابط", labBack:"رجوع", labSaved:"اتحفظت التجربة في حسابك ✓",
       diLbl:"اختار الدورة", diNew:"شارك في النقاش", diSend:"إرسال", diPh:"اكتب سؤالك أو ملاحظتك",
       diEmpty:"مفيش نقاشات في الدورة دي لسه. ابدأ إنت.", diShort:"اكتب 3 حروف على الأقل.", diSent:"تم إرسال تعليقك، هيظهر بعد المراجعة.",
       diErr:"تعذر تحميل النقاشات دلوقتي.", diSignin:"سجّل الدخول عشان تشارك.",
@@ -359,6 +391,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"Connection problem. Try again.", slow:"Please wait a moment before requesting a new code.",
       pwBad:"Wrong email or password.", pwNo:"No account with that email.", resendIn:"Resend in ", sec:"s",
       nvHome:"Dashboard", nvCourses:"My courses", nvLabs:"The lab", nvAi:"AI tasks", nvAch:"Achievements", nvCat:"Courses", nvPaths:"Paths", nvDisc:"Discussions", tDid:"Ask and discuss in your courses",
+      labCodeLbl:"Code", labHintSum:"Need a hint?", labNoteLbl:"My notes", labRun:"Run", labCheck:"Check", labReset:"Original code", labCopy:"Copy link", labBack:"Back", labSaved:"Lab saved to your account ✓",
       diLbl:"Pick a course", diNew:"Join the discussion", diSend:"Send", diPh:"Write your question or note",
       diEmpty:"No discussions here yet. Start one.", diShort:"Write at least 3 characters.", diSent:"Your comment was sent and will appear after review.",
       diErr:"Could not load discussions right now.", diSignin:"Sign in to take part.",
@@ -408,6 +441,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("lLabs").textContent = t("sLabs"); $("lSub").textContent = t("sSub");
     $("hCont").textContent = t("hCont"); $("hGo").textContent = t("hGo");
     $("nvCat").textContent = t("nvCat"); $("nvPaths").textContent = t("nvPaths"); $("nvDisc").textContent = t("nvDisc");
+    $("labCodeLbl").textContent = t("labCodeLbl"); $("labHintSum").textContent = t("labHintSum"); $("labNoteLbl").textContent = t("labNoteLbl");
+    $("labRun").textContent = t("labRun"); $("labCheck").textContent = t("labCheck"); $("labReset").textContent = t("labReset");
+    $("labCopy").textContent = t("labCopy"); $("labClose").textContent = t("labBack");
     $("diT").textContent = t("nvDisc"); $("diLbl").textContent = t("diLbl"); $("diNew").textContent = t("diNew");
     $("diSend").textContent = t("diSend"); $("diText").placeholder = t("diPh");
     $("tDi").textContent = t("nvDisc"); $("tDid").textContent = t("tDid");
@@ -544,7 +580,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("q").classList.remove("hidden");
     $("dEmail2").textContent = u.email || "";
     var hash = (location.hash || "").replace("#", "");
-    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hash) >= 0 ? hash : "home");
+    var hh = hash.indexOf("lab-") === 0 ? "labs" : hash;
+    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : "home");
+    if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
     load(u);
   }
 
@@ -625,21 +663,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     });
 
     /* labs */
-    var ll = $("labList"); ll.innerHTML = "";
-    if (!D.labs.length){ ll.appendChild(el("div","empty", esc(t("noLab")))); }
-    D.labs.forEach(function(x){
-      var done = !!(D.myLabs[x.id] && D.myLabs[x.id].done);
-      var row = el("div","item");
-      row.appendChild(el("div","ic","⚗"));
-      var tt = el("div","tt");
-      tt.appendChild(el("b", null, esc(L(x.title) || x.id)));
-      tt.appendChild(el("span", null, esc(String(L(x.brief) || "").slice(0, 80))));
-      row.appendChild(tt);
-      var a = el("a", done ? "done" : "", done ? esc(t("labDone")) : esc(t("labOpen")));
-      a.href = "/#lab";
-      row.appendChild(a);
-      ll.appendChild(row);
-    });
+    renderLabs();
 
     /* ai tasks */
     var al = $("aiList"); al.innerHTML = "";
@@ -759,6 +783,133 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     row.appendChild(a);
     return row;
   }
+
+  /* ---- interactive lab ---- */
+  var LAB = { cur: null, done: {} };
+  function labDoc(x, code){
+    var tpl = (x.code && x.code.html) || '<div id="app"></div>';
+    var head = '<!doctype html><meta charset="utf-8"><style>body{font-family:system-ui,Arial,sans-serif;padding:12px;margin:0;direction:rtl}</style>';
+    var script = '<script>' + code + '<\/script>';
+    var harness = '<script>(function(){window.addEventListener("message",function(e){var d=e.data||{};if(d.type!=="lab-tests")return;var out=[];(d.tests||[]).forEach(function(t){try{var v=Function("return ("+t.expr+")")();out.push({ok:!!v,name:t.name,got:String(v).slice(0,120)});}catch(err){out.push({ok:false,name:t.name,err:String(err&&err.message||err).slice(0,120)});}});parent.postMessage({type:"lab-result",results:out,id:d.id},"*");});})();<\/script>';
+    var t = tpl.trim();
+    if (t.indexOf("</body>") >= 0) return t.replace("</body>", script + harness + "</body>");
+    if (/^<!doctype/i.test(t) || /^<html/i.test(t)) return t + script + harness;
+    return head + t + script + harness;
+  }
+  function renderLabs(){
+    var D = DATA || { labs: [], myLabs: {} };
+    var ll = $("labList"); ll.innerHTML = "";
+    var tot = D.labs.length, fin = 0;
+    D.labs.forEach(function(x){ if (D.myLabs[x.id] && D.myLabs[x.id].done) fin++; });
+    var pg = $("labProgress");
+    pg.innerHTML = tot ? '<div style="display:flex;align-items:center;gap:10px"><div class="bar" style="flex:1;margin:0"><i style="width:' + Math.round(fin / tot * 100) + '%"></i></div><span style="font-size:12.5px;color:var(--ink2)">' + (lang === "ar" ? "خلصت " + fin + " من " + tot : fin + " of " + tot + " done") + '</span></div>' : "";
+    if (!D.labs.length){ ll.appendChild(el("div","empty", esc(t("noLab")))); return; }
+    D.labs.forEach(function(x){
+      var done = !!(D.myLabs[x.id] && D.myLabs[x.id].done);
+      var row = el("div","item");
+      row.appendChild(el("div","ic","⚗"));
+      var tt = el("div","tt");
+      tt.appendChild(el("b", null, esc(L(x.title) || x.id)));
+      tt.appendChild(el("span", null, esc(String(L(x.brief) || "").slice(0, 90))));
+      row.appendChild(tt);
+      var b = el("button", "btn" + (done ? " done" : ""), esc(done ? t("labDone") : t("labOpen")));
+      b.addEventListener("click", function(){ openLabPanel(x.id); });
+      row.appendChild(b);
+      ll.appendChild(row);
+    });
+  }
+  function openLabPanel(id){
+    var x = null;
+    (DATA.labs || []).forEach(function(y){ if (y.id === id) x = y; });
+    if (!x) return;
+    LAB.cur = x;
+    $("labList").classList.add("hidden");
+    $("labProgress").classList.add("hidden");
+    $("labPanel").classList.remove("hidden");
+    $("labTitle").textContent = L(x.title) || x.id;
+    $("labBrief").textContent = String(L(x.brief) || "");
+    var hint = String(L(x.hint) || "");
+    $("labHintWrap").classList.toggle("hidden", !hint);
+    $("labHint").textContent = hint;
+    var starter = (x.code && (x.code.js || x.code.html)) || "";
+    var draft = "";
+    try { draft = localStorage.getItem("sl_lab_" + id) || ""; } catch(e){}
+    $("labCode").value = draft || starter;
+    $("labNote").value = (DATA.myLabs[id] && DATA.myLabs[id].note) || "";
+    $("labRes").innerHTML = "";
+    runLab();
+    if (history.replaceState) history.replaceState(null, "", "/learn#lab-" + id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function runLab(){
+    var x = LAB.cur; if (!x) return;
+    var code = $("labCode").value;
+    try { localStorage.setItem("sl_lab_" + x.id, code); } catch(e){}
+    var f = $("labFrame");
+    f.srcdoc = labDoc(x, code);
+  }
+  function checkLab(){
+    var x = LAB.cur; if (!x) return;
+    var f = $("labFrame");
+    var tests = (x.tests || []).map(function(t, i){ return { name: t.name || ("test " + (i + 1)), expr: String(t.expr || "false") }; });
+    var box = $("labRes");
+    if (!tests.length){ box.textContent = lang === "ar" ? "مفيش اختبارات للتجربة دي." : "This lab has no checks."; return; }
+    runLab();
+    setTimeout(function(){ try { f.contentWindow.postMessage({ type: "lab-tests", tests: tests, id: x.id }, "*"); } catch(e){ box.textContent = t("diErr"); } }, 700);
+  }
+  window.addEventListener("message", function(e){
+    var d = e.data || {};
+    if (d.type !== "lab-result") return;
+    var x = LAB.cur; if (!x || d.id !== x.id) return;
+    var res = d.results || [], bad = res.filter(function(r){ return !r.ok; });
+    var ok = res.length > 0 && !bad.length;
+    var box = $("labRes");
+    box.innerHTML = (ok
+      ? '<b class="ok">' + (lang === "ar" ? "تمام، الحل صح ✓" : "Correct ✓") + '</b>'
+      : '<b>' + (lang === "ar" ? "لسه فيه " + bad.length + " من " + res.length : bad.length + " of " + res.length + " left") + '</b>')
+      + '<div style="margin-top:6px">' + res.map(function(r){
+          return '<div class="' + (r.ok ? "ok" : "no") + '">' + (r.ok ? "✓" : "✗") + " " + esc(r.name) + (r.ok ? "" : (r.err ? " — " + esc(r.err) : "")) + '</div>';
+        }).join("") + '</div>';
+    if (ok) saveLab(x.id);
+  });
+  function saveLab(id){
+    var u = firebase.auth().currentUser; if (!u) return;
+    firebase.firestore().collection("users").doc(u.uid).collection("labs").doc(id)
+      .set({ done: true, at: Date.now() }, { merge: true }).then(function(){
+        if (DATA && DATA.myLabs) DATA.myLabs[id] = Object.assign({}, DATA.myLabs[id] || {}, { done: true });
+        if (DATA){ var n = 0; (DATA.labs || []).forEach(function(y){ if (DATA.myLabs[y.id] && DATA.myLabs[y.id].done) n++; }); DATA.labsDone = n; }
+        $("sLabs").textContent = String((DATA && DATA.labsDone) || 0);
+        $("labRes").innerHTML += '<div class="ok" style="margin-top:6px">' + (lang === "ar" ? "اتحفظت التجربة في حسابك ✓" : "Lab saved to your account ✓") + '</div>';
+      }).catch(function(){});
+  }
+  $("labRun").addEventListener("click", runLab);
+  $("labCheck").addEventListener("click", checkLab);
+  $("labReset").addEventListener("click", function(){
+    var x = LAB.cur; if (!x) return;
+    var starter = (x.code && (x.code.js || x.code.html)) || "";
+    $("labCode").value = starter;
+    try { localStorage.setItem("sl_lab_" + x.id, starter); } catch(e){}
+    $("labRes").innerHTML = ""; runLab();
+  });
+  $("labCopy").addEventListener("click", function(){
+    var x = LAB.cur; if (!x) return;
+    var u = location.origin + "/learn#lab-" + x.id;
+    var done = function(){ $("labCopy").textContent = lang === "ar" ? "اتنسخ ✓" : "Copied ✓"; setTimeout(function(){ $("labCopy").textContent = lang === "ar" ? "نسخ الرابط" : "Copy link"; }, 1600); };
+    try { navigator.clipboard.writeText(u).then(done, done); } catch(e){ done(); }
+  });
+  $("labClose").addEventListener("click", function(){
+    LAB.cur = null;
+    $("labPanel").classList.add("hidden");
+    $("labList").classList.remove("hidden");
+    $("labProgress").classList.remove("hidden");
+    if (history.replaceState) history.replaceState(null, "", "/learn#labs");
+  });
+  $("labNote").addEventListener("blur", function(){
+    var u = firebase.auth().currentUser, x = LAB.cur; if (!u || !x) return;
+    var v = String($("labNote").value || "").slice(0, 2000);
+    firebase.firestore().collection("users").doc(u.uid).collection("labs").doc(x.id).set({ note: v }, { merge: true }).catch(function(){});
+    if (DATA && DATA.myLabs) DATA.myLabs[x.id] = Object.assign({}, DATA.myLabs[x.id] || {}, { note: v });
+  });
 
   /* ---- discussions ---- */
   var DI = { id: "", loaded: false };
