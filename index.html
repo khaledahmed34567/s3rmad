@@ -1666,6 +1666,7 @@ function openDrawer() {
 const closeDrawer = () => { const d = $('#drawer'); if (d) d.remove(); };
 
 /* command palette */
+const SEARCH_EXTRA = { labs: [], tasks: [] };
 function searchIndex() {
   const out = [];
   [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
@@ -1673,6 +1674,8 @@ function searchIndex() {
   APPS.forEach(a => out.push({ t: L(a.name), sub: T('تطبيق', 'App'), h: 'apps', k: 'monitor', x: L(a.d) }));
   COURSES.forEach(c => out.push({ t: L(c.t), sub: T('كورس', 'Course'), h: 'course-' + c.id, k: 'book', x: L(c.d) }));
   POSTS.forEach(p => out.push({ t: L(p.t), sub: T('مقال', 'Article'), h: 'post-' + p.id, k: 'pen', x: L(p.ex) }));
+  SEARCH_EXTRA.labs.forEach(l => out.push({ t: l.t, sub: T('تجربة في المعمل', 'Lab'), h: 'lab-' + l.id, k: 'zap', x: l.x }));
+  SEARCH_EXTRA.tasks.forEach(t => out.push({ t: t.t, sub: T('مهمة ذكاء اصطناعي', 'AI task'), h: 'aitasks', k: 'zap', x: t.x }));
   return out;
 }
 function openSearch() {
@@ -2516,6 +2519,7 @@ async function loadAITasks() {
   try {
     const s = await fbDb.collection('ai_tasks').where('on', '==', true).get();
     const a = []; s.forEach(d => a.push(Object.assign({ id: d.id }, d.data())));
+    SEARCH_EXTRA.tasks = a.map(x => ({ id: x.id, t: L(x.title) || x.id, x: String(x.topics || '').slice(0, 90) }));
     if (!a.length) { box.innerHTML = `<p class="muted">${T('مفيش مهام متاحة دلوقتي.', 'No tasks available yet.')}</p>`; return; }
     box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3 dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</h3><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;text-align:start">${esc(String(x.topics || '').slice(0, 200))}</p><button class="btn primary" data-ait="${esc(x.id)}">${T('ابدأ المهمة', 'Start task')}</button></article>`).join('');
     $$('[data-ait]', box).forEach(btn => btn.addEventListener('click', () => { const x = a.find(y => y.id === btn.dataset.ait); if (x) openAITask(x); }));
@@ -2589,6 +2593,7 @@ async function loadLabs(openId) {
     let done = {};
     try { const p = await fbDb.collection('users').doc(fbAuth.currentUser.uid).collection('labs').get(); p.forEach(d => { done[d.id] = d.data(); }); } catch (e) { }
     LAB.done = done;
+    SEARCH_EXTRA.labs = a.map(x => ({ id: x.id, t: L(x.title) || x.id, x: String(L(x.brief) || '').slice(0, 90) }));
     const tot = a.length, fin = a.filter(x => done[x.id] && done[x.id].done).length;
     const dl = $('#lab-daily');
     if (dl && tot) {
@@ -2614,6 +2619,8 @@ function openLab(x) {
   const starter = code.js || code.html || '';
   openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start">${esc(String(L(x.brief) || ''))}</p>${x.hint ? `<details style="margin:-6px 0 4px"><summary class="muted sm" style="cursor:pointer">${T('محتاج تلميح؟', 'Need a hint?')}</summary><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;margin:6px 0 0">${esc(String(L(x.hint) || ''))}</p></details>` : ''}<div class="field"><label for="lab-code">${T('الكود', 'Code')}</label><textarea id="lab-code" spellcheck="false" dir="ltr" style="min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6">${esc(starter)}</textarea></div><div class="row" style="gap:8px;margin:10px 0"><button class="btn primary" id="lab-run">${T('تشغيل', 'Run')}</button><button class="btn" id="lab-check">${T('تحقّق', 'Check')}</button><span class="sp"></span><span class="muted sm" id="lab-res"></span></div><div class="field"><label>${T('النتيجة', 'Result')}</label><iframe id="lab-frame" sandbox="allow-scripts" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#fff" title="lab"></iframe></div></div>`, 'ai-modal');
   const run = () => { const f = $('#lab-frame'); if (!f) return; f.srcdoc = labDoc(x, $('#lab-code').value || ''); };
+  const ta = $('#lab-code');
+  if (ta) ta.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); } });
   const r1 = $('#lab-run'), r2 = $('#lab-check');
   if (r1) r1.addEventListener('click', run);
   if (r2) r2.addEventListener('click', () => { run(); setTimeout(() => labAsk(x), 900); });
@@ -2641,7 +2648,9 @@ window.addEventListener('message', e => {
   const x = LAB.cur; if (!x || d.id !== x.id) return;
   const res = d.results || [], ok = res.length > 0 && res.every(r => r.ok);
   const box = $('#lab-res');
-  if (box) box.innerHTML = ok ? `<b style="color:#0f6b52">${T('تمام، الحل صح ✓', 'Correct ✓')}</b>` : `${T('لسه فيه:', 'Not yet:')} ${esc(res.filter(r => !r.ok).map(r => r.name).join('، '))}`;
+  if (box) box.innerHTML = ok
+    ? `<b style="color:#0f6b52">${T('تمام، الحل صح ✓', 'Correct ✓')}</b><div style="margin-top:6px">${res.map(r => `<div class="sm" style="color:#0f6b52">✓ ${esc(r.name)}</div>`).join('')}</div>`
+    : `<b>${T('لسه فيه ' + res.filter(r => !r.ok).length + ' من ' + res.length, res.filter(r => !r.ok).length + ' of ' + res.length + ' left')}</b><div style="margin-top:6px">${res.map(r => `<div class="sm" style="color:${r.ok ? '#0f6b52' : '#b4342b'}">${r.ok ? '✓' : '✗'} ${esc(r.name)}${r.ok ? '' : (r.err ? ' — ' + esc(r.err) : '')}</div>`).join('')}</div>`;
   if (ok) labSave(x);
 });
 async function labSave(x) {
