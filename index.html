@@ -1339,6 +1339,64 @@ function gateModal(msg) {
   const ic = $('#otp-code'); if (ic) ic.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
   return b;
 }
+
+/* ---------- per-action OTP (login, certificate, support) ---------- */
+async function actOtp(act, ref) {
+  const u = fbAuth && fbAuth.currentUser; if (!u) return false;
+  const AL = { login: T('تسجيل الدخول', 'signing in'), cert: T('الشهادة', 'the certificate'), support: T('رسالة الدعم', 'the support message') };
+  const lb = AL[act] || '';
+  return await new Promise(resolve => {
+    let need = 1, finished = false;
+    const b = openModal(`<div class="modal-h"><b>${T('تأكيد مطلوب', 'Confirmation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${T('لأمان حسابك، أكّد ' + lb + ' بكود نبعته لك.', 'To secure your account, confirm ' + lb + ' with a code we send you.')}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-ach="tg">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-ach="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="act-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="act-code" inputmode="numeric" maxlength="6" dir="ltr" autocomplete="one-time-code"></div><div class="err" id="act-err"></div><button class="btn primary block" id="act-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px" id="act-hint"></p></div>`);
+    const err = m => { const e = b.querySelector('#act-err'); if (e) e.textContent = m; };
+    const hint = m => { const e = b.querySelector('#act-hint'); if (e) e.textContent = m; };
+    const close = ok => { if (finished) return; finished = true; try { closeModal(); } catch (e) { } resolve(ok); };
+    const start = async want => {
+      try {
+        const t = await u.getIdToken();
+        const r = await fetch(OTPW + '/actstart', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, act, ref: ref || '', ch: want || undefined }) });
+        const j = await r.json();
+        if (j && j.ok) {
+          need = j.need || 1;
+          err(j.ch === 'tg' ? T('بعتنالك الكود على تيليجرام.', 'Code sent on Telegram.') : T('بعتنالك الكود على بريدك، وممكن ياخد دقيقتين.', 'Code sent to your email; it may take a couple of minutes.'));
+          if (need > 1) hint(T('ده كود 1 من 2.', 'This is code 1 of 2.'));
+          return true;
+        }
+        if (j && j.why === 'limit') err(T('وصلت للحد على القناتين. استنى شوية، أو ادخل من بوت تيليجرام.', 'Both channels hit their limit. Wait a bit, or sign in from the Telegram bot.'));
+        else err(T('تعذر إرسال الكود. حاول تاني.', 'Could not send the code. Try again.'));
+        return false;
+      } catch (e) { err(T('تعذر إرسال الكود. حاول تاني.', 'Could not send the code. Try again.')); return false; }
+    };
+    const go = async () => {
+      const el = b.querySelector('#act-code'), code = ((el && el.value) || '').replace(/\D/g, '');
+      if (code.length !== 6) return err(T('اكتب 6 أرقام.', 'Enter 6 digits.'));
+      const btn = b.querySelector('#act-go'); if (btn) btn.disabled = true;
+      try {
+        const t = await u.getIdToken();
+        const r = await fetch(OTPW + '/actcheck', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, act, code, ref: ref || '' }) });
+        const j = await r.json();
+        if (j && j.ok && j.done) { toast(T('تم التأكيد', 'Confirmed')); close(true); return; }
+        if (j && j.ok && !j.done) { if (el) el.value = ''; hint(''); err(''); await start(); if (btn) btn.disabled = false; return; }
+        if (j && j.why === 'wrong') err(T('الكود غلط. المحاولات الباقية: ', 'Wrong code. Attempts left: ') + (j.left || 0));
+        else if (j && j.why === 'expired') err(T('الكود انتهت صلاحيته. اطلب كود جديد.', 'The code expired. Request a new one.'));
+        else if (j && j.why === 'locked') err(T('محاولات كتير. اطلب كود جديد.', 'Too many attempts. Request a new one.'));
+        else err(T('تعذر التأكيد. حاول تاني.', 'Could not verify. Try again.'));
+      } catch (e) { err(T('تعذر التأكيد. حاول تاني.', 'Could not verify. Try again.')); }
+      if (btn) btn.disabled = false;
+    };
+    b.querySelectorAll('[data-ach]').forEach(btn => btn.addEventListener('click', async () => { btn.disabled = true; await start(btn.dataset.ach); btn.disabled = false; }));
+    const gb = b.querySelector('#act-go'); if (gb) gb.addEventListener('click', go);
+    const ic = b.querySelector('#act-code'); if (ic) ic.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+    start();
+  });
+}
+async function needLoginOtp() {
+  if (await actOtp('login')) return true;
+  try { await fbAuth.signOut(); } catch (e) { }
+  const er = $('#auth-err');
+  if (er) er.textContent = T('لازم تأكيد الكود لإكمال الدخول. جرّب تاني، أو ادخل من بوت تيليجرام لو الكود مش واصل.', 'Confirm the code to finish signing in. Try again, or sign in from the Telegram bot if codes are not arriving.');
+  return false;
+}
 async function needActive(msg, after) {
   if (await gateActive()) return true;
   GATE.after = after || null; gateModal(msg); return false;
@@ -2282,7 +2340,7 @@ const A = {
   ordersTab() { S.tab = 'payments'; closeModal(); },
   async google(el) {
     const k = el.dataset.k || 'main'; el.disabled = true;
-    try { const u = await DB.google(); if (u) { if (k === 'lx') S.user = await DB.setLink('learning', true); await afterAuth(k, T('أهلًا بك', 'Welcome')); } }
+    try { const u = await DB.google(); if (u) { if (!(await needLoginOtp())) return; if (k === 'lx') S.user = await DB.setLink('learning', true); await afterAuth(k, T('أهلًا بك', 'Welcome')); } }
     catch (e) {
       if (e.message === 'newacc') { const er = $('#auth-err'); const m = T('الدخول بجوجل للحسابات الموجودة فقط. اعمل حسابك أولًا بالبريد وكلمة المرور، وبعدها تقدر تدخل بجوجل.', 'Google sign-in is for existing accounts only. Create your account with email and password first, then you can sign in with Google.'); if (er) er.textContent = m; else toast(m); }
       else if (e.message !== 'cancel') { const er = $('#auth-err'); if (er) er.textContent = T('تعذر الدخول عبر جوجل. حاول مرة أخرى.', 'Google sign-in failed. Please try again.'); else toast(T('تعذر الدخول عبر جوجل', 'Google sign-in failed')); }
@@ -2364,7 +2422,7 @@ const FORMS = {
   },
   async login(f) {
     const d = new FormData(f), err = $('#auth-err');
-    try { await DB.login({ id: d.get('id'), password: d.get('password') }); await afterAuth('main', T('أهلًا بعودتك', 'Welcome back')); }
+    try { await DB.login({ id: d.get('id'), password: d.get('password') }); if (!(await needLoginOtp())) return; await afterAuth('main', T('أهلًا بعودتك', 'Welcome back')); }
     catch (e) { err.textContent = T('البيانات غير صحيحة. تحقق من البريد وكلمة المرور.', 'Details do not match. Check your email and password.'); }
   },
   async signup(f) {
@@ -2694,7 +2752,7 @@ function vLxComplete() {
 Object.assign(FORMS, {
   async lxlogin(f) {
     const d = new FormData(f), err = $('#auth-err');
-    try { await DB.login({ id: d.get('id'), password: d.get('password') }); S.user = await DB.setLink('learning', true); await afterAuth('lx', T('أهلًا بعودتك', 'Welcome back')); }
+    try { await DB.login({ id: d.get('id'), password: d.get('password') }); if (!(await needLoginOtp())) return; S.user = await DB.setLink('learning', true); await afterAuth('lx', T('أهلًا بعودتك', 'Welcome back')); }
     catch (e) { err.textContent = T('البيانات غير صحيحة. تحقق من البريد وكلمة المرور.', 'Details do not match. Check your email and password.'); }
   },
   async lxsignup(f) {
@@ -3218,6 +3276,7 @@ FORMS.aid = async f => {
   if (!d.get('truth') || !d.get('consent') || !d.get('commit')) return bad(T('وافق على الإقرارات الثلاثة.', 'Accept the three declarations.'));
   err.textContent = '';
   if (!(await gateActive())) { needActive(T('لازم تفعّل حسابك قبل ما تبعت طلب المساعدة.', 'Activate your account before sending the aid request.')); return; }
+  if (!(await actOtp('support'))) { err.textContent = T('لازم تأكيد الكود قبل إرسال الطلب.', 'Confirm the code before sending the request.'); return; }
   const aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null });
   try { fetch(KYCN, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: aidId, kind: d.get('dockind') === 'nid' ? 'nid' : 'univ', fields: Object.assign({ _who: name.join(' ') }, AID.fields || {}) }) }); } catch (e) { }
   AID.fields = {};
