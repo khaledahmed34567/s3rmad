@@ -3346,6 +3346,10 @@ Object.assign(A, { async aiRec() {
     out.textContent = j.ok ? j.a : (r.status === 429 ? T('وصلت للحد اليومي. جرّب غدًا.', 'Daily limit reached. Try tomorrow.') : T('المساعد غير متاح الآن.', 'Assistant unavailable now.'));
   } catch (e) { out.textContent = T('تعذّر الاتصال. جرّب لاحقًا.', 'Connection failed. Try later.'); }
 } });
+AFTER.push(r => { if (r.name !== 'learn') return; const v = $('#main .view'); if (!v || $('#lnote')) return;
+  const cid = r.cid || r.c, lid = r.lid || r.l, key = 'note:' + cid + ':' + lid;
+  v.insertAdjacentHTML('beforeend', `<section class="sec" id="lnote" style="padding-top:0"><div class="wrap"><div class="card stack" style="gap:10px"><b>${T('ملاحظاتي على هذا الدرس', 'My notes on this lesson')}</b><textarea id="lnotet" rows="4" maxlength="3000" style="width:100%" placeholder="${T('اكتب ما تريد تذكّره…', 'Write what you want to remember…')}"></textarea><span class="muted sm" id="lnotes">${T('تُحفظ تلقائيًا على جهازك فقط', 'Saved automatically on this device only')}</span></div></div></section>`);
+  const t = $('#lnotet'); t.value = ls.get(key) || ''; let tm; t.addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { ls.set(key, t.value); const s = $('#lnotes'); if (s) s.textContent = T('تم الحفظ ✓', 'Saved ✓'); }, 400); }); });
 AFTER.push(r => { if (r.name !== 'learn') return; const v = $('#main .view'); if (!v || $('#ailes')) return;
   v.insertAdjacentHTML('beforeend', `<section class="sec" id="ailes" style="padding-top:0"><div class="wrap"><div class="card stack" style="gap:10px"><b>${T('لم تفهم نقطة في هذا الدرس؟ اسأل المساعد', 'Stuck on this lesson? Ask the assistant')}</b><input id="ailq" maxlength="200" placeholder="${T('اكتب سؤالك عن الدرس', 'Type your question about the lesson')}" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:10px;font:inherit;background:var(--bg);color:inherit"><button class="btn" data-act="aiLesson">${T('اسأل', 'Ask')}</button><div id="aila" class="sm muted" style="white-space:pre-wrap" aria-live="polite"></div></div></div></section>`); });
 Object.assign(A, { async aiLesson() {
