@@ -2958,9 +2958,14 @@ function certHtml(c) {
 }
 function vCert(r) {
   const code = (r.id || '').toUpperCase().replace(/[^A-Z0-9-]/g, '');
-  DB.cert(code).then(c => {
+  DB.cert(code).then(async c => {
     const box = $('#certbox'); if (!box) return;
     if (!c) { box.innerHTML = certState('', T('شهادة غير موجودة', 'Certificate not found'), T('تأكد من الكود وحاول مرة أخرى.', 'Check the code and try again.')); return; }
+    const _u = fbAuth && fbAuth.currentUser;
+    if (_u && c.userId === _u.uid) {
+      const _ok = await actOtp('cert', c.id);
+      if (!_ok) { if ($('#certbox')) $('#certbox').innerHTML = certState('', T('تأكيد مطلوب', 'Confirmation required'), T('لعرض شهادتك لازم كود تأكيد. اضغط على الرابط من حسابك تاني.', 'A confirmation code is needed to show your certificate. Open it again from your account.')); return; }
+    }
     if (c.revoked || c.status === 'revoked') { box.innerHTML = certState('', T('هذه الشهادة ملغاة', 'This certificate has been revoked'), T('لم تعد صالحة للتحقق.', 'It is no longer valid.')); return; }
     if (c.status !== 'approved') { box.innerHTML = certState('', T('شهادتك قيد المراجعة', 'Your certificate is under review'), T('أرسلنا طلبك لفريق سرمد. ستظهر الشهادة هنا فور اعتماد الفريق لإتمامك الكورس.', 'Your request has been sent to the Sarmad team. The certificate appears here as soon as the team confirms you completed the course.')); return; }
     window._cert = c; box.innerHTML = `<div class="cert2-wrap">${certHtml(c)}</div><div class="cert2-ver ok">${icon('check')} ${T('شهادة موثّقة وصالحة · صادرة من سرمد ليرننج', 'Verified and valid · issued by Sarmad Learning')}</div>
