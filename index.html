@@ -1846,6 +1846,21 @@ function faqBlock(n = 99) { return `<div class="acc">${FAQ.slice(0, n).map(f => 
 const ctaBand = () => `<section class="sec"><div class="wrap"><div class="band"><div><h2 class="h2">${T('عندك فكرة أو منتج يحتاج تطوير أو حماية؟', 'Have an idea, or a product that needs building or securing?')}</h2><p style="margin-top:14px;opacity:.9">${T('اشرح لنا ما تحتاجه ونرد بخطة واضحة. الربط ببوابة الدفع تم مجاني مع الخدمة.', 'Tell us what you need and we reply with a clear plan. Tam payment integration is free with the service.')}</p></div><div class="row" style="justify-content:flex-end"><a class="btn primary" href="#contact">${T('اطلب عرض سعر', 'Request a quote')} ${arrow()}</a><a class="btn" href="#pricing">${T('شاهد الباقات', 'See packages')}</a></div></div></div></section>`;
 
 /* ---------- home ---------- */
+function resumeCard() {
+  if (!S.user || !S.prog) return '';
+  let best = null;
+  (COURSES || []).forEach(c => {
+    const pr = S.prog[c.id]; if (!pr || !pr.lessons) return;
+    const ls = c.lessons || []; if (!ls.length) return;
+    const done = ls.filter(l => (pr.lessons[l.id] || {}).done).length;
+    if (done === 0 || done >= ls.length) return;
+    const idx = ls.findIndex(l => !(pr.lessons[l.id] || {}).done); if (idx < 0) return;
+    const at = Math.max(0, ...Object.keys(pr.lessons).map(k => +((pr.lessons[k] || {}).at) || 0));
+    if (!best || at > best.at) best = { c, l: ls[idx], idx, done, total: ls.length, at };
+  });
+  if (!best) return '';
+  return `<div class="note" style="margin:18px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span>${T('كمّل من حيث وقفت:', 'Pick up where you left off:')} <b dir="auto">${esc(L(best.c.t))}</b> — ${T('درس ' + (best.idx + 1) + ' من ' + best.total, 'lesson ' + (best.idx + 1) + ' of ' + best.total)}</span><span class="sp"></span><a class="btn sm primary" href="#learn-${esc(best.c.id)}-${esc(best.l.id)}">${T('كمّل', 'Continue')} ${arrow()}</a></div>`;
+}
 function vHome() {
   return `
   <section class="hero"><div class="wrap hero-grid"><div>
@@ -1863,6 +1878,7 @@ function vHome() {
     <div class="lyr"><span class="n">03</span><div><b>${T('الأمن السيبراني', 'Cybersecurity')}</b><span class="mono">Pentest · Hardening · Audit</span></div>${icon('shield')}</div>
     <div class="lyr tam"><span class="n">04</span><div><b>${T('تم للمدفوعات', 'Tam payments')}</b><span class="mono">Checkout · Webhooks · Test mode</span></div><span class="tag free">${T('مجاني معنا', 'free with us')}</span></div>
   </div></div></section>
+  <div class="wrap">${resumeCard()}</div>
 
   <section class="sec"><div class="wrap">${secHead(T('جرّب الجديد', 'Try what is new'), T('حاجات تقدر تستخدمها دلوقتي', 'Things you can use right now'), '')}
     <div class="grid g3">
