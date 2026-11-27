@@ -2633,8 +2633,10 @@ function openLab(x) {
   LAB.cur = x;
   const code = x.code || {};
   const starter = code.js || code.html || '';
-  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start">${esc(String(L(x.brief) || ''))}</p>${x.hint ? `<details style="margin:-6px 0 4px"><summary class="muted sm" style="cursor:pointer">${T('محتاج تلميح؟', 'Need a hint?')}</summary><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;margin:6px 0 0">${esc(String(L(x.hint) || ''))}</p></details>` : ''}<div class="field"><label for="lab-code">${T('الكود', 'Code')}</label><textarea id="lab-code" spellcheck="false" dir="ltr" style="min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6">${esc(starter)}</textarea></div><div class="row" style="gap:8px;margin:10px 0"><button class="btn primary" id="lab-run">${T('تشغيل', 'Run')}</button><button class="btn" id="lab-check">${T('تحقّق', 'Check')}</button><span class="sp"></span><span class="muted sm" id="lab-res"></span></div><div class="field"><label>${T('النتيجة', 'Result')}</label><iframe id="lab-frame" sandbox="allow-scripts" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#fff" title="lab"></iframe></div></div>`, 'ai-modal');
+  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start">${esc(String(L(x.brief) || ''))}</p>${x.hint ? `<details style="margin:-6px 0 4px"><summary class="muted sm" style="cursor:pointer">${T('محتاج تلميح؟', 'Need a hint?')}</summary><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;margin:6px 0 0">${esc(String(L(x.hint) || ''))}</p></details>` : ''}<div class="field"><label for="lab-code">${T('الكود', 'Code')}</label><textarea id="lab-code" spellcheck="false" dir="ltr" style="min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6">${esc(starter)}</textarea></div><div class="field"><label for="lab-note">${T('ملاحظاتي', 'My notes')}</label><textarea id="lab-note" rows="3" dir="auto" placeholder="${T('اكتب ملاحظة لنفسك عن التجربة', 'Write yourself a note about this lab')}"></textarea></div><div class="row" style="gap:8px;margin:10px 0"><button class="btn primary" id="lab-run">${T('تشغيل', 'Run')}</button><button class="btn" id="lab-check">${T('تحقّق', 'Check')}</button><span class="sp"></span><span class="muted sm" id="lab-res"></span></div><div class="field"><label>${T('النتيجة', 'Result')}</label><iframe id="lab-frame" sandbox="allow-scripts" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#fff" title="lab"></iframe></div></div>`, 'ai-modal');
   const run = () => { const f = $('#lab-frame'); if (!f) return; f.srcdoc = labDoc(x, $('#lab-code').value || ''); };
+  const nt = $('#lab-note');
+  if (nt) { nt.value = (LAB.done[x.id] && LAB.done[x.id].note) || ''; nt.addEventListener('blur', () => labNote(x, nt.value)); }
   const ta = $('#lab-code');
   if (ta) ta.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); } });
   const r1 = $('#lab-run'), r2 = $('#lab-check');
@@ -2669,6 +2671,13 @@ window.addEventListener('message', e => {
     : `<b>${T('لسه فيه ' + res.filter(r => !r.ok).length + ' من ' + res.length, res.filter(r => !r.ok).length + ' of ' + res.length + ' left')}</b><div style="margin-top:6px">${res.map(r => `<div class="sm" style="color:${r.ok ? '#0f6b52' : '#b4342b'}">${r.ok ? '✓' : '✗'} ${esc(r.name)}${r.ok ? '' : (r.err ? ' — ' + esc(r.err) : '')}</div>`).join('')}</div>`;
   if (ok) labSave(x);
 });
+async function labNote(x, v) {
+  const u = fbAuth && fbAuth.currentUser; if (!u) return;
+  try {
+    await fbDb.collection('users').doc(u.uid).collection('labs').doc(x.id).set({ note: String(v || '').slice(0, 2000) }, { merge: true });
+    toast(T('اتحفظت الملاحظة ✓', 'Note saved ✓'));
+  } catch (e) { }
+}
 async function labSave(x) {
   const u = fbAuth && fbAuth.currentUser; if (!u) return;
   try {
@@ -2699,9 +2708,16 @@ async function loadAch() {
   if (certs >= 1) badges.push({ ar: 'شهادة معتمدة', en: 'Certificate' });
   if (S.sub) badges.push({ ar: 'اشتراك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus'), en: (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan' });
   const card = (n, l, h) => `<a class="card" href="#${h}" style="padding:18px;display:block;text-align:center"><div style="font-size:1.9rem;font-weight:800">${esc(String(n))}</div><div class="muted sm">${l}</div></a>`;
-  box.innerHTML = `<div class="grid g4">${card(labs, T('تجربة معمل خلصتها', 'Labs finished'), 'lab')}${card(tasks, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${card(certs, T('شهادة', 'Certificates'), 'account')}${card(S.sub ? fmtDate(S.sub.until) : '—', S.sub ? T('اشتراكك ساري حتى', 'Plan active until') : T('مفيش اشتراك', 'No plan'), 'learning')}</div>` + (badges.length ? `<h3 class="h3" style="margin:26px 0 12px">${T('أوسمة', 'Badges')}</h3><div class="row" style="gap:8px;flex-wrap:wrap">${badges.map(b => `<span class="tag ok">${esc(L(b))}</span>`).join('')}</div>` : `<p class="muted" style="margin-top:22px">${T('لسه مفيش أوسمة. ابدأ بتجربة في المعمل أو مهمة ذكاء اصطناعي.', 'No badges yet. Start with a lab or an AI task.')}</p>`);
+  const shareLine = T('خلصت ' + labs + ' تجربة معمل و ' + tasks + ' مهمة ذكاء اصطناعي على سرمد، وعندي ' + certs + ' شهادة. جرّب أنت كمان:', 'I finished ' + labs + ' labs and ' + tasks + ' AI tasks on Sarmad, with ' + certs + ' certificate(s). Try it too:') + ' ' + location.origin + location.pathname;
+  box.innerHTML = `<div class="grid g4">${card(labs, T('تجربة معمل خلصتها', 'Labs finished'), 'lab')}${card(tasks, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${card(certs, T('شهادة', 'Certificates'), 'account')}${card(S.sub ? fmtDate(S.sub.until) : '—', S.sub ? T('اشتراكك ساري حتى', 'Plan active until') : T('مفيش اشتراك', 'No plan'), 'learning')}</div>` + `<div style="margin-top:22px"><button class="btn" id="ach-share" data-share="${esc(shareLine)}">${T('شارك إنجازك', 'Share your progress')}</button></div>` + (badges.length ? `<h3 class="h3" style="margin:26px 0 12px">${T('أوسمة', 'Badges')}</h3><div class="row" style="gap:8px;flex-wrap:wrap">${badges.map(b => `<span class="tag ok">${esc(L(b))}</span>`).join('')}</div>` : `<p class="muted" style="margin-top:22px">${T('لسه مفيش أوسمة. ابدأ بتجربة في المعمل أو مهمة ذكاء اصطناعي.', 'No badges yet. Start with a lab or an AI task.')}</p>`);
 }
 ROUTE.achievements = vAchievements;
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('#ach-share'); if (!b) return;
+  const t = b.dataset.share || '';
+  const ok = () => toast(T('تم نسخ الإنجاز ✓', 'Copied ✓'));
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok).catch(() => prompt('', t)); else prompt('', t);
+});
 
 /* ---------- what's new ---------- */
 const NEWS = [
