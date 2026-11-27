@@ -1654,7 +1654,7 @@ function openModal(html, cls = '') {
 }
 function closeModal() { const b = $('#modal-back'); if (b) b.remove(); }
 function openDrawer() {
-  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
+  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
   const d = document.createElement('div'); d.className = 'drawer'; d.id = 'drawer';
   d.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="logo" style="--lw:104px"></span><button class="ib" data-act="closeDrawer" aria-label="close">${icon('x')}</button></div>
     ${items.map(([h, n]) => `<a href="#${h}" data-act="closeDrawer">${n}${icon('arrow', 'flip')}</a>`).join('')}
@@ -1666,7 +1666,7 @@ const closeDrawer = () => { const d = $('#drawer'); if (d) d.remove(); };
 /* command palette */
 function searchIndex() {
   const out = [];
-  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
+  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
   SERVICES.forEach(s => out.push({ t: L(s.t), sub: T('خدمة', 'Service'), h: 'services', k: s.icon }));
   APPS.forEach(a => out.push({ t: L(a.name), sub: T('تطبيق', 'App'), h: 'apps', k: 'monitor', x: L(a.d) }));
   COURSES.forEach(c => out.push({ t: L(c.t), sub: T('كورس', 'Course'), h: 'course-' + c.id, k: 'book', x: L(c.d) }));
@@ -2494,6 +2494,74 @@ const okSel = t => t && t.closest && t.closest('input,textarea,select,[contented
 ['copy', 'cut', 'contextmenu', 'selectstart', 'dragstart'].forEach(ev => document.addEventListener(ev, e => { if (!okSel(e.target)) e.preventDefault(); }));
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 'u', 's', 'p'].includes(e.key.toLowerCase()) && !okSel(e.target)) e.preventDefault(); });
 
+/* ---------- AI discussion tasks (student) ---------- */
+const AIT = { sid: '', hist: [], start: 0, on: 0, off: 0 };
+function vAITasks() {
+  setTimeout(loadAITasks, 0);
+  return `<section class="wrap sec"><div class="sec-h"><h2>${T('مهام الذكاء الاصطناعي', 'AI discussion tasks')}</h2></div><p class="muted">${T('اختار مهمة وناقشها مع المدرّس الذكي في حدود موضوعاتها.', 'Pick a task and discuss it with the AI tutor within its topics.')}</p><div id="ai-list" class="grid"><p class="muted sm">${T('جارٍ التحميل...', 'Loading...')}</p></div></section>`;
+}
+async function loadAITasks() {
+  const box = $('#ai-list'); if (!box) return;
+  if (!S.user) { box.innerHTML = `<p class="muted">${T('سجّل الدخول الأول عشان تشوف المهام.', 'Sign in to see the tasks.')}</p>`; return; }
+  try {
+    const s = await fbDb.collection('ai_tasks').where('on', '==', true).get();
+    const a = []; s.forEach(d => a.push(Object.assign({ id: d.id }, d.data())));
+    if (!a.length) { box.innerHTML = `<p class="muted">${T('مفيش مهام متاحة دلوقتي.', 'No tasks available yet.')}</p>`; return; }
+    box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3>${esc(L(x.title) || x.id)}</h3><p class="muted sm">${esc(String(x.topics || '').slice(0, 200))}</p><button class="btn primary" data-ait="${esc(x.id)}">${T('ابدأ المهمة', 'Start task')}</button></article>`).join('');
+    $$('[data-ait]', box).forEach(btn => btn.addEventListener('click', () => { const x = a.find(y => y.id === btn.dataset.ait); if (x) openAITask(x); }));
+  } catch (e) { box.innerHTML = `<p class="muted">${T('تعذر تحميل المهام.', 'Could not load the tasks.')}</p>`; }
+}
+function openAITask(t) {
+  const u = fbAuth.currentUser;
+  if (!u) { location.hash = '#login'; return; }
+  const min = Math.min(3600, Math.max(10, +(t.min || 30)));
+  AIT.sid = ''; AIT.hist = []; AIT.start = Date.now(); AIT.on = 0; AIT.off = 0;
+  openModal(`<div class="modal-h"><b>${esc(L(t.title) || t.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${T('الموضوعات المسموحة:', 'Allowed topics:')} ${esc(String(t.topics || ''))}</p><div id="ai-chat" style="max-height:44vh;overflow:auto;display:grid;gap:8px;margin:10px 0"></div><div class="field"><label for="ai-q">${T('اكتب رسالتك', 'Your message')}</label><input id="ai-q" autocomplete="off" maxlength="400"></div><div class="err" id="ai-err"></div><button class="btn primary block" id="ai-send">${T('إرسال', 'Send')}</button><button class="btn ghost block" id="ai-done" style="margin-top:8px">${T('إنهاء المهمة', 'Finish task')}</button><p class="muted sm" id="ai-prog"></p></div>`);
+  const err = m => { const e = $('#ai-err'); if (e) e.textContent = m; };
+  const add = (who, txt) => { const c = $('#ai-chat'); if (!c) return; const d = document.createElement('div'); d.style.cssText = (who === 'me' ? 'justify-self:end;background:#eef;' : 'justify-self:start;background:#f6f3ec;') + 'padding:8px 10px;border-radius:12px;max-width:85%'; d.textContent = txt; c.appendChild(d); c.scrollTop = c.scrollHeight; };
+  const prog = () => { const p = $('#ai-prog'); if (!p) return; const mins = Math.floor((Date.now() - AIT.start) / 60000); p.textContent = T('المدة: ' + mins + ' من ' + min + ' دقيقة، وردود في الموضوع: ' + AIT.on, 'Time: ' + mins + ' of ' + min + ' min, on-topic replies: ' + AIT.on); };
+  prog();
+  const post = async body => { const idt = await u.getIdToken(); const r = await fetch(OTPW + '/aitsess', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(Object.assign({ t: idt }, body)) }); return await r.json(); };
+  const send = async () => {
+    const el = $('#ai-q'); const q = ((el && el.value) || '').trim();
+    if (q.length < 2) return err(T('اكتب رسالة الأول.', 'Write a message first.'));
+    if (el) el.value = ''; err(''); add('me', q);
+    const btn = $('#ai-send'); if (btn) btn.disabled = true;
+    try {
+      if (!AIT.sid) {
+        const j0 = await post({ a: 'start', task: t.id, topics: String(t.topics || ''), min });
+        if (!(j0 && j0.ok && j0.sid)) { err(j0 && j0.why === 'limit' ? T('وصلت للحد في الوقت الحالي. جرّب بعد شوية.', 'You hit the limit for now. Try again later.') : T('تعذر بدء المهمة. حاول تاني.', 'Could not start the task. Try again.')); if (btn) btn.disabled = false; return; }
+        AIT.sid = j0.sid;
+      }
+      const j = await post({ sid: AIT.sid, q, hist: AIT.hist });
+      if (j && j.ok && j.a) { add('ai', j.a); AIT.hist.push({ r: 'u', t: q }, { r: 'a', t: j.a }); if (j.on) AIT.on++; else AIT.off++; prog(); }
+      else if (j && j.why === 'limit') err(T('وصلت للحد في الوقت الحالي. جرّب بعد شوية.', 'You hit the limit for now. Try again later.'));
+      else if (j && j.why === 'expired') { AIT.sid = ''; err(T('الجلسة انتهت. ابعت تاني لتبدأ جلسة جديدة.', 'The session expired. Send again to start a new one.')); }
+      else err(T('تعذر إرسال الرسالة. حاول تاني.', 'Could not send. Try again.'));
+    } catch (e) { err(T('تعذر إرسال الرسالة. حاول تاني.', 'Could not send. Try again.')); }
+    if (btn) btn.disabled = false;
+  };
+  const finish = async () => {
+    const btn = $('#ai-done'); if (btn) btn.disabled = true; err('');
+    try {
+      if (!AIT.sid) { err(T('ابدأ المهمة الأول.', 'Start the task first.')); if (btn) btn.disabled = false; return; }
+      const j = await post({ a: 'done', sid: AIT.sid });
+      if (j && j.ok) {
+        try { await fbDb.collection('users').doc(u.uid).collection('aitasks').doc(t.id).set({ done: true, secs: j.secs || 0, at: tsNow() }); } catch (e) { }
+        toast(T('خلصت المهمة. شكرًا لمشاركتك.', 'Task complete. Thanks for taking part.'));
+        closeModal(); return;
+      }
+      if (j && j.why === 'time') err(T('لسه محتاج ' + Math.max(0, (j.need || 0) - (j.secs || 0)) + ' ثانية على الأقل.', 'You still need at least ' + Math.max(0, (j.need || 0) - (j.secs || 0)) + ' more seconds.'));
+      else if (j && j.why === 'topic') err(T('محتاج مشاركة أطول في موضوعات المهمة قبل الإنهاء.', 'You need more on-topic participation before finishing.'));
+      else err(T('تعذر إنهاء المهمة. حاول تاني.', 'Could not finish the task. Try again.'));
+    } catch (e) { err(T('تعذر إنهاء المهمة. حاول تاني.', 'Could not finish the task. Try again.')); }
+    if (btn) btn.disabled = false;
+  };
+  const sb = $('#ai-send'); if (sb) sb.addEventListener('click', send);
+  const db2 = $('#ai-done'); if (db2) db2.addEventListener('click', finish);
+  const iq = $('#ai-q'); if (iq) iq.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+}
+ROUTE.aitasks = vAITasks;
 /* ---------- boot ---------- */
 (async function boot() {
   { const rf = new URLSearchParams(location.search).get('ref'); if (rf && /^SRM-[A-Z2-9]{8}$/.test(rf)) ls.set('ref', rf); }
