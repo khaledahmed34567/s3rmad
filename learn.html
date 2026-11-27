@@ -776,19 +776,21 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   function loadDisc(id){
     DI.id = id; DI.loaded = true;
     var box = $("discList"); box.innerHTML = '<div class="empty">' + esc(lang === "ar" ? "جارٍ التحميل..." : "Loading...") + '</div>';
-    var db = firebase.firestore();
-    db.collection("comments").where("postId", "==", id).limit(40).get().then(function(s){
-      var rows = [];
-      s.forEach(function(d){ var v = d.data(); if (v.status === "approved" || v.status === "ok") rows.push(v); });
-      rows.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+    var u = firebase.auth().currentUser;
+    if (!u){ box.innerHTML = '<div class="empty">' + esc(t("diSignin")) + '</div>'; return; }
+    u.getIdToken().then(function(tk){
+      return fetch(API + "/disc/list", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ t: tk, course: id }) });
+    }).then(function(r){ return r.json(); }).then(function(j){
+      if (!j || !j.ok) throw new Error("bad");
+      var rows = j.items || [];
       box.innerHTML = "";
       if (!rows.length){ box.appendChild(el("div","empty", esc(t("diEmpty")))); return; }
       rows.forEach(function(v){
         var row = el("div","item");
         row.appendChild(el("div","ic","💬"));
         var tt = el("div","tt");
-        tt.appendChild(el("b", null, esc(v.name || (lang === "ar" ? "طالب" : "Student"))));
-        tt.appendChild(el("span", null, esc(String(v.text || "").slice(0, 400))));
+        tt.appendChild(el("b", null, esc(v.n || (lang === "ar" ? "طالب" : "Student"))));
+        tt.appendChild(el("span", null, esc(String(v.t || "").slice(0, 400))));
         row.appendChild(tt);
         box.appendChild(row);
       });
