@@ -242,6 +242,16 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   <!-- home -->
   <div id="v-home">
+    <div id="contCard" class="sec hidden">
+      <div class="card2" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:12.5px;color:var(--ink2)" id="contLbl">كمّل من هنا</div>
+          <b id="contTitle" style="font-size:15.5px;font-weight:500"></b>
+          <div id="contSub" style="font-size:12.5px;color:var(--ink2)"></div>
+        </div>
+        <a id="contBtn" href="#" style="background:var(--green);color:#fff;border-radius:999px;padding:9px 18px;font-size:13.5px;font-weight:500">متابعة</a>
+      </div>
+    </div>
     <div class="sec">
       <h2 id="actT">نشاطك</h2>
       <div class="card2">
@@ -382,6 +392,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"حصلت مشكلة في الاتصال. جرب تاني.", slow:"استنى لحظة قبل ما تطلب كود جديد.",
       pwBad:"الإيميل أو كلمة السر غلط.", pwNo:"مفيش حساب بالإيميل ده.", resendIn:"إعادة الإرسال بعد ", sec:"ث",
       nvHome:"لوحتي", nvCourses:"كورساتي", nvLabs:"المعمل", nvAi:"الذكاء الاصطناعي", nvAch:"إنجازاتي", nvCat:"الدورات", nvPaths:"المسارات", nvDisc:"النقاشات", tDid:"اسأل وناقش في دوراتك",
+      contLbl:"كمّل من هنا", contBtn:"متابعة", share:"نسخ الرابط", shared:"اتنسخ ✓",
       actT:"نشاطك", streakL:"يوم متتالي", weekL:"أيام نشاط هذا الأسبوع",
       labCodeLbl:"الكود", labHintSum:"محتاج تلميح؟", labNoteLbl:"ملاحظاتي", labRun:"تشغيل", labCheck:"تحقّق", labReset:"الكود الأصلي", labCopy:"نسخ الرابط", labBack:"رجوع", labSaved:"اتحفظت التجربة في حسابك ✓",
       diLbl:"اختار الدورة", diNew:"شارك في النقاش", diSend:"إرسال", diPh:"اكتب سؤالك أو ملاحظتك",
@@ -416,6 +427,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"Connection problem. Try again.", slow:"Please wait a moment before requesting a new code.",
       pwBad:"Wrong email or password.", pwNo:"No account with that email.", resendIn:"Resend in ", sec:"s",
       nvHome:"Dashboard", nvCourses:"My courses", nvLabs:"The lab", nvAi:"AI tasks", nvAch:"Achievements", nvCat:"Courses", nvPaths:"Paths", nvDisc:"Discussions", tDid:"Ask and discuss in your courses",
+      contLbl:"Pick up here", contBtn:"Continue", share:"Copy link", shared:"Copied ✓",
       actT:"Your activity", streakL:"day streak", weekL:"active days this week",
       labCodeLbl:"Code", labHintSum:"Need a hint?", labNoteLbl:"My notes", labRun:"Run", labCheck:"Check", labReset:"Original code", labCopy:"Copy link", labBack:"Back", labSaved:"Lab saved to your account ✓",
       diLbl:"Pick a course", diNew:"Join the discussion", diSend:"Send", diPh:"Write your question or note",
@@ -467,6 +479,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("lLabs").textContent = t("sLabs"); $("lSub").textContent = t("sSub");
     $("hCont").textContent = t("hCont"); $("hGo").textContent = t("hGo");
     $("nvCat").textContent = t("nvCat"); $("nvPaths").textContent = t("nvPaths"); $("nvDisc").textContent = t("nvDisc");
+    $("contLbl").textContent = t("contLbl"); $("contBtn").textContent = t("contBtn");
     $("actT").textContent = t("actT"); $("streakL").textContent = t("streakL"); $("weekL").textContent = t("weekL");
     $("labCodeLbl").textContent = t("labCodeLbl"); $("labHintSum").textContent = t("labHintSum"); $("labNoteLbl").textContent = t("labNoteLbl");
     $("labRun").textContent = t("labRun"); $("labCheck").textContent = t("labCheck"); $("labReset").textContent = t("labReset");
@@ -709,6 +722,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       al.appendChild(row);
     });
 
+    /* continue */
+    renderContinue();
+
     /* activity */
     renderActivity();
 
@@ -728,7 +744,17 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       tt.appendChild(el("span", null, '<b style="font-weight:500;color:' + (c.price ? "var(--ink)" : "var(--green)") + '">' + esc(c.price ? (c.price + " " + (lang === "ar" ? "ج.م" : "EGP")) : t("free")) + '</b>'));
       row.appendChild(tt);
       if (c.status === "soon"){ var s = el("span","btn done", esc(t("soon"))); row.appendChild(s); }
-      else { var a = el("a", null, esc(mine ? t("open") : t("startC"))); a.href = "/#course-" + id; row.appendChild(a); }
+      else {
+        var sh = el("button", "btn done", esc(t("share")));
+        sh.style.marginInlineEnd = "8px";
+        sh.addEventListener("click", function(){
+          var u = location.origin + "/#course-" + id;
+          var done = function(){ sh.textContent = t("shared"); setTimeout(function(){ sh.textContent = t("share"); }, 1500); };
+          try { navigator.clipboard.writeText(u).then(done, done); } catch(e){ done(); }
+        });
+        row.appendChild(sh);
+        var a = el("a", null, esc(mine ? t("open") : t("startC"))); a.href = "/#course-" + id; row.appendChild(a);
+      }
       cl2.appendChild(row);
     });
 
@@ -813,6 +839,23 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id;
     row.appendChild(a);
     return row;
+  }
+
+  /* ---- continue where you left off ---- */
+  function renderContinue(){
+    var D = DATA || { ids: [], prog: {} };
+    var pick = null, best = null;
+    D.ids.forEach(function(id){
+      var n = D.prog[id] || 0;
+      if (n === 0){ if (pick === null) pick = id; return; }
+      if (best === null || n < (D.prog[best] || 0)) best = id;
+    });
+    var id = pick || best;
+    if (!id){ $("contCard").classList.add("hidden"); return; }
+    $("contCard").classList.remove("hidden");
+    $("contTitle").textContent = courseTitle(id);
+    $("contSub").textContent = (D.prog[id] || 0) + " " + t("lessonsDone");
+    $("contBtn").href = "/#course-" + id;
   }
 
   /* ---- activity strip ---- */
