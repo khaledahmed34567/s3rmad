@@ -2703,6 +2703,34 @@ function streakOf(lists) {
   while (days.has(key(cur))) { n++; cur.setDate(cur.getDate() - 1); }
   return n;
 }
+
+function actDays(lists) {
+  const days = new Set();
+  lists.forEach(arr => (arr || []).forEach(x => {
+    if (!x || !x.done) return;
+    const ms = toMs(x.at); if (!ms) return;
+    const d = new Date(ms);
+    days.add(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate());
+  }));
+  return days;
+}
+function dayKey(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function weekStrip(lists) {
+  const days = actDays(lists), out = [];
+  const names = ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'];
+  const today = new Date(), tk = dayKey(today);
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+    const k = dayKey(d), on = days.has(k), isToday = k === tk;
+    out.push(`<div style="display:grid;justify-items:center;gap:4px"><div title="${k}" style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;${on ? 'background:var(--ok);color:#fff;' : 'background:var(--bg3);color:var(--muted);'}${isToday ? 'box-shadow:0 0 0 2px var(--ok);' : ''}">${on ? '✓' : ''}</div><span class="muted" style="font-size:10px">${names[d.getDay()]}</span></div>`);
+  }
+  return `<div class="row" style="gap:6px;align-items:flex-start;flex-wrap:nowrap;justify-content:space-between;max-width:280px">${out.join('')}</div>`;
+}
+function didToday(lists) { return actDays(lists).has(dayKey(new Date())); }
+function weekCard(lists) {
+  const goal = didToday(lists);
+  return `<div class="card" style="padding:18px;margin-bottom:16px"><div class="row" style="align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px"><b>${T('نشاطي آخر 7 أيام', 'My last 7 days')}</b><span class="sp"></span>${goal ? `<span class="tag ok">${T('هدف النهاردة ✓', "Today's goal ✓")}</span>` : `<span class="tag gold">${T('هدف النهاردة: خلّص حاجة', "Today's goal: finish one")}</span>`}</div>${weekStrip(lists)}<p class="muted sm" style="margin-top:10px">${T('كل دايرة بتتملى لما تخلّص تجربة معمل أو مهمة ذكاء اصطناعي في اليوم ده.', 'Each dot fills when you finish a lab or an AI task that day.')}</p></div>`;
+}
 function vDash() {
   setTimeout(loadDash, 0);
   return `<section class="wrap sec"><div class="sec-h"><h2>${T('لوحتي', 'My dashboard')}</h2></div><div id="dash-body"><div class="spin" style="margin:40px auto"></div></div></section>`;
@@ -2733,6 +2761,7 @@ async function loadDash() {
   const news = (typeof NEWS !== 'undefined' ? NEWS : []).slice(0, 3).map(n => `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b dir="auto">${esc(L(n.t))}</b><div class="muted sm" dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(n.x)).slice(0, 120)}</div></div>`).join('');
   box.innerHTML = `
     <div class="card" style="padding:20px;margin-bottom:16px"><div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><b style="font-size:1.15rem">${T('أهلاً ' + (S.user.name || '') + ' 👋', 'Welcome ' + (S.user.name || '') + ' 👋')}</b><span class="sp"></span>${(() => { const st = streakOf([myLabs, myTasks]); return st >= 1 ? `<span class="tag gold">${T('سلسلة ' + st + ' يوم 🔥', st + '-day streak 🔥')}</span>` : ''; })()}${S.sub ? `<span class="tag ok">${T('اشتراك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' حتى ' + fmtDate(S.sub.until), (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan until ' + fmtDate(S.sub.until))}</span>` : `<span class="tag gold">${T('مفيش اشتراك', 'No plan')}</span><a class="btn sm" href="#learning">${T('شوف الاشتراكات', 'See plans')}</a>`}</div></div>
+    ${weekCard([myLabs, myTasks])}
     ${resumeCard()}
     <div class="grid g4" style="margin:16px 0">${stat(labsDone, T('تجربة معمل', 'Labs done'), 'lab')}${stat(tasksDone, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${stat(certs, T('شهادة', 'Certificates'), 'account')}${stat(labsOn.length ? labsDone + '/' + labsOn.length : '—', T('المعمل', 'Lab progress'), 'lab')}</div>
     <div class="card" style="padding:18px;margin-bottom:16px"><div class="row" style="align-items:center;margin-bottom:10px"><b>${T('كورساتي', 'My courses')}</b><span class="sp"></span><a class="link" href="#learning">${T('كل الكورسات', 'All courses')} ${arrow()}</a></div>${courseRows || `<p class="muted sm">${T('لسه مشترك في كورس. شوف الكورسات وابدأ.', 'No course yet. Browse the courses and start.')}</p>`}</div>
@@ -2764,7 +2793,7 @@ async function loadAch() {
   try { const st = streakOf([_ml, _mt]); if (st >= 2) badges.push({ ar: 'سلسلة ' + st + ' يوم', en: st + '-day streak' }); } catch (e) { }
   const card = (n, l, h) => `<a class="card" href="#${h}" style="padding:18px;display:block;text-align:center"><div style="font-size:1.9rem;font-weight:800">${esc(String(n))}</div><div class="muted sm">${l}</div></a>`;
   const shareLine = T('خلصت ' + labs + ' تجربة معمل و ' + tasks + ' مهمة ذكاء اصطناعي على سرمد، وعندي ' + certs + ' شهادة. جرّب أنت كمان:', 'I finished ' + labs + ' labs and ' + tasks + ' AI tasks on Sarmad, with ' + certs + ' certificate(s). Try it too:') + ' ' + location.origin + location.pathname;
-  box.innerHTML = `<div class="grid g4">${card(labs, T('تجربة معمل خلصتها', 'Labs finished'), 'lab')}${card(tasks, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${card(certs, T('شهادة', 'Certificates'), 'account')}${card(S.sub ? fmtDate(S.sub.until) : '—', S.sub ? T('اشتراكك ساري حتى', 'Plan active until') : T('مفيش اشتراك', 'No plan'), 'learning')}</div>` + `<div style="margin-top:22px"><button class="btn" id="ach-share" data-share="${esc(shareLine)}">${T('شارك إنجازك', 'Share your progress')}</button></div>` + (badges.length ? `<h3 class="h3" style="margin:26px 0 12px">${T('أوسمة', 'Badges')}</h3><div class="row" style="gap:8px;flex-wrap:wrap">${badges.map(b => `<span class="tag ok">${esc(L(b))}</span>`).join('')}</div>` : `<p class="muted" style="margin-top:22px">${T('لسه مفيش أوسمة. ابدأ بتجربة في المعمل أو مهمة ذكاء اصطناعي.', 'No badges yet. Start with a lab or an AI task.')}</p>`);
+  box.innerHTML = `<div class="card" style="padding:18px;margin-bottom:16px"><div class="row" style="align-items:center;margin-bottom:10px"><b>${T('نشاطي آخر 7 أيام', 'My last 7 days')}</b></div>${weekStrip([_ml, _mt])}</div><div class="grid g4">${card(labs, T('تجربة معمل خلصتها', 'Labs finished'), 'lab')}${card(tasks, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${card(certs, T('شهادة', 'Certificates'), 'account')}${card(S.sub ? fmtDate(S.sub.until) : '—', S.sub ? T('اشتراكك ساري حتى', 'Plan active until') : T('مفيش اشتراك', 'No plan'), 'learning')}</div>` + `<div style="margin-top:22px"><button class="btn" id="ach-share" data-share="${esc(shareLine)}">${T('شارك إنجازك', 'Share your progress')}</button></div>` + (badges.length ? `<h3 class="h3" style="margin:26px 0 12px">${T('أوسمة', 'Badges')}</h3><div class="row" style="gap:8px;flex-wrap:wrap">${badges.map(b => `<span class="tag ok">${esc(L(b))}</span>`).join('')}</div>` : `<p class="muted" style="margin-top:22px">${T('لسه مفيش أوسمة. ابدأ بتجربة في المعمل أو مهمة ذكاء اصطناعي.', 'No badges yet. Start with a lab or an AI task.')}</p>`);
 }
 ROUTE.achievements = vAchievements;
 document.addEventListener('click', e => {
