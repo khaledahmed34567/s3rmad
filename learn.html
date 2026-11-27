@@ -47,6 +47,15 @@ button{font-family:inherit}
 .labres{font-size:13px}
 .labres .ok{color:#0f6b52}
 .labres .no{color:var(--red)}
+.chip2{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 9px;border-radius:999px;background:#eef3ee;color:#2b6b47;margin-inline-end:6px}
+.chip2.gold{background:#f7efdc;color:#8a6a1f}
+.chip2.grey{background:#f0ece2;color:#6b6558}
+.stepnum{width:26px;height:26px;flex:0 0 26px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:500}
+.item.flat{border:0;background:transparent;padding:8px 0;margin-bottom:2px}
+.item.flat:hover{transform:none;border-color:transparent}
+.pathcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--sh);margin-bottom:12px}
+.pathhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pathhead b{font-size:16px;font-weight:500}
 .sel,.ta{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;font-size:14.5px;font-family:inherit;color:var(--ink);outline:none}
 .sel:focus,.ta:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
 .ta{resize:vertical;min-height:84px}
@@ -690,11 +699,12 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       row.appendChild(el("div","ic", mine ? "▶" : "◆"));
       var tt = el("div","tt");
       tt.appendChild(el("b", null, esc(lang === "ar" ? c.ar : c.en)));
-      var bits = [t(c.level === "intermediate" ? "inter" : "beginner"), c.hours + " " + t("hoursU")];
-      bits.push(c.price ? (c.price + " " + (lang === "ar" ? "ج.م" : "EGP")) : t("free"));
-      if (c.status === "soon") bits.push(t("soon"));
-      if (mine) bits.push(t("joinedB") + (n ? " · " + n + " " + t("lessonsDone") : ""));
-      tt.appendChild(el("span", null, esc(bits.join(" · "))));
+      var chips = '<span class="chip2' + (c.level === "intermediate" ? " gold" : "") + '">' + esc(t(c.level === "intermediate" ? "inter" : "beginner")) + '</span>'
+        + '<span class="chip2 grey">' + c.hours + " " + esc(t("hoursU")) + '</span>'
+        + (c.status === "soon" ? '<span class="chip2 grey">' + esc(t("soon")) + '</span>' : '')
+        + (mine ? '<span class="chip2">' + esc(t("joinedB")) + (n ? " · " + n + " " + esc(t("lessonsDone")) : "") + '</span>' : '');
+      tt.appendChild(el("span", null, chips));
+      tt.appendChild(el("span", null, '<b style="font-weight:500;color:' + (c.price ? "var(--ink)" : "var(--green)") + '">' + esc(c.price ? (c.price + " " + (lang === "ar" ? "ج.م" : "EGP")) : t("free")) + '</b>'));
       row.appendChild(tt);
       if (c.status === "soon"){ var s = el("span","btn done", esc(t("soon"))); row.appendChild(s); }
       else { var a = el("a", null, esc(mine ? t("open") : t("startC"))); a.href = "/#course-" + id; row.appendChild(a); }
@@ -706,18 +716,18 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     TRACKS.forEach(function(tr){
       var joined = 0, done = 0;
       tr.courses.forEach(function(cid){ if (D.enr[cid]) joined++; done += (D.prog[cid] || 0); });
-      var card = el("div","card2"); card.style.marginBottom = "12px";
-      var head = el("div"); head.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:10px";
+      var card = el("div","pathcard");
+      var head = el("div","pathhead");
       head.appendChild(el("b", null, esc(lang === "ar" ? tr.ar : tr.en)));
-      head.appendChild(el("span", null, '<span style="font-size:12.5px;color:var(--ink2)">' + esc(t(tr.level === "intermediate" ? "inter" : "beginner")) + '</span>'));
+      head.appendChild(el("span", null, '<span class="chip2' + (tr.level === "intermediate" ? " gold" : "") + '">' + esc(t(tr.level === "intermediate" ? "inter" : "beginner")) + '</span><span class="chip2 grey">' + tr.courses.length + " " + esc(t("trackCourses")) + '</span>'));
       card.appendChild(head);
-      card.appendChild(el("div", "", '<div style="font-size:12.5px;color:var(--ink2);margin-top:2px">' + esc(t("trackCourses")) + " · " + tr.courses.length + " · " + esc(t("trackProg")) + " " + joined + "/" + tr.courses.length + '</div>'));
+      card.appendChild(el("div", "", '<div style="font-size:12.5px;color:var(--ink2);margin-top:4px">' + esc(t("trackProg")) + " " + joined + "/" + tr.courses.length + '</div>'));
       card.appendChild(el("div","bar", '<i style="width:' + Math.round(joined / Math.max(1, tr.courses.length) * 100) + '%"></i>'));
       var list = el("div"); list.style.marginTop = "10px";
       tr.courses.forEach(function(cid){
         var c = COURSES[cid]; if (!c) return;
-        var row = el("div","item"); row.style.marginBottom = "6px";
-        row.appendChild(el("div","ic", D.enr[cid] ? "▶" : "◆"));
+        var row = el("div","item flat");
+        row.appendChild(el("div","stepnum", String(tr.courses.indexOf(cid) + 1)));
         var tt = el("div","tt");
         tt.appendChild(el("b", null, esc(lang === "ar" ? c.ar : c.en)));
         tt.appendChild(el("span", null, esc((D.prog[cid] || 0) + " " + t("lessonsDone"))));
