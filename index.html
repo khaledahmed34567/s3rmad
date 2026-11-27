@@ -1584,7 +1584,7 @@ function renderHeader() {
     ? `<a class="ib" href="#account" aria-label="${T('حسابي', 'My account')}" style="background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700">${esc(S.user.name.trim().charAt(0).toUpperCase())}</a>`
     : `<a class="btn ghost sm hide-m" href="#login">${T('دخول', 'Sign in')}</a><a class="btn primary sm hide-m" href="#signup">${T('إنشاء حساب', 'Sign up')}</a>`;
   $('#hdr').innerHTML = `
-  <div class="strip"><div class="wrap">${portals().map(([h, k, n]) => `<a href="#${h}" class="${portal === k ? 'on' : ''}">${n}</a>`).join('')}<span class="sp"></span><a href="#contact" class="hide-m">${T('تواصل معنا', 'Contact')}</a></div></div>
+  <div class="strip"><div class="wrap">${portals().map(([h, k, n]) => `<a href="#${h}" class="${portal === k ? 'on' : ''}">${n}</a>`).join('')}<span class="sp"></span><a href="#whatsnew" class="hide-m">${T('الجديد', "What's new")}</a><a href="#contact" class="hide-m">${T('تواصل معنا', 'Contact')}</a></div></div>
   <div class="hdr"><div class="wrap">
     <a href="#home" class="logo" aria-label="${T('سرمد - الرئيسية', 'Sarmad - Home')}"></a>
     <nav class="nav" aria-label="main">
@@ -1656,7 +1656,7 @@ function openModal(html, cls = '') {
 }
 function closeModal() { const b = $('#modal-back'); if (b) b.remove(); }
 function openDrawer() {
-  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
+  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
   const d = document.createElement('div'); d.className = 'drawer'; d.id = 'drawer';
   d.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="logo" style="--lw:104px"></span><button class="ib" data-act="closeDrawer" aria-label="close">${icon('x')}</button></div>
     ${items.map(([h, n]) => `<a href="#${h}" data-act="closeDrawer">${n}${icon('arrow', 'flip')}</a>`).join('')}
@@ -1668,7 +1668,7 @@ const closeDrawer = () => { const d = $('#drawer'); if (d) d.remove(); };
 /* command palette */
 function searchIndex() {
   const out = [];
-  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
+  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
   SERVICES.forEach(s => out.push({ t: L(s.t), sub: T('خدمة', 'Service'), h: 'services', k: s.icon }));
   APPS.forEach(a => out.push({ t: L(a.name), sub: T('تطبيق', 'App'), h: 'apps', k: 'monitor', x: L(a.d) }));
   COURSES.forEach(c => out.push({ t: L(c.t), sub: T('كورس', 'Course'), h: 'course-' + c.id, k: 'book', x: L(c.d) }));
@@ -2652,6 +2652,20 @@ async function labSave(x) {
   } catch (e) { }
 }
 ROUTE.lab = vLab;
+
+/* ---------- what's new ---------- */
+const NEWS = [
+  { d: '2026-11-27', h: 'lab', tag: { ar: 'جديد', en: 'New' }, t: { ar: 'المعمل التفاعلي', en: 'Interactive lab' }, x: { ar: 'اكتب كود في المتصفح، شوف النتيجة على طول، وتحقق من حلك. فيه تحدي يومي وتلميحات وروابط تشاركها.', en: 'Write code in the browser, see the result instantly, and check your answer. Daily challenge, hints and shareable links included.' } },
+  { d: '2026-11-27', h: 'aitasks', tag: { ar: 'جديد', en: 'New' }, t: { ar: 'مهام الذكاء الاصطناعي', en: 'AI tasks' }, x: { ar: 'مهمة قصيرة مع مدرّس ذكي في موضوع محدد، ولوحة تحكم تنشر منها المهام.', en: 'A short task with an AI tutor on a set topic, with an admin tab to publish tasks.' } },
+  { d: '2026-11-27', h: 'aid', tag: { ar: 'جديد', en: 'New' }, t: { ar: 'نساعد بعض', en: 'Let us help each other' }, x: { ar: 'اطلب مساعدة أو ساعد غيرك، طلب واحد لكل حساب، مع إشعار بالإيميل.', en: 'Ask for help or help someone else, one request per account, with an email receipt.' } },
+  { d: '2026-11-27', h: 'home', tag: { ar: 'تحسين', en: 'Improvement' }, t: { ar: 'الوصول الأسرع للميزات', en: 'Faster access to features' }, x: { ar: 'أزرار سريعة في أول الصفحة الرئيسية، وقسم «جرّب الجديد».', en: 'Quick buttons at the top of the home page and a "Try what is new" section.' } },
+  { d: '2026-11-27', h: 'lab', tag: { ar: 'تحسين', en: 'Improvement' }, t: { ar: 'قراءة أوضح في الوضع الليلي', en: 'Clearer reading in dark mode' }, x: { ar: 'نصوص المهام والمحادثات والمعمل بقت واضحة في الوضع الليلي والفاتح.', en: 'Task text, chat and lab screens are readable in both dark and light mode.' } },
+  { d: '2026-11-27', h: 'home', tag: { ar: 'تحسين', en: 'Improvement' }, t: { ar: 'تحديث أسرع للموقع', en: 'Faster site updates' }, x: { ar: 'الصفحة بقت بتتحدث على طول من غير ما تفضل نسخة قديمة محفوظة في المتصفح.', en: 'The page now refreshes straight away instead of serving an hour-old copy.' } }
+];
+function vWhatsNew() {
+  return `<section class="wrap sec"><div class="sec-h"><h2>${T('الجديد في سرمد', "What's new in Sarmad")}</h2></div><p class="muted">${T('كل حاجة جديدة أو تحسين بنزّله على الموقع بيتكتب هنا بالتاريخ.', 'Everything new or improved on the site is listed here with its date.')}</p><div class="grid" style="margin-top:18px">${NEWS.map(n => `<article class="card" style="padding:16px"><div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><span class="tag ${n.tag.ar === 'جديد' ? 'ok' : 'gold'}">${esc(L(n.tag))}</span><span class="muted sm">${esc(n.d)}</span></div><h3 dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere;margin:8px 0 6px">${esc(L(n.t))}</h3><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start">${esc(L(n.x))}</p><a class="link" href="#${esc(n.h)}">${T('افتح', 'Open')} ${arrow()}</a></article>`).join('')}</div></section>`;
+}
+ROUTE.whatsnew = vWhatsNew;
 
 /* ---------- boot ---------- */
 (async function boot() {
