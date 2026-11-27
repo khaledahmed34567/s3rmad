@@ -29,6 +29,8 @@ button{font-family:inherit}
 .lnav button:hover{background:#f1ebdc;color:var(--ink)}
 .lnav button.on{background:var(--green);color:#fff}
 .lact{display:flex;align-items:center;gap:8px}
+.qin{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:none;width:220px}
+.qin:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
 .chip{font-size:12px;color:var(--ink2);background:#f1ebdc;border-radius:999px;padding:5px 11px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ghost{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
 .ghost:hover{border-color:var(--green2);color:var(--green)}
@@ -117,6 +119,7 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
       <button data-v="ai" id="nvAi">الذكاء الاصطناعي</button>
       <button data-v="ach" id="nvAch">إنجازاتي</button>
     </nav>
+    <input class="qin hidden" id="q" type="search" placeholder="ابحث في كورساتك ومعملك" aria-label="بحث">
     <div class="lact hidden" id="lact">
       <span class="chip" id="dEmail2"></span>
       <button class="ghost" id="outBtn">خروج</button>
@@ -188,6 +191,11 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
         <div class="tile" data-go="ach"><b id="tH">إنجازاتي</b><span id="tHd">شهاداتك وشاراتك</span></div>
       </div>
     </div>
+  </div>
+
+  <!-- search -->
+  <div id="v-search" class="hidden">
+    <div class="sec"><h2 id="srT">نتائج البحث</h2><div id="searchList"></div></div>
   </div>
 
   <!-- courses -->
@@ -338,7 +346,7 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
   var TAB = "home";
   function goTab(v){
     TAB = v;
-    ["home","courses","labs","ai","ach"].forEach(function(k){
+    ["home","courses","labs","ai","ach","search"].forEach(function(k){
       $("v-" + k).classList.toggle("hidden", k !== v);
     });
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){
@@ -434,6 +442,8 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
     $("app").classList.add("hidden");
     $("lnav").classList.add("hidden");
     $("lact").classList.add("hidden");
+    $("q").classList.add("hidden");
+    $("q").value = "";
     DATA = null;
   }
   function showApp(u){
@@ -442,9 +452,10 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
     $("app").classList.remove("hidden");
     $("lnav").classList.remove("hidden");
     $("lact").classList.remove("hidden");
+    $("q").classList.remove("hidden");
     $("dEmail2").textContent = u.email || "";
     var hash = (location.hash || "").replace("#", "");
-    goTab(["home","courses","labs","ai","ach"].indexOf(hash) >= 0 ? hash : "home");
+    goTab(["home","courses","labs","ai","ach","search"].indexOf(hash) >= 0 ? hash : "home");
     load(u);
   }
 
@@ -586,6 +597,13 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
       tt.appendChild(el("b", null, esc(L({ ar:c.courseAr, en:c.courseEn }) || c.courseId || c.id)));
       tt.appendChild(el("div","code", esc(c.id) + (c.status === "pending" ? " · " + esc(t("pending")) : "")));
       row.appendChild(tt);
+      var cp = el("button", "btn done", lang === "ar" ? "نسخ الكود" : "Copy code");
+      cp.style.cssText = "margin-inline-end:8px";
+      cp.addEventListener("click", function(){
+        var done = function(){ cp.textContent = lang === "ar" ? "اتنسخ ✓" : "Copied ✓"; setTimeout(function(){ cp.textContent = lang === "ar" ? "نسخ الكود" : "Copy code"; }, 1600); };
+        try { navigator.clipboard.writeText(c.id).then(done, done); } catch(e){ done(); }
+      });
+      row.appendChild(cp);
       var a = el("a", null, esc(t("view"))); a.href = "/#cert-" + c.id;
       row.appendChild(a);
       ce.appendChild(row);
@@ -602,6 +620,43 @@ input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
     row.appendChild(a);
     return row;
   }
+
+  /* ---- search ---- */
+  function doSearch(){
+    var q = ($("q").value || "").trim().toLowerCase();
+    if (!q){ goTab("home"); return; }
+    goTab("search");
+    var out = [];
+    var D = DATA || { ids:[], labs:[], tasks:[], myLabs:{}, myTasks:{}, prog:{} };
+    D.ids.forEach(function(id){
+      var ti = courseTitle(id);
+      if (ti.toLowerCase().indexOf(q) >= 0) out.push({ k:"c", title:ti, sub:(D.prog[id]||0) + " " + t("lessonsDone"), href:"/#course-" + id });
+    });
+    D.labs.forEach(function(x){
+      var ti = L(x.title) || x.id, br = String(L(x.brief) || "");
+      if ((ti + " " + br).toLowerCase().indexOf(q) >= 0) out.push({ k:"l", title:ti, sub:br.slice(0,90), href:"/#lab" });
+    });
+    D.tasks.forEach(function(x){
+      var ti = L(x.title) || x.id, tp = String(L(x.topics) || "");
+      if ((ti + " " + tp).toLowerCase().indexOf(q) >= 0) out.push({ k:"a", title:ti, sub:tp.slice(0,90), href:"/#aitasks" });
+    });
+    var box = $("searchList"); box.innerHTML = "";
+    $("srT").textContent = (lang === "ar" ? "نتائج البحث (" + out.length + ")" : "Results (" + out.length + ")");
+    if (!out.length){ box.appendChild(el("div","empty", lang === "ar" ? "مفيش نتائج للبحث ده." : "Nothing matches that.")); return; }
+    out.forEach(function(r){
+      var row = el("div","item");
+      row.appendChild(el("div","ic", r.k === "c" ? "▶" : (r.k === "l" ? "⚗" : "✦")));
+      var tt = el("div","tt");
+      tt.appendChild(el("b", null, esc(r.title)));
+      if (r.sub) tt.appendChild(el("span", null, esc(r.sub)));
+      row.appendChild(tt);
+      var a = el("a", null, esc(t("open"))); a.href = r.href;
+      row.appendChild(a);
+      box.appendChild(row);
+    });
+  }
+  var qTimer = null;
+  $("q").addEventListener("input", function(){ if (qTimer) clearTimeout(qTimer); qTimer = setTimeout(doSearch, 220); });
 
   /* ---- boot ---- */
   try { var sv = localStorage.getItem("sl_lang"); if (sv === "en" || sv === "ar") lang = sv; } catch(e){}
