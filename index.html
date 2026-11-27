@@ -1571,7 +1571,7 @@ const isDark = () => (getTheme() ? getTheme() === 'dark' : matchMedia('(prefers-
 function applyLang() { document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; }
 
 function navItems() {
-  return [['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['aitasks', T('الذكاء الاصطناعي', 'AI tasks')], ['tam', T('تم', 'Tam')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('عنّا', 'About')]];
+  return [['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['aitasks', T('الذكاء الاصطناعي', 'AI tasks')], ['lab', T('المعمل', 'Lab')], ['tam', T('تم', 'Tam')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('عنّا', 'About')]];
 }
 function portals() {
   return [['home', 'main', T('سرمد', 'Sarmad')], ['platform', 'platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', 'learning', T('سرمد ليرننج', 'Sarmad Learning')], ['tam', 'tam', T('تم', 'Tam')]];
@@ -1655,7 +1655,7 @@ function openModal(html, cls = '') {
 }
 function closeModal() { const b = $('#modal-back'); if (b) b.remove(); }
 function openDrawer() {
-  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
+  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
   const d = document.createElement('div'); d.className = 'drawer'; d.id = 'drawer';
   d.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="logo" style="--lw:104px"></span><button class="ib" data-act="closeDrawer" aria-label="close">${icon('x')}</button></div>
     ${items.map(([h, n]) => `<a href="#${h}" data-act="closeDrawer">${n}${icon('arrow', 'flip')}</a>`).join('')}
@@ -1667,7 +1667,7 @@ const closeDrawer = () => { const d = $('#drawer'); if (d) d.remove(); };
 /* command palette */
 function searchIndex() {
   const out = [];
-  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
+  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
   SERVICES.forEach(s => out.push({ t: L(s.t), sub: T('خدمة', 'Service'), h: 'services', k: s.icon }));
   APPS.forEach(a => out.push({ t: L(a.name), sub: T('تطبيق', 'App'), h: 'apps', k: 'monitor', x: L(a.d) }));
   COURSES.forEach(c => out.push({ t: L(c.t), sub: T('كورس', 'Course'), h: 'course-' + c.id, k: 'book', x: L(c.d) }));
@@ -2563,6 +2563,71 @@ function openAITask(t) {
   const iq = $('#ai-q'); if (iq) iq.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
 }
 ROUTE.aitasks = vAITasks;
+/* ---------- interactive lab (student, sandboxed) ---------- */
+const LAB = { cur: null, done: {} };
+function vLab() {
+  setTimeout(loadLabs, 0);
+  return `<section class="wrap sec"><div class="sec-h"><h2>${T('المعمل التفاعلي', 'Interactive lab')}</h2></div><p class="muted">${T('اكتب الكود، شوف النتيجة على طول، ولما تخلّص اضغط تحقّق.', 'Write code, watch the result live, and press check when you are done.')}</p><div id="lab-list" class="grid"><p class="muted sm">${T('جارٍ التحميل...', 'Loading...')}</p></div></section>`;
+}
+async function loadLabs() {
+  const box = $('#lab-list'); if (!box) return;
+  if (!S.user) { box.innerHTML = `<p class="muted">${T('سجّل الدخول الأول عشان تفتح المعمل.', 'Sign in to open the lab.')}</p>`; return; }
+  try {
+    const s = await fbDb.collection('labs').where('on', '==', true).get();
+    const a = []; s.forEach(d => a.push(Object.assign({ id: d.id }, d.data())));
+    if (!a.length) { box.innerHTML = `<p class="muted">${T('مفيش تجارب متاحة دلوقتي.', 'No labs available yet.')}</p>`; return; }
+    let done = {};
+    try { const p = await fbDb.collection('users').doc(fbAuth.currentUser.uid).collection('labs').get(); p.forEach(d => { done[d.id] = d.data(); }); } catch (e) { }
+    LAB.done = done;
+    box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3>${esc(L(x.title) || x.id)}</h3><p class="muted sm">${esc(String(L(x.brief) || '').slice(0, 200))}</p><div class="row" style="gap:8px;align-items:center">${done[x.id] && done[x.id].done ? `<span class="tag ok">${T('خلصتها', 'Done')}</span>` : ''}<button class="btn primary" data-lab="${esc(x.id)}">${T('افتح التجربة', 'Open lab')}</button></div></article>`).join('');
+    $$('[data-lab]', box).forEach(b => b.addEventListener('click', () => { const x = a.find(y => y.id === b.dataset.lab); if (x) openLab(x); }));
+  } catch (e) { box.innerHTML = `<p class="muted">${T('تعذر تحميل التجارب.', 'Could not load the labs.')}</p>`; }
+}
+function openLab(x) {
+  LAB.cur = x;
+  const code = x.code || {};
+  const starter = code.js || code.html || '';
+  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${esc(String(L(x.brief) || ''))}</p><div class="field"><label for="lab-code">${T('الكود', 'Code')}</label><textarea id="lab-code" spellcheck="false" dir="ltr" style="min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6">${esc(starter)}</textarea></div><div class="row" style="gap:8px;margin:10px 0"><button class="btn primary" id="lab-run">${T('تشغيل', 'Run')}</button><button class="btn" id="lab-check">${T('تحقّق', 'Check')}</button><span class="sp"></span><span class="muted sm" id="lab-res"></span></div><div class="field"><label>${T('النتيجة', 'Result')}</label><iframe id="lab-frame" sandbox="allow-scripts" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#fff" title="lab"></iframe></div></div>`, 'ai-modal');
+  const run = () => { const f = $('#lab-frame'); if (!f) return; f.srcdoc = labDoc(x, $('#lab-code').value || ''); };
+  const r1 = $('#lab-run'), r2 = $('#lab-check');
+  if (r1) r1.addEventListener('click', run);
+  if (r2) r2.addEventListener('click', () => { run(); setTimeout(() => labAsk(x), 900); });
+  run();
+}
+function labDoc(x, code) {
+  const tpl = (x.code && x.code.html) || '<div id="app"></div>';
+  const head = '<!doctype html><meta charset="utf-8"><style>body{font-family:system-ui,Arial,sans-serif;padding:12px;margin:0;direction:rtl}</style>';
+  const script = '<script>' + code + '<\/script>';
+  const harness = '<script>(function(){window.addEventListener("message",function(e){var d=e.data||{};if(d.type!=="lab-tests")return;var out=[];(d.tests||[]).forEach(function(t){try{var v=Function("return ("+t.expr+")")();out.push({ok:!!v,name:t.name,got:String(v).slice(0,120)});}catch(err){out.push({ok:false,name:t.name,err:String(err&&err.message||err).slice(0,120)});}});parent.postMessage({type:"lab-result",results:out,id:d.id},"*");});})();<\/script>';
+  const t = tpl.trim();
+  if (t.indexOf('</body>') >= 0) return t.replace('</body>', script + harness + '</body>');
+  if (/^<!doctype/i.test(t) || /^<html/i.test(t)) return t + script + harness;
+  return head + t + script + harness;
+}
+function labAsk(x) {
+  const f = $('#lab-frame'); if (!f || !f.contentWindow) return;
+  const tests = (x.tests || []).map((t, i) => ({ name: t.name || ('test ' + (i + 1)), expr: String(t.expr || 'false') }));
+  if (!tests.length) { const r = $('#lab-res'); if (r) r.textContent = T('مفيش اختبارات لهذه التجربة.', 'This lab has no checks.'); return; }
+  f.contentWindow.postMessage({ type: 'lab-tests', tests, id: x.id }, '*');
+}
+window.addEventListener('message', e => {
+  const d = e.data || {};
+  if (d.type !== 'lab-result') return;
+  const x = LAB.cur; if (!x || d.id !== x.id) return;
+  const res = d.results || [], ok = res.length > 0 && res.every(r => r.ok);
+  const box = $('#lab-res');
+  if (box) box.innerHTML = ok ? `<b style="color:#0f6b52">${T('تمام، الحل صح ✓', 'Correct ✓')}</b>` : `${T('لسه فيه:', 'Not yet:')} ${esc(res.filter(r => !r.ok).map(r => r.name).join('، '))}`;
+  if (ok) labSave(x);
+});
+async function labSave(x) {
+  const u = fbAuth && fbAuth.currentUser; if (!u) return;
+  try {
+    await fbDb.collection('users').doc(u.uid).collection('labs').doc(x.id).set({ done: true, at: tsNow() }, { merge: true });
+    toast(T('اتحفظت التجربة في حسابك ✓', 'Lab saved to your account ✓'));
+  } catch (e) { }
+}
+ROUTE.lab = vLab;
+
 /* ---------- boot ---------- */
 (async function boot() {
   { const rf = new URLSearchParams(location.search).get('ref'); if (rf && /^SRM-[A-Z2-9]{8}$/.test(rf)) ls.set('ref', rf); }
@@ -3956,6 +4021,8 @@ html[data-theme="dark"] .modal.ai-modal .field label,html.dark .modal.ai-modal .
 html[data-theme="dark"] .modal.ai-modal .btn.primary,html.dark .modal.ai-modal .btn.primary{background:#1f6b52;color:#f4ecd6;border-color:#2c7d61}
 html[data-theme="dark"] .modal.ai-modal .btn.ghost,html.dark .modal.ai-modal .btn.ghost{background:transparent;color:#f4ecd6;border-color:#305245}
 html[data-theme="dark"] .modal.ai-modal .err,html.dark .modal.ai-modal .err{color:#f2a7a0}
+html[data-theme="dark"] #lab-code,html.dark #lab-code{background:#0d1f1b;color:#f4ecd6;border:1px solid #305245;border-radius:12px;padding:12px}
+html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
 </style>
 </body>
 </html>
