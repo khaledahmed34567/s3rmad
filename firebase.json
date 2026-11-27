@@ -27,6 +27,24 @@
             "value": "no-cache, max-age=0, must-revalidate"
           }
         ]
+      },
+      {
+        "source": "/learn",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, max-age=0, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "/learn.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, max-age=0, must-revalidate"
+          }
+        ]
       }
     ],
     "rewrites": [
