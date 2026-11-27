@@ -1553,6 +1553,7 @@ function parse() {
   if (h.startsWith('cert-')) return { name: 'cert', id: h.slice(5), key: h };
   if (h.startsWith('resetpw-')) return { name: 'resetpw', id: h.slice(8), key: h };
   if (h.startsWith('app-')) return { name: 'app', id: h.slice(4), key: h };
+  if (h.startsWith('lab-')) return { name: 'lab', id: h.slice(4), key: h };
   if (h === 'lx-login') return { name: 'lxlogin', key: h };
   if (h === 'lx-signup') return { name: 'lxsignup', key: h };
   if (h === 'lx-complete') return { name: 'lxcomplete', key: h };
@@ -2566,10 +2567,11 @@ ROUTE.aitasks = vAITasks;
 /* ---------- interactive lab (student, sandboxed) ---------- */
 const LAB = { cur: null, done: {} };
 function vLab() {
-  setTimeout(loadLabs, 0);
-  return `<section class="wrap sec"><div class="sec-h"><h2>${T('المعمل التفاعلي', 'Interactive lab')}</h2></div><p class="muted">${T('اكتب الكود، شوف النتيجة على طول، ولما تخلّص اضغط تحقّق.', 'Write code, watch the result live, and press check when you are done.')}</p><div id="lab-list" class="grid"><p class="muted sm">${T('جارٍ التحميل...', 'Loading...')}</p></div></section>`;
+  const rid = (parse() || {}).id || '';
+  setTimeout(() => loadLabs(rid), 0);
+  return `<section class="wrap sec"><div class="sec-h"><h2>${T('المعمل التفاعلي', 'Interactive lab')}</h2></div><p class="muted">${T('اكتب الكود، شوف النتيجة على طول، ولما تخلّص اضغط تحقّق.', 'Write code, watch the result live, and press check when you are done.')}</p><div id="lab-prog" class="muted sm"></div><div id="lab-list" class="grid"><p class="muted sm">${T('جارٍ التحميل...', 'Loading...')}</p></div></section>`;
 }
-async function loadLabs() {
+async function loadLabs(openId) {
   const box = $('#lab-list'); if (!box) return;
   if (!S.user) { box.innerHTML = `<p class="muted">${T('سجّل الدخول الأول عشان تفتح المعمل.', 'Sign in to open the lab.')}</p>`; return; }
   try {
@@ -2579,8 +2581,17 @@ async function loadLabs() {
     let done = {};
     try { const p = await fbDb.collection('users').doc(fbAuth.currentUser.uid).collection('labs').get(); p.forEach(d => { done[d.id] = d.data(); }); } catch (e) { }
     LAB.done = done;
-    box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3>${esc(L(x.title) || x.id)}</h3><p class="muted sm">${esc(String(L(x.brief) || '').slice(0, 200))}</p><div class="row" style="gap:8px;align-items:center">${done[x.id] && done[x.id].done ? `<span class="tag ok">${T('خلصتها', 'Done')}</span>` : ''}<button class="btn primary" data-lab="${esc(x.id)}">${T('افتح التجربة', 'Open lab')}</button></div></article>`).join('');
+    const tot = a.length, fin = a.filter(x => done[x.id] && done[x.id].done).length;
+    const pg = $('#lab-prog');
+    if (pg) pg.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin:8px 0 16px"><div style="flex:1;height:8px;border-radius:99px;background:var(--bg3);overflow:hidden"><div style="width:${tot ? Math.round(fin / tot * 100) : 0}%;height:100%;background:var(--ok)"></div></div><span>${T('خلصت ' + fin + ' من ' + tot, fin + ' of ' + tot + ' done')}</span></div>`;
+    box.innerHTML = a.map(x => `<article class="card" style="padding:16px"><h3 dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</h3><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere;text-align:start">${esc(String(L(x.brief) || '').slice(0, 200))}</p><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap">${done[x.id] && done[x.id].done ? `<span class="tag ok">${T('خلصتها', 'Done')}</span>` : ''}<button class="btn primary" data-lab="${esc(x.id)}">${T('افتح التجربة', 'Open lab')}</button><button class="btn" data-copy="${esc(x.id)}">${T('نسخ الرابط', 'Copy link')}</button></div></article>`).join('');
     $$('[data-lab]', box).forEach(b => b.addEventListener('click', () => { const x = a.find(y => y.id === b.dataset.lab); if (x) openLab(x); }));
+    $$('[data-copy]', box).forEach(b => b.addEventListener('click', () => {
+      const u = location.origin + location.pathname + '#lab-' + b.dataset.copy;
+      const ok = () => toast(T('تم نسخ رابط التجربة ✓', 'Lab link copied ✓'));
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok).catch(() => prompt('', u)); else prompt('', u);
+    }));
+    if (openId) { const t = a.find(y => y.id === openId); if (t) openLab(t); }
   } catch (e) { box.innerHTML = `<p class="muted">${T('تعذر تحميل التجارب.', 'Could not load the labs.')}</p>`; }
 }
 function openLab(x) {
