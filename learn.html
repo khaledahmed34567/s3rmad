@@ -60,6 +60,26 @@ input::placeholder{color:#9aa294}
 .lang{position:fixed;top:14px;inset-inline-start:14px;background:var(--card);border:1px solid var(--line);
   border-radius:999px;padding:6px 12px;font:inherit;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer}
 @media (max-width:380px){.card{padding:18px}}
+
+.dash{width:100%}
+body.tall{align-items:flex-start;padding-top:26px;padding-bottom:26px}
+.dhead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dhead h2{margin:0;font-size:17px}
+.statrow{display:flex;gap:10px;margin-top:14px}
+.stat{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px}
+.stat span{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px}
+.stat b{font-size:15px;font-weight:800}
+.card h3{margin:0 0 12px;font-size:14.5px;font-weight:800}
+.item{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .ic{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.item .tt{flex:1;min-width:0}
+.item .tt b{display:block;font-size:13.5px;font-weight:700;line-height:1.5}
+.item .tt span{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+.item a{font-size:12.5px;font-weight:700;color:var(--accent);text-decoration:none;white-space:nowrap}
+.empty{font-size:12.5px;color:var(--muted);line-height:1.8}
+.skel{height:44px;border-radius:10px;background:var(--bg2);margin-top:8px;animation:p 1.2s infinite}
+@keyframes p{0%,100%{opacity:.55}50%{opacity:.9}}
 </style>
 </head>
 <body>
@@ -108,6 +128,32 @@ input::placeholder{color:#9aa294}
     </div>
   </div>
 
+
+<div id="dash" class="dash hidden">
+  <div class="card">
+    <div class="dhead">
+      <div>
+        <h2 id="dName">أهلًا</h2>
+        <div class="mini" id="dEmail" style="margin-top:3px"></div>
+      </div>
+      <button class="link" id="outBtn" type="button">تسجيل الخروج</button>
+    </div>
+    <div class="statrow">
+      <div class="stat"><span id="lSub">الاشتراك</span><b id="dSub">—</b></div>
+      <div class="stat"><span id="lCourses">الكورسات</span><b id="dCourses">0</b></div>
+      <div class="stat"><span id="lCerts">الشهادات</span><b id="dCerts">0</b></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3 id="tMyCourses">كورساتي</h3>
+    <div id="dCourseList"><div class="skel"></div><div class="skel"></div></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3 id="tMyCerts">شهاداتي</h3>
+    <div id="dCertList"><div class="skel"></div></div>
+  </div>
+  <a class="btn" id="dOpen" href="/#learning" style="display:block;text-align:center;text-decoration:none">افتح المنصة</a>
+</div>
   <p class="foot">
     <span id="tHelp">محتاج مساعدة؟</span> <a href="mailto:contact@sarmad.qd.je">contact@sarmad.qd.je</a>
   </p>
@@ -115,6 +161,7 @@ input::placeholder{color:#9aa294}
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (function(){
   "use strict";
@@ -196,7 +243,91 @@ input::placeholder{color:#9aa294}
     }).then(function(r){ return r.json().catch(function(){ return {}; }); });
   }
 
+  var COURSES = {"cyber1": {"ar": "أساسيات الأمن السيبراني للمطورين", "en": "Cybersecurity Essentials for Developers", "status": "open"}, "front1": {"ar": "واجهات سريعة ومتجاوبة بالعربية والإنجليزية", "en": "Fast Bilingual Responsive Interfaces", "status": "open"}, "pay1": {"ar": "ربط بوابات الدفع بأمان", "en": "Integrating Payment Gateways Safely", "status": "soon"}};
   function goHome(){ location.replace(HOME); }
+  function fmtDate(ms){ try { return new Date(ms).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", { day:"numeric", month:"long", year:"numeric" }); } catch(e){ return ""; } }
+  function el(tag, cls, html){ var d = document.createElement(tag); if (cls) d.className = cls; if (html != null) d.innerHTML = html; return d; }
+  function courseTitle(id){ var c = COURSES[id]; return c ? (lang === "ar" ? c.ar : c.en) : id; }
+
+  function showDash(u){
+    document.querySelector(".card").classList.add("hidden");
+    document.querySelector(".brand").classList.add("hidden");
+    $("dash").classList.remove("hidden");
+    document.body.classList.add("tall");
+    var db = firebase.firestore();
+    var uref = db.collection("users").doc(u.uid);
+    $("dEmail").textContent = u.email || "";
+    uref.get().then(function(s){
+      var d = s.exists ? s.data() : {};
+      $("dName").textContent = (lang === "ar" ? "أهلًا، " : "Hi, ") + (d.name || (u.email || "").split("@")[0]);
+    }).catch(function(){ $("dName").textContent = (lang === "ar" ? "أهلًا" : "Hi"); });
+
+    Promise.all([
+      uref.collection("enroll").get().catch(function(){ return null; }),
+      uref.collection("progress").get().catch(function(){ return null; }),
+      db.collection("orders").where("userId","==",u.uid).get().catch(function(){ return null; }),
+      db.collection("certs").where("userId","==",u.uid).get().catch(function(){ return null; })
+    ]).then(function(res){
+      var enr = {}, prog = {}, orders = [], certs = [];
+      if (res[0]) res[0].forEach(function(d){ enr[d.id] = 1; });
+      if (res[1]) res[1].forEach(function(d){ var ls = (d.data().lessons)||{}; var n = 0; Object.keys(ls).forEach(function(k){ if (ls[k] && ls[k].done) n++; }); prog[d.id] = { done: n, touched: Object.keys(ls).length }; });
+      if (res[2]) res[2].forEach(function(d){ orders.push(Object.assign({ id: d.id }, d.data())); });
+      if (res[3]) res[3].forEach(function(d){ certs.push(Object.assign({ id: d.id }, d.data())); });
+
+      var sub = null;
+      orders.forEach(function(o){
+        if (o.status !== "paid") return;
+        if (o.courseId) enr[o.courseId] = 1;
+        if (o.plan){ var at = o.paidAt || o.at; var dt = new Date(at && at.seconds ? at.seconds*1000 : at); dt.setMonth(dt.getMonth() + (o.plan === "pro" ? 6 : 3)); var until = dt.getTime(); if (until > Date.now() && (!sub || until > sub.until)) sub = { plan: o.plan, until: until }; }
+      });
+
+      var subEl = $("dSub");
+      if (sub){ subEl.textContent = (sub.plan === "pro" ? "برو" : "بلس") + " · " + fmtDate(sub.until); subEl.style.fontSize = "12.5px"; }
+      else { subEl.textContent = lang === "ar" ? "بدون اشتراك" : "None"; subEl.style.fontSize = "12.5px"; }
+
+      var ids = Object.keys(enr).filter(function(id){ return COURSES[id] || prog[id]; });
+      $("dCourses").textContent = String(ids.length);
+      var cl = $("dCourseList"); cl.innerHTML = "";
+      if (!ids.length){ cl.appendChild(el("div","empty", lang === "ar" ? "لسه مسجلتش في كورس. ابدأ من صفحة المنصة." : "You haven't joined a course yet.")); }
+      ids.forEach(function(id){
+        var p = prog[id] || { done: 0 };
+        var row = el("div","item");
+        row.appendChild(el("div","ic","▶"));
+        var tt = el("div","tt");
+        tt.appendChild(el("b",null,courseTitle(id)));
+        tt.appendChild(el("span",null, (lang === "ar" ? p.done + " درس مكتمل" : p.done + " lessons done")));
+        row.appendChild(tt);
+        var a = el("a",null, lang === "ar" ? "متابعة" : "Open");
+        a.href = "/#course-" + id;
+        row.appendChild(a);
+        cl.appendChild(row);
+      });
+
+      $("dCerts").textContent = String(certs.length);
+      var cl2 = $("dCertList"); cl2.innerHTML = "";
+      if (!certs.length){ cl2.appendChild(el("div","empty", lang === "ar" ? "مفيش شهادات لسه. خلص كورس عشان تستحق شهادتك." : "No certificates yet. Finish a course to earn one.")); }
+      certs.forEach(function(c){
+        var row = el("div","item");
+        row.appendChild(el("div","ic","✦"));
+        var tt = el("div","tt");
+        tt.appendChild(el("b",null, (lang === "ar" ? (c.courseAr || "") : (c.courseEn || c.courseAr || "")) || c.courseId));
+        tt.appendChild(el("span",null, c.id + (c.status === "pending" ? (lang === "ar" ? " · قيد المراجعة" : " · pending") : "")));
+        row.appendChild(tt);
+        var a = el("a",null, lang === "ar" ? "عرض" : "View");
+        a.href = "/#cert-" + c.id;
+        row.appendChild(a);
+        cl2.appendChild(row);
+      });
+    }).catch(function(){
+      $("dCourseList").innerHTML = '<div class="empty">' + (lang === "ar" ? "تعذر تحميل البيانات. افتح المنصة." : "Could not load your data.") + '</div>';
+    });
+  }
+  function showLogin(){
+    $("dash").classList.add("hidden");
+    document.querySelector(".card").classList.remove("hidden");
+    document.querySelector(".brand").classList.remove("hidden");
+    document.body.classList.remove("tall");
+  }
 
   function startResend(){
     var left = 60;
@@ -290,7 +421,8 @@ input::placeholder{color:#9aa294}
   try { var saved = localStorage.getItem("learn_lang"); if (saved === "en" || saved === "ar") lang = saved; } catch (e) {}
   applyLang();
 
-  auth.onAuthStateChanged(function(u){ if (u) goHome(); });
+  $("outBtn").addEventListener("click", function(){ auth.signOut().then(function(){ showLogin(); }); });
+  auth.onAuthStateChanged(function(u){ if (u) showDash(u); else showLogin(); });
 })();
 </script>
 </body>
