@@ -1589,6 +1589,7 @@ function renderHeader() {
     <a href="#home" class="logo" aria-label="${T('سرمد - الرئيسية', 'Sarmad - Home')}"></a>
     <nav class="nav" aria-label="main">
       ${nav.slice(0, 2).map(([h, n]) => `<a href="#${h}" class="${r.name === h ? 'on' : ''}">${n}</a>`).join('')}
+      <a href="/learn">${T('سرمد ليرننج', 'Sarmad Learning')}</a>
       <div class="menu-wrap"><button data-act="pop" aria-haspopup="true">${T('المنصة', 'Platform')} ${icon('chev')}</button>
         <div class="pop"><a href="#platform"><span class="ic">${icon('pen')}</span><b>${T('سرمد بلاتفورم', 'Sarmad Platform')}</b><small>${T('المدونة والمقالات', 'Blog and articles')}</small></a>
         <a href="#learning"><span class="ic">${icon('book')}</span><b>${T('سرمد ليرننج', 'Sarmad Learning')}</b><small>${T('كورسات بالفيديو والصوت والاختبارات', 'Courses with video, audio and quizzes')}</small></a></div></div>
