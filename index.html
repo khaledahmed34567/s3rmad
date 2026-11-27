@@ -1584,7 +1584,7 @@ function renderHeader() {
     ? `<a class="ib" href="#account" aria-label="${T('حسابي', 'My account')}" style="background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700">${esc(S.user.name.trim().charAt(0).toUpperCase())}</a>`
     : `<a class="btn ghost sm hide-m" href="#login">${T('دخول', 'Sign in')}</a><a class="btn primary sm hide-m" href="#signup">${T('إنشاء حساب', 'Sign up')}</a>`;
   $('#hdr').innerHTML = `
-  <div class="strip"><div class="wrap">${portals().map(([h, k, n]) => `<a href="#${h}" class="${portal === k ? 'on' : ''}">${n}</a>`).join('')}<span class="sp"></span><a href="#whatsnew" class="hide-m">${T('الجديد', "What's new")}${(+ls.get('newsSeen', 0) < NEWS.length) ? ' <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:#d9ae55;vertical-align:middle"></span>' : ''}</a><a href="#contact" class="hide-m">${T('تواصل معنا', 'Contact')}</a></div></div>
+  <div class="strip"><div class="wrap">${portals().map(([h, k, n]) => `<a href="#${h}" class="${portal === k ? 'on' : ''}">${n}</a>`).join('')}<span class="sp"></span>${S.user ? `<a href="#dashboard" class="hide-m">${T('لوحتي', 'My dashboard')}</a>` : ''}<a href="#whatsnew" class="hide-m">${T('الجديد', "What's new")}${(+ls.get('newsSeen', 0) < NEWS.length) ? ' <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:#d9ae55;vertical-align:middle"></span>' : ''}</a><a href="#contact" class="hide-m">${T('تواصل معنا', 'Contact')}</a></div></div>
   <div class="hdr"><div class="wrap">
     <a href="#home" class="logo" aria-label="${T('سرمد - الرئيسية', 'Sarmad - Home')}"></a>
     <nav class="nav" aria-label="main">
@@ -1656,7 +1656,7 @@ function openModal(html, cls = '') {
 }
 function closeModal() { const b = $('#modal-back'); if (b) b.remove(); }
 function openDrawer() {
-  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")], ['achievements', T('إنجازاتي', 'My achievements')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
+  const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")], ['dashboard', T('لوحتي', 'My dashboard')], ['achievements', T('إنجازاتي', 'My achievements')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
   const d = document.createElement('div'); d.className = 'drawer'; d.id = 'drawer';
   d.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="logo" style="--lw:104px"></span><button class="ib" data-act="closeDrawer" aria-label="close">${icon('x')}</button></div>
     ${items.map(([h, n]) => `<a href="#${h}" data-act="closeDrawer">${n}${icon('arrow', 'flip')}</a>`).join('')}
@@ -1669,7 +1669,7 @@ const closeDrawer = () => { const d = $('#drawer'); if (d) d.remove(); };
 const SEARCH_EXTRA = { labs: [], tasks: [] };
 function searchIndex() {
   const out = [];
-  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")], ['achievements', T('إنجازاتي', 'My achievements')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
+  [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات وروابط التحميل', 'Apps and downloads')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")], ['dashboard', T('لوحتي', 'My dashboard')], ['achievements', T('إنجازاتي', 'My achievements')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم - بوابة الدفع', 'Tam - payment gateway')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], ['login', T('تسجيل الدخول', 'Sign in')], ['signup', T('إنشاء حساب', 'Create account')]].forEach(([h, t]) => out.push({ t, sub: T('صفحة', 'Page'), h, k: 'zap' }));
   SERVICES.forEach(s => out.push({ t: L(s.t), sub: T('خدمة', 'Service'), h: 'services', k: s.icon }));
   APPS.forEach(a => out.push({ t: L(a.name), sub: T('تطبيق', 'App'), h: 'apps', k: 'monitor', x: L(a.d) }));
   COURSES.forEach(c => out.push({ t: L(c.t), sub: T('كورس', 'Course'), h: 'course-' + c.id, k: 'book', x: L(c.d) }));
@@ -1809,9 +1809,8 @@ const shareUrl = route => location.href.split('#')[0].split('?')[0] + (S.user &&
 const shareBtn = (route, title, cls = 'chip', label) => `<button class="${cls}" type="button" data-act="share" data-r="${esc(route)}" data-t="${esc(title)}">${icon('share')} <span>${label || T('مشاركة', 'Share')}</span></button>`;
 async function doShare(route, title) {
   const url = shareUrl(route);
-  if (navigator.share) { try { await navigator.share({ title, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(url); } catch (e) { const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (x) { } t.remove(); }
-  toast(T('تم نسخ رابط المشاركة', 'Share link copied'));
+  toast(T('تم نسخ الرابط ✓', 'Link copied ✓'));
 }
 function appBtns(a) {
   const os = detectOS(); const order = [os, ...PLATFORMS.filter(p => p !== os)].filter(p => p in a.dl);
@@ -2686,6 +2685,45 @@ async function labSave(x) {
   } catch (e) { }
 }
 ROUTE.lab = vLab;
+
+/* ---------- student dashboard ---------- */
+function vDash() {
+  setTimeout(loadDash, 0);
+  return `<section class="wrap sec"><div class="sec-h"><h2>${T('لوحتي', 'My dashboard')}</h2></div><div id="dash-body"><div class="spin" style="margin:40px auto"></div></div></section>`;
+}
+async function loadDash() {
+  const box = $('#dash-body'); if (!box) return;
+  if (!S.user) { box.innerHTML = `<div class="card" style="padding:20px"><p class="muted">${T('سجّل الدخول عشان تشوف لوحتك.', 'Sign in to see your dashboard.')}</p><a class="btn primary" href="#login">${T('دخول', 'Sign in')}</a></div>`; return; }
+  const uid = S.user.id;
+  let labsOn = [], tasksOn = [], myLabs = [], myTasks = [], certs = 0;
+  try { const q = await fbDb.collection('labs').where('on', '==', true).get(); q.forEach(d => labsOn.push(Object.assign({ id: d.id }, d.data()))); } catch (e) { }
+  try { const q = await fbDb.collection('ai_tasks').where('on', '==', true).get(); q.forEach(d => tasksOn.push(Object.assign({ id: d.id }, d.data()))); } catch (e) { }
+  try { const q = await fbDb.collection('users').doc(uid).collection('labs').get(); q.forEach(d => myLabs.push(Object.assign({ id: d.id }, d.data()))); } catch (e) { }
+  try { const q = await fbDb.collection('users').doc(uid).collection('aitasks').get(); q.forEach(d => myTasks.push(Object.assign({ id: d.id }, d.data()))); } catch (e) { }
+  try { const q = await fbDb.collection('certs').where('userId', '==', uid).get(); certs = q.size; } catch (e) { }
+  const labsDone = myLabs.filter(x => x.done).length, tasksDone = myTasks.filter(x => x.done).length;
+  const notes = myLabs.filter(x => x.note && String(x.note).trim());
+  const titleOf = id => { const x = labsOn.find(y => y.id === id); return x ? (L(x.title) || id) : id; };
+  const bar = (a, b) => `<div style="height:8px;border-radius:99px;background:var(--bg3);overflow:hidden;margin:8px 0 4px"><div style="width:${b ? Math.round(a / b * 100) : 0}%;height:100%;background:var(--ok)"></div></div>`;
+  const stat = (n, l, h) => `<a class="card" href="#${h}" style="padding:16px;display:block;text-align:center"><div style="font-size:1.7rem;font-weight:800">${esc(String(n))}</div><div class="muted sm">${l}</div></a>`;
+  const enr = Object.keys(S.enr || {}).map(id => (COURSES || []).find(c => c.id === id)).filter(Boolean);
+  const withProg = (COURSES || []).filter(c => S.prog && S.prog[c.id] && S.prog[c.id].lessons);
+  const courseRows = (enr.length ? enr : withProg).slice(0, 6).map(c => {
+    const ls = c.lessons || [], pr = (S.prog || {})[c.id] || { lessons: {} };
+    const done = ls.filter(l => (pr.lessons[l.id] || {}).done).length;
+    const next = ls.find(l => !(pr.lessons[l.id] || {}).done);
+    return `<div class="card" style="padding:14px"><div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><b dir="auto" style="unicode-bidi:plaintext">${esc(L(c.t))}</b><span class="sp"></span><span class="muted sm">${T(done + ' من ' + ls.length, done + ' of ' + ls.length)}</span>${next ? `<a class="btn sm primary" href="#learn-${esc(c.id)}-${esc(next.id)}">${T('كمّل', 'Continue')}</a>` : `<span class="tag ok">${T('خلصت', 'Done')}</span>`}</div>${bar(done, ls.length)}</div>`;
+  }).join('');
+  const news = (typeof NEWS !== 'undefined' ? NEWS : []).slice(0, 3).map(n => `<div style="padding:10px 0;border-bottom:1px solid var(--line)"><b dir="auto">${esc(L(n.t))}</b><div class="muted sm" dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(n.x)).slice(0, 120)}</div></div>`).join('');
+  box.innerHTML = `
+    <div class="card" style="padding:20px;margin-bottom:16px"><div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><b style="font-size:1.15rem">${T('أهلاً ' + (S.user.name || '') + ' 👋', 'Welcome ' + (S.user.name || '') + ' 👋')}</b><span class="sp"></span>${S.sub ? `<span class="tag ok">${T('اشتراك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' حتى ' + fmtDate(S.sub.until), (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan until ' + fmtDate(S.sub.until))}</span>` : `<span class="tag gold">${T('مفيش اشتراك', 'No plan')}</span><a class="btn sm" href="#learning">${T('شوف الاشتراكات', 'See plans')}</a>`}</div></div>
+    ${resumeCard()}
+    <div class="grid g4" style="margin:16px 0">${stat(labsDone, T('تجربة معمل', 'Labs done'), 'lab')}${stat(tasksDone, T('مهمة ذكاء اصطناعي', 'AI tasks done'), 'aitasks')}${stat(certs, T('شهادة', 'Certificates'), 'account')}${stat(labsOn.length ? labsDone + '/' + labsOn.length : '—', T('المعمل', 'Lab progress'), 'lab')}</div>
+    <div class="card" style="padding:18px;margin-bottom:16px"><div class="row" style="align-items:center;margin-bottom:10px"><b>${T('كورساتي', 'My courses')}</b><span class="sp"></span><a class="link" href="#learning">${T('كل الكورسات', 'All courses')} ${arrow()}</a></div>${courseRows || `<p class="muted sm">${T('لسه مشترك في كورس. شوف الكورسات وابدأ.', 'No course yet. Browse the courses and start.')}</p>`}</div>
+    <div class="card" style="padding:18px;margin-bottom:16px"><div class="row" style="align-items:center;margin-bottom:10px"><b>${T('المعمل', 'Interactive lab')}</b><span class="sp"></span><a class="link" href="#lab">${T('افتح المعمل', 'Open the lab')} ${arrow()}</a></div>${bar(labsDone, labsOn.length)}<p class="muted sm">${T('خلصت ' + labsDone + ' من ' + labsOn.length + ' تجربة', labsDone + ' of ' + labsOn.length + ' labs finished')}</p>${notes.length ? `<div style="margin-top:10px"><b class="sm">${T('ملاحظاتي', 'My notes')}</b>${notes.slice(0, 4).map(n => `<div class="sm muted" dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere;padding:6px 0;border-bottom:1px solid var(--line)"><b style="color:var(--fg)">${esc(titleOf(n.id))}</b> — ${esc(String(n.note).slice(0, 120))}</div>`).join('')}</div>` : ''}</div>
+    ${news ? `<div class="card" style="padding:18px"><div class="row" style="align-items:center;margin-bottom:6px"><b>${T('الجديد', "What's new")}</b><span class="sp"></span><a class="link" href="#whatsnew">${T('كل الجديد', 'All')} ${arrow()}</a></div>${news}</div>` : ''}`;
+}
+ROUTE.dashboard = vDash;
 
 /* ---------- my achievements ---------- */
 function vAchievements() {
