@@ -1280,6 +1280,7 @@ const toMs = v => (v && v.toMillis ? v.toMillis() : typeof v === 'number' ? v : 
 const cu = () => { if (!fbAuth || !fbAuth.currentUser) throw new Error('auth'); return fbAuth.currentUser; };
 /* ---------- activation gate (OTP) ---------- */
 const OTPW = 'https://sarmad-bot.khaledahmedelbrbary80.workers.dev';
+async function sendReceipt(kind) { try { const u = fbAuth && fbAuth.currentUser; if (!u) return; const t = await u.getIdToken(); await fetch(OTPW + '/receipt', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t, kind }) }); } catch (e) { } }
 const GATE = { until: 0, uid: '', after: null };
 async function gateActive() {
   const u = fbAuth && fbAuth.currentUser; if (!u) return false;
@@ -2416,7 +2417,7 @@ const FORMS = {
     const d = new FormData(f), err = $('#contact-err'), ph = normPhone(d.get('phone'));
     if (!ph) { err.textContent = phoneErr(); return; }
     if (!d.getAll('svc').length) { err.textContent = T('اختر خدمة واحدة على الأقل.', 'Choose at least one service.'); return; }
-    await DB.sendMessage({ type: 'quote', services: d.getAll('svc'), projectType: d.get('ptype'), langs: d.get('langs'), platforms: d.getAll('plat'), budget: d.get('budget'), timeline: d.get('timeline'), site: d.get('site'), name: d.get('name'), email: d.get('email'), phone: ph, org: d.get('org'), city: d.get('city'), how: d.get('how'), message: d.get('message') });
+    await DB.sendMessage({ type: 'quote', services: d.getAll('svc'), projectType: d.get('ptype'), langs: d.get('langs'), platforms: d.getAll('plat'), budget: d.get('budget'), timeline: d.get('timeline'), site: d.get('site'), name: d.get('name'), email: d.get('email'), phone: ph, org: d.get('org'), city: d.get('city'), how: d.get('how'), message: d.get('message') }); sendReceipt('contact');
     try { S.msgs = await DB.messages(); } catch (e) { }
     f.outerHTML = `<div class="card" style="align-self:start"><div class="ic">${icon('check')}</div><h2 class="h2" style="font-size:1.6rem">${T('استلمنا طلبك', 'We got your request')}</h2><p class="muted">${T('سنراجع التفاصيل ونرد عليك بخطة وتقدير.', 'We will review the details and reply with a plan and an estimate.')}</p><div><a class="btn primary" href="#home">${T('العودة للرئيسية', 'Back to home')}</a></div></div>`;
     fixDigits($('#main')); toast(T('تم إرسال الطلب', 'Request submitted'));
@@ -3025,7 +3026,7 @@ Object.assign(A, {
     const c = COURSES.find(x => x.id === el.dataset.c); if (!c || !S.user) return needAuth();
     if (courseProgress(c) < 100) return toast(T('أكمل الكورس أولًا.', 'Finish the course first.'));
     if (!(await needActive(T('لازم تفعّل حسابك قبل طلب الشهادة.', 'Activate your account before requesting the certificate.'), () => A.getCert(el)))) return;
-    el.disabled = true; try { const code = await DB.makeCert(c); go('cert-' + code); } catch (e) { el.disabled = false; toast(T('تعذر إرسال الطلب.', 'Could not send the request.')); }
+    el.disabled = true; try { const code = await DB.makeCert(c); sendReceipt('cert'); go('cert-' + code); } catch (e) { el.disabled = false; toast(T('تعذر إرسال الطلب.', 'Could not send the request.')); }
   }
 });
 const certState = (icon_, h, p) => `<div class="card stack" style="text-align:center;justify-items:center;padding:36px 22px"><span class="done-check" style="${icon_}" role="img"></span><h2 class="h2">${h}</h2><p class="muted" style="max-width:46ch">${p}</p><a class="btn" href="#learning">${T('العودة لسرمد ليرننج', 'Back to Sarmad Learning')}</a></div>`;
@@ -3237,7 +3238,7 @@ function aidDone(r) {
   const msg = (st === 'accepted' || st === 'approved') ? T('تم قبول طلبك، وتفاصيل الدعم وصلتك على بريدك.', 'Your request was accepted and the support details were sent to your email.')
     : (st === 'rejected') ? T('راجعنا طلبك ولم يُقبل هذه المرة. لو ظروفك اتغيرت، كلّم فريق الدعم.', 'We reviewed your request and it was not accepted this time. If your situation changes, contact support.')
       : T('طلبك وصلنا وهو قيد المراجعة. مش محتاج تبعت تاني، وهنبلغك على بريدك أول ما يتراجع.', 'We received your request and it is under review. You do not need to send it again; we will email you once it is reviewed.');
-  return `<div class="card stack" style="text-align:center;justify-items:center;padding:34px 22px"><span class="done-check" role="img"></span><h2 class="h2">${T('طلبك مسجّل عندنا', 'Your request is already with us')}</h2><p class="muted" style="max-width:520px">${msg}</p><p class="muted sm">${T('طلب المساعدة بيتبعت مرة واحدة بس لكل حساب.', 'The support request can be sent only once per account.')}</p><a class="btn" href="#support">${T('كلّم الدعم', 'Contact support')}</a></div>`;
+  return `<div class="card stack" style="text-align:center;justify-items:center;padding:34px 22px"><span class="done-check" role="img"></span><h2 class="h2">${T('طلبك مسجّل عندنا', 'Your request is already with us')}</h2><p class="muted" style="max-width:520px">${msg}</p><p class="muted sm">${T('طلب المساعدة بيتبعت مرة واحدة بس لكل حساب.', 'The support request can be sent only once per account.')}</p>${r && r.decidedAt ? `<p class="muted sm">${T('آخر تحديث للطلب:', 'Last update:')} ${new Date(toMs(r.decidedAt)).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>` : ''}<a class="btn" href="#support">${T('كلّم الدعم', 'Contact support')}</a></div>`;
 }
 function vAid() {
   const u = S.user || {}, p = u.profile || {};
@@ -3389,7 +3390,7 @@ FORMS.aid = async f => {
   err.textContent = '';
   if (!(await gateActive())) { needActive(T('لازم تفعّل حسابك قبل ما تبعت طلب المساعدة.', 'Activate your account before sending the aid request.')); return; }
   if (!(await actOtp('support'))) { err.textContent = T('لازم تأكيد الكود قبل إرسال الطلب.', 'Confirm the code before sending the request.'); return; }
-  let aidId; try { aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null }); } catch (e) {
+  let aidId; try { aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null }); sendReceipt('aid'); } catch (e) {
     const w = $('#aidwrap');
     if (String((e && e.code) || '') === 'permission-denied' && w) { w.innerHTML = aidDone({ status: 'new' }); return; }
     return bad(T('تعذر إرسال الطلب. جرّب تاني، ولو كنت بعت طلب قبل كده مش هينفع تبعت تاني.', 'Could not send the request. Try again; if you already sent one, it cannot be sent again.'));
