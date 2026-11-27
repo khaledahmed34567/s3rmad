@@ -1545,6 +1545,7 @@ function parse() {
   if (h.startsWith('invoice-')) return { name: 'invoice', id: h.slice(8), key: h };
   if (h.startsWith('verify-')) return { name: 'verify', id: h.slice(7), key: h };
   if (h.startsWith('cert-')) return { name: 'cert', id: h.slice(5), key: h };
+  if (h.startsWith('resetpw-')) return { name: 'resetpw', id: h.slice(8), key: h };
   if (h.startsWith('app-')) return { name: 'app', id: h.slice(4), key: h };
   if (h === 'lx-login') return { name: 'lxlogin', key: h };
   if (h === 'lx-signup') return { name: 'lxsignup', key: h };
@@ -2292,6 +2293,7 @@ function routeTitle(r) {
   if (r.name === 'course' || r.name === 'learn') { const c = COURSES.find(x => x.id === (r.id || r.cid)); t = c && L(c.t); }
   return (t || '404') + (r.name === 'home' ? '' : ' | ' + T('سرمد', 'Sarmad'));
 }
+ROUTE.resetpw = vResetPw;
 let lastKey = null;
 function render() {
   const r = parse(), fn = ROUTE[r.name] || v404;
@@ -2416,11 +2418,30 @@ const FORMS = {
   },
   async career(f) { const d = new FormData(f); await DB.sendMessage({ type: 'career', name: d.get('name'), email: d.get('email'), role: d.get('role'), link: d.get('link') }); f.reset(); toast(T('وصلنا طلبك، شكرًا', 'We received your application, thank you')); },
   async forgot(f) {
-    const d = new FormData(f), err = $('#fg-err');
-    try { await DB.resetPassword(d.get('email')); closeModal(); toast(T('أرسلنا رابط الاستعادة إلى بريدك', 'We sent a reset link to your email')); }
-    catch (e) { err.textContent = T('تعذر الإرسال. تأكد من البريد.', 'Could not send. Check the email address.'); }
-  },
-  async login(f) {
+      const d = new FormData(f), err = $('#fg-err'), em = String(d.get('email') || '').trim();
+      if (!em) { if (err) err.textContent = T('اكتب بريدك الإلكتروني.', 'Enter your email.'); return; }
+      try {
+        const r = await fetch(OTPW + '/pwreset', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: em }) });
+        const j = await r.json();
+        if (j && j.ok) { closeModal(); toast(T('لو البريد مسجل عندنا، وصلك رابط إعادة التعيين.', 'If that email is registered, a reset link is on its way.')); return; }
+        if (j && j.why === 'limit') { if (err) err.textContent = T('طلبت كتير. استنى شوية وحاول تاني.', 'Too many requests. Wait a bit and try again.'); return; }
+        if (err) err.textContent = T('تعذر الإرسال. تأكد من البريد.', 'Could not send. Check the email address.');
+      } catch (e) { if (err) err.textContent = T('تعذر الإرسال. حاول تاني.', 'Could not send. Try again.'); }
+    },
+    async resetpw(f) {
+      const d = new FormData(f), err = $('#rp-err'), code = String(d.get('code') || ''), pw = String(d.get('password') || ''), pw2 = String(d.get('password2') || '');
+      if (pw.length < 8) { if (err) err.textContent = T('كلمة المرور 8 حروف على الأقل.', 'Password must be at least 8 characters.'); return; }
+      if (pw !== pw2) { if (err) err.textContent = T('كلمتا المرور مش متطابقتين.', 'The passwords do not match.'); return; }
+      try {
+        await fbAuth.confirmPasswordReset(code, pw);
+        toast(T('تم تغيير كلمة المرور. ادخل بكلمتك الجديدة.', 'Password changed. Sign in with your new password.'));
+        go('login');
+      } catch (e) {
+        const c = String((e && e.code) || '');
+        if (err) err.textContent = /expired|invalid|used/i.test(c) ? T('الرابط انتهت صلاحيته. اطلب رابط جديد.', 'This link has expired. Request a new one.') : T('تعذر الحفظ. حاول تاني.', 'Could not save. Try again.');
+      }
+    },
+    async login(f) {
     const d = new FormData(f), err = $('#auth-err');
     try { await DB.login({ id: d.get('id'), password: d.get('password') }); if (!(await needLoginOtp())) return; await afterAuth('main', T('أهلًا بعودتك', 'Welcome back')); }
     catch (e) { err.textContent = T('البيانات غير صحيحة. تحقق من البريد وكلمة المرور.', 'Details do not match. Check your email and password.'); }
@@ -2955,6 +2976,11 @@ function certHtml(c) {
     </footer>
     ${c.revoked ? `<div class="cert2-rev">${T('ملغاة', 'REVOKED')}</div>` : ''}
   </div></div></div>`;
+}
+function vResetPw(r) {
+  const code = String(r.id || '');
+  return `<div class="auth"><div class="auth-main"><div class="auth-box"><div><h1 class="h1" style="font-size:2rem">${T('كلمة مرور جديدة', 'New password')}</h1><p class="muted" style="margin-top:8px">${T('اختار كلمة مرور قوية لحسابك.', 'Choose a strong password for your account.')}</p></div>
+    <form class="form" data-form="resetpw"><input type="hidden" name="code" value="${esc(code)}"><div class="field"><label for="rp-pw">${T('كلمة المرور الجديدة', 'New password')}</label><input id="rp-pw" name="password" type="password" minlength="8" required autocomplete="new-password"></div><div class="field"><label for="rp-pw2">${T('تأكيد كلمة المرور', 'Confirm password')}</label><input id="rp-pw2" name="password2" type="password" minlength="8" required autocomplete="new-password"></div><div class="err" id="rp-err"></div><button class="btn primary block" type="submit">${T('حفظ كلمة المرور', 'Save password')}</button></form></div></div></div>`;
 }
 function vCert(r) {
   const code = (r.id || '').toUpperCase().replace(/[^A-Z0-9-]/g, '');
