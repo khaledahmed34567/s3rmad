@@ -2634,12 +2634,38 @@ function openLab(x) {
   LAB.cur = x;
   const code = x.code || {};
   const starter = code.js || code.html || '';
-  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start">${esc(String(L(x.brief) || ''))}</p>${x.hint ? `<details style="margin:-6px 0 4px"><summary class="muted sm" style="cursor:pointer">${T('محتاج تلميح؟', 'Need a hint?')}</summary><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;margin:6px 0 0">${esc(String(L(x.hint) || ''))}</p></details>` : ''}<div class="field"><label for="lab-code">${T('الكود', 'Code')}</label><textarea id="lab-code" spellcheck="false" dir="ltr" style="min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6">${esc(starter)}</textarea></div><div class="field"><label for="lab-note">${T('ملاحظاتي', 'My notes')}</label><textarea id="lab-note" rows="3" dir="auto" placeholder="${T('اكتب ملاحظة لنفسك عن التجربة', 'Write yourself a note about this lab')}"></textarea></div><div class="row" style="gap:8px;margin:10px 0"><button class="btn primary" id="lab-run">${T('تشغيل', 'Run')}</button><button class="btn" id="lab-check">${T('تحقّق', 'Check')}</button><span class="sp"></span><span class="muted sm" id="lab-res"></span></div><div class="field"><label>${T('النتيجة', 'Result')}</label><iframe id="lab-frame" sandbox="allow-scripts" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#fff" title="lab"></iframe></div></div>`, 'ai-modal');
+  openModal(`<div class="modal-h"><b dir="auto" style="unicode-bidi:plaintext;overflow-wrap:anywhere">${esc(L(x.title) || x.id)}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start">${esc(String(L(x.brief) || ''))}</p>${x.hint ? `<details style="margin:-6px 0 4px"><summary class="muted sm" style="cursor:pointer">${T('محتاج تلميح؟', 'Need a hint?')}</summary><p class="muted sm" dir="auto" style="unicode-bidi:plaintext;white-space:pre-wrap;overflow-wrap:anywhere;text-align:start;margin:6px 0 0">${esc(String(L(x.hint) || ''))}</p></details>` : ''}<div class="field"><label for="lab-code">${T('الكود', 'Code')}</label><textarea id="lab-code" spellcheck="false" dir="ltr" style="min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.6">${esc(starter)}</textarea></div><div id="lab-draft" style="margin:-6px 0 8px"></div><div class="field"><label for="lab-note">${T('ملاحظاتي', 'My notes')}</label><textarea id="lab-note" rows="3" dir="auto" placeholder="${T('اكتب ملاحظة لنفسك عن التجربة', 'Write yourself a note about this lab')}"></textarea></div><div class="row" style="gap:8px;margin:10px 0"><button class="btn primary" id="lab-run">${T('تشغيل', 'Run')}</button><button class="btn" id="lab-check">${T('تحقّق', 'Check')}</button><button class="btn ghost" id="lab-reset">${T('الكود الأصلي', 'Original code')}</button><span class="sp"></span><span class="muted sm" id="lab-res"></span></div><div class="field"><label>${T('النتيجة', 'Result')}</label><iframe id="lab-frame" sandbox="allow-scripts" style="width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#fff" title="lab"></iframe></div></div>`, 'ai-modal');
   const run = () => { const f = $('#lab-frame'); if (!f) return; f.srcdoc = labDoc(x, $('#lab-code').value || ''); };
   const nt = $('#lab-note');
   if (nt) { nt.value = (LAB.done[x.id] && LAB.done[x.id].note) || ''; nt.addEventListener('blur', () => labNote(x, nt.value)); }
   const ta = $('#lab-code');
   if (ta) ta.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); } });
+  const draftKey = 'labdraft:' + x.id;
+  const draft = ls.get(draftKey, '');
+  if (ta && typeof draft === 'string' && draft && draft !== starter) {
+    ta.value = draft;
+    const dd = $('#lab-draft');
+    if (dd) dd.innerHTML = `<span class="tag gold">${T('رجّعت لك المسودة اللي كنت بتكتبها ✓', 'Restored the draft you were writing ✓')}</span>`;
+  }
+  if (ta) {
+    let _dt = 0;
+    ta.addEventListener('input', () => {
+      clearTimeout(_dt);
+      _dt = setTimeout(() => {
+        ls.set(draftKey, ta.value);
+        const dd = $('#lab-draft');
+        if (dd) dd.innerHTML = `<span class="tag ok">${T('المسودة اتحفظت تلقائي', 'Draft saved automatically')}</span>`;
+      }, 500);
+    });
+  }
+  const rz = $('#lab-reset');
+  if (rz) rz.addEventListener('click', () => {
+    ls.set(draftKey, '');
+    if (ta) ta.value = starter;
+    const dd = $('#lab-draft'); if (dd) dd.innerHTML = '';
+    run();
+    toast(T('رجّعنا الكود الأصلي', 'Original code restored'));
+  });
   const r1 = $('#lab-run'), r2 = $('#lab-check');
   if (r1) r1.addEventListener('click', run);
   if (r2) r2.addEventListener('click', () => { run(); setTimeout(() => labAsk(x), 900); });
