@@ -3318,6 +3318,18 @@ Object.assign(A, {
   tmReset() { TM.run = false; clearInterval(TM.iv); TM.left = (TM.mode === 'focus' ? 25 : 5) * 60; renderTimer(); },
   tmMode() { TM.mode = TM.mode === 'focus' ? 'break' : 'focus'; A.tmReset(); }
 });
+AFTER.push(r => { if (r.name !== 'learning') return; const v = $('#main .view'); if (!v || $('#cfind')) return;
+  const g = v.querySelector('.grid.g3'); if (!g) return;
+  g.insertAdjacentHTML('beforebegin', `<div id="cfind" class="stack" style="gap:8px;margin-bottom:14px"><input id="cfq" maxlength="60" placeholder="${T('ابحث في الكورسات…', 'Search courses…')}" style="width:100%"><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn sm" data-cfm="all">${T('الكل', 'All')}</button><button class="btn sm" data-cfm="free">${T('المجانية', 'Free')}</button><button class="btn sm" data-cfm="mine">${T('المسجّل فيها', 'Enrolled')}</button></div><p id="cfn" class="muted sm" hidden>${T('لا توجد كورسات مطابقة', 'No matching courses')}</p></div>`);
+  let mode = 'all';
+  const run = () => { const q = ($('#cfq').value || '').trim().toLowerCase(); let n = 0;
+    document.querySelectorAll('#main a.course').forEach(a => { const id = (a.getAttribute('href') || '').replace('#course-', ''), c = COURSES.find(x => String(x.id) === id);
+      const ok = (!q || a.textContent.toLowerCase().includes(q)) && (mode === 'all' || (mode === 'free' && c && c.price === 0) || (mode === 'mine' && !!S.enr[id]));
+      a.style.display = ok ? '' : 'none'; if (ok) n++; });
+    $('#cfn').hidden = n > 0; document.querySelectorAll('[data-cfm]').forEach(b => b.style.opacity = b.dataset.cfm === mode ? '1' : '.6'); };
+  $('#cfq').addEventListener('input', run);
+  document.querySelectorAll('[data-cfm]').forEach(b => b.addEventListener('click', () => { mode = b.dataset.cfm; run(); }));
+  run(); });
 AFTER.push(r => { if (r.name !== 'learning') return; const v = $('#main .view'); if (!v || $('#airec')) return;
   v.insertAdjacentHTML('afterbegin', `<section class="sec" id="airec" style="padding-bottom:0"><div class="wrap"><div class="card stack" style="gap:10px"><b>${T('لا تعرف من أين تبدأ؟ اسأل المساعد الذكي', 'Not sure where to start? Ask the smart assistant')}</b><input id="airq" maxlength="200" placeholder="${T('اكتب هدفك، مثال: أريد أن أصبح مطور مواقع', 'Type your goal, e.g. I want to become a web developer')}" style="width:100%;border:1px solid var(--line2);border-radius:12px;padding:10px;font:inherit;background:var(--bg);color:inherit"><button class="btn primary" data-act="aiRec">${T('اقترح لي كورس', 'Suggest a course')}</button><div id="aira" class="sm muted" style="white-space:pre-wrap" aria-live="polite"></div></div></div></section>`); });
 Object.assign(A, { async aiRec() {
