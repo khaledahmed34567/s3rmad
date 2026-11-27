@@ -935,9 +935,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var u = firebase.auth().currentUser; if (!u) return;
     firebase.firestore().collection("users").doc(u.uid).collection("labs").doc(id)
       .set({ done: true, at: Date.now() }, { merge: true }).then(function(){
-        if (DATA && DATA.myLabs) DATA.myLabs[id] = Object.assign({}, DATA.myLabs[id] || {}, { done: true });
+        if (DATA && DATA.myLabs) DATA.myLabs[id] = Object.assign({}, DATA.myLabs[id] || {}, { done: true, at: Date.now() });
         if (DATA){ var n = 0; (DATA.labs || []).forEach(function(y){ if (DATA.myLabs[y.id] && DATA.myLabs[y.id].done) n++; }); DATA.labsDone = n; }
         $("sLabs").textContent = String((DATA && DATA.labsDone) || 0);
+        renderActivity();
         $("labRes").innerHTML += '<div class="ok" style="margin-top:6px">' + (lang === "ar" ? "اتحفظت التجربة في حسابك ✓" : "Lab saved to your account ✓") + '</div>';
       }).catch(function(){});
   }
