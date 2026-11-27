@@ -2229,7 +2229,7 @@ function vAccount() {
   const u = S.user, tab = S.tab;
   const tabs = [['profile', 'user', T('الملف الشخصي', 'Profile')], ['learning', 'book', T('تعلّمي', 'My learning')], ['linked', 'link', T('الحسابات المربوطة', 'Linked services')], ['payments', 'card', T('المدفوعات', 'Payments')], ['requests', 'send', T('طلباتي', 'My requests')]];
   let body = '';
-  if (tab === 'profile') { const p = u.profile || {}; body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('الملف الشخصي', 'Profile')}</h2><form class="form" data-form="profile" style="max-width:560px"><div class="field"><label for="p-name">${T('الاسم', 'Name')}</label><input id="p-name" name="name" required value="${esc(u.name)}"></div><div class="field"><label for="p-email">${T('البريد الإلكتروني', 'Email')}</label><input id="p-email" value="${esc(u.email)}" readonly dir="ltr"></div>${phoneField('p-phone', 'phone', u.phone)}${personFields(p)}<h3 class="h3" style="margin-top:8px">${T('البيانات الدراسية (سرمد ليرننج)', 'Study details (Sarmad Learning)')}</h3>${studyFields(u.study || {})}<div class="err" id="auth-err"></div><div><button class="btn primary" type="submit">${T('حفظ', 'Save')}</button></div></form>`; }
+  if (tab === 'profile') { const p = u.profile || {}; body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('الملف الشخصي', 'Profile')}</h2><form class="form" data-form="profile" style="max-width:560px"><div class="field"><label for="p-name">${T('الاسم', 'Name')}</label><input id="p-name" name="name" required value="${esc(u.name)}"></div><div class="field"><label for="p-email">${T('البريد الإلكتروني', 'Email')}</label><input id="p-email" value="${esc(u.email)}" readonly dir="ltr"></div>${(typeof tgEmailBox === 'function') ? tgEmailBox(u) : ''}${phoneField('p-phone', 'phone', u.phone)}${personFields(p)}<h3 class="h3" style="margin-top:8px">${T('البيانات الدراسية (سرمد ليرننج)', 'Study details (Sarmad Learning)')}</h3>${studyFields(u.study || {})}<div class="err" id="auth-err"></div><div><button class="btn primary" type="submit">${T('حفظ', 'Save')}</button></div></form>`; }
   if (tab === 'learning') {
     const mine = COURSES.filter(c => S.enr[c.id]);
     body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('تعلّمي', 'My learning')}</h2>` + (mine.length ? `<div class="grid g2">${mine.map(courseCard).join('')}</div>` : `<div class="empty">${T('لم تبدأ أي كورس بعد.', 'You have not started a course yet.')}<a class="btn primary sm" href="#learning">${T('تصفح الكورسات', 'Browse courses')}</a></div>`);
@@ -4257,5 +4257,63 @@ html[data-theme="dark"] .modal.ai-modal .err,html.dark .modal.ai-modal .err{colo
 html[data-theme="dark"] #lab-code,html.dark #lab-code{background:#0d1f1b;color:#f4ecd6;border:1px solid #305245;border-radius:12px;padding:12px}
 html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
 </style>
+<script>
+
+/* --- Add a real email for Telegram-only accounts --- */
+(function(){
+  var API = 'https://sarmad-bot.khaledahmedelbrbary80.workers.dev';
+  function L(ar,en){ return (document.documentElement.lang||'ar').indexOf('en')===0 ? en : ar; }
+  window.tgEmailBox = function(u){
+    if (!u || !/@tg\.sarmad\.qd\.je$/.test(u.email||'')) return '';
+    return '<div id="tge" style="margin-top:18px;padding:16px;border:1px solid var(--line2);border-radius:14px;background:var(--accent-soft)">'
+      + '<b style="display:block;font-size:14.5px;margin-bottom:6px">' + L('أضف إيميلك الحقيقي','Add your real email') + '</b>'
+      + '<p class="sm" style="margin:0 0 12px;color:var(--muted);line-height:1.8">' + L('حسابك اتفتح من تيليجرام، فمفيش إيميل حقيقي عليه. أضف إيميلك عشان تدخل بكود وتوصلك الفواتير والشهادات عليه.','Your account was created through Telegram, so it has no real email yet. Add one to sign in with a code and receive receipts and certificates.') + '</p>'
+      + '<div id="tge-step1"><input id="tge-email" type="email" dir="ltr" placeholder="name@example.com" style="width:100%;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;font:inherit;background:#fff">'
+      + '<button class="btn primary" type="button" data-tge="send" style="margin-top:10px">' + L('أرسل كود التأكيد','Send code') + '</button></div>'
+      + '<div id="tge-step2" style="display:none;margin-top:10px"><input id="tge-code" inputmode="numeric" maxlength="6" dir="ltr" placeholder="000000" style="width:100%;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;font:inherit;letter-spacing:8px;text-align:center;background:#fff">'
+      + '<button class="btn primary" type="button" data-tge="verify" style="margin-top:10px">' + L('تأكيد','Confirm') + '</button></div>'
+      + '<div id="tge-msg" class="sm" style="margin-top:10px"></div></div>';
+  };
+  function msg(t, bad){ var m=document.getElementById('tge-msg'); if(!m) return; m.textContent=t; m.style.color = bad ? '#9c2f16' : '#145c46'; }
+  function tok(){ try { return firebase.auth().currentUser.getIdToken(); } catch(e){ return Promise.resolve(''); } }
+  document.addEventListener('click', function(ev){
+    var b = ev.target.closest ? ev.target.closest('[data-tge]') : null;
+    if (!b) return;
+    var act = b.getAttribute('data-tge');
+    if (act === 'send'){
+      var em = (document.getElementById('tge-email')||{}).value || '';
+      em = em.trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { msg(L('اكتب إيميل صحيح.','Enter a valid email.'),1); return; }
+      b.disabled = true; msg(L('جاري الإرسال...','Sending...'));
+      tok().then(function(t){
+        return fetch(API+'/otpmail/start',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:t,email:em})}).then(function(r){return r.json()});
+      }).then(function(j){
+        b.disabled = false;
+        if (j && j.ok && j.sent){ document.getElementById('tge-step2').style.display='block'; msg(L('بعتنالك كود على ','We sent a code to ')+em); }
+        else if (j && j.ok && j.why==='slow') msg(L('استنى لحظة قبل ما تطلب كود جديد.','Wait a moment before requesting a new code.'),1);
+        else if (j && j.why==='taken') msg(L('الإيميل ده مستخدم في حساب تاني.','That email is already used by another account.'),1);
+        else if (j && j.why==='same') msg(L('ده نفس إيميل حسابك.','That is already your email.'),1);
+        else if (j && j.why==='auth') msg(L('سجل خروج وادخل تاني وجرب.','Sign out and back in, then try again.'),1);
+        else msg(L('حصلت مشكلة. جرب تاني.','Something went wrong. Try again.'),1);
+      }).catch(function(){ b.disabled=false; msg(L('حصلت مشكلة في الاتصال.','Connection problem.'),1); });
+    }
+    if (act === 'verify'){
+      var c = ((document.getElementById('tge-code')||{}).value||'').replace(/\D/g,'');
+      if (c.length !== 6){ msg(L('اكتب الكود (6 أرقام).','Enter the 6-digit code.'),1); return; }
+      b.disabled = true; msg(L('جاري التأكيد...','Confirming...'));
+      tok().then(function(t){
+        return fetch(API+'/otpmail/check',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:t,code:c})}).then(function(r){return r.json()});
+      }).then(function(j){
+        b.disabled = false;
+        if (j && j.ok){ msg(L('تم. إيميلك اتحدث. جاري تحديث الصفحة...','Done. Your email is updated. Reloading...')); setTimeout(function(){ location.reload(); }, 1600); }
+        else if (j && j.why==='bad') msg(L('الكود غلط. جرب تاني.','Wrong code. Try again.'),1);
+        else if (j && j.why==='expired') msg(L('الكود انتهت صلاحيته. اطلب كود جديد.','Code expired. Request a new one.'),1);
+        else if (j && j.why==='update') msg(L('تعذر تحديث الإيميل. كلم الدعم.','Could not update the email. Contact support.'),1);
+        else msg(L('حصلت مشكلة. جرب تاني.','Something went wrong. Try again.'),1);
+      }).catch(function(){ b.disabled=false; msg(L('حصلت مشكلة في الاتصال.','Connection problem.'),1); });
+    }
+  });
+})();
+</script>
 </body>
 </html>
