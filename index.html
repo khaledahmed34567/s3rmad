@@ -2360,7 +2360,7 @@ function ring(pct, size = 64, label = true) {
   const r = 26, C = +(2 * Math.PI * r).toFixed(1), off = +(C * (1 - pct / 100)).toFixed(1);
   return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 64 64" role="img" aria-label="${pct}%"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--bg3)" stroke-width="7"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 32 32)" style="--full:${C}"/>${label ? `<text x="32" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="var(--fg)">${pct}%</text>` : ''}</svg>`;
 }
-const STEP_META = { text: ['book', T => T('نص', 'Text')], video: ['video', T => T('فيديو', 'Video')], audio: ['headphones', T => T('صوت', 'Audio')], pdf: ['file', () => 'PDF'], choose: ['help', T => T('اختر', 'Choose')], complete: ['pen', T => T('أكمل', 'Complete')], article: ['book', T => T('مقال', 'Article')] };
+const STEP_META = { text: ['book', T => T('نص', 'Text')], video: ['video', T => T('فيديو', 'Video')], audio: ['headphones', T => T('صوت', 'Audio')], pdf: ['file', () => 'PDF'], choose: ['help', T => T('اختر', 'Choose')], complete: ['pen', T => T('أكمل', 'Complete')], article: ['book', T => T('مقال', 'Article')], lab: ['pen', T => T('معمل', 'Lab')] };
 const stepMeta = s => { const m = STEP_META[s.type] || STEP_META.text; return [m[0], m[1](T)]; };
 
 /* ---------- learning sub-navigation ---------- */
@@ -2438,6 +2438,8 @@ function retryHtml(c, l, s, i, ans) {
   const P = lessonP(c.id, l.id), left = triesOf(s) - usedOf(P, i);
   return left > 0 ? `<button class="btn sm" style="margin-top:12px" data-act="stepRetry" data-c="${c.id}" data-l="${l.id}" data-i="${i}">${T('أعد المحاولة', 'Try again')} (${left})</button>` : `<p class="xs muted" style="margin-top:12px">${T('استُنفدت محاولات هذا السؤال.', 'No attempts left for this question.')}</p>`;
 }
+const labTicks = (cid, lid, i) => ls.get('lab.' + cid + '.' + lid + '.' + i, []);
+const labAll = (c, l, s, i) => { const n = (L(s.tasks) || []).length, tk = labTicks(c.id, l.id, i); return n === 0 || (tk.filter(Boolean).length >= n); };
 function stepContent(c, l, s, i, sq) {
   const ans = sq && sq[i];
   const head = `<div class="blk-h">${icon(stepMeta(s)[0])} ${stepMeta(s)[1]} · ${T('المهمة', 'Task')} ${i + 1}/${l.steps.length}</div><h2 class="h2" style="font-size:clamp(1.4rem,3vw,2rem);margin:6px 0 18px">${esc(L(s.t))}</h2>`;
@@ -2449,6 +2451,10 @@ function stepContent(c, l, s, i, sq) {
   if (s.type === 'choose') {
     const order = permute(s.o.length, c.id + l.id + i);
     return head + `<p class="lead" style="color:var(--fg);margin-bottom:16px">${esc(L(s.q))}</p><div class="stack" style="gap:10px">${order.map(k => `<button class="opt ${ans ? (k === s.a ? 'good' : ans.v === k ? 'bad' : '') : ''}" ${ans ? 'disabled' : ''} data-act="stepPick" data-c="${c.id}" data-l="${l.id}" data-i="${i}" data-v="${k}">${ans ? (k === s.a ? icon('check') : ans.v === k ? icon('x') : '') : ''}<span>${esc(LSx(s.o[k]))}</span></button>`).join('')}</div>${ans ? `<div class="callout" style="margin-top:16px">${ans.ok ? T('إجابة صحيحة.', 'Correct.') : T('إجابة غير صحيحة.', 'Not quite.')} ${s.x ? esc(L(s.x)) : ''}</div>${retryHtml(c, l, s, i, ans)}` : `<p class="xs muted" style="margin-top:12px">${triesHint(s, c.id, l.id, i)}</p>`}`;
+  }
+  if (s.type === 'lab') {
+    const tk = labTicks(c.id, l.id, i), tasks = (L(s.tasks) || []);
+    return head + `${s.goal && L(s.goal) ? `<div class="callout" style="margin-bottom:14px"><b>${T('الهدف', 'Goal')}</b><br>${esc(L(s.goal))}</div>` : ''}<div class="stack" style="gap:8px">${tasks.map((x, k) => `<button class="opt ${tk[k] ? 'good' : ''}" data-act="labTick" data-c="${c.id}" data-l="${l.id}" data-i="${i}" data-k="${k}" aria-pressed="${!!tk[k]}">${tk[k] ? icon('check') : (k + 1)} ${esc(x)}</button>`).join('')}</div><p class="xs muted" style="margin-top:10px">${tk.filter(Boolean).length}/${tasks.length} ${T('خطوات منفذة', 'steps done')}</p>${s.hint && L(s.hint) ? `<details style="margin-top:12px"><summary>${T('تلميح', 'Hint')}</summary><p class="sm">${esc(L(s.hint))}</p></details>` : ''}${s.result && L(s.result) ? `<div class="callout" style="margin-top:14px"><b>${T('النتيجة المتوقعة', 'Expected result')}</b><br>${esc(L(s.result))}</div>` : ''}`;
   }
   if (s.type === 'complete') {
     const parts = esc(L(s.q)).split('___');
@@ -2468,7 +2474,7 @@ function vLecture(c, l) {
   const last = i === l.steps.length - 1, answered = !!sd[i] || (!S.user && !isQ);
   if (seqLocked(c, l)) return learnNav() + lockedLecture(c, l, side);
   const st = quizStat(l, P), allDone = l.steps.every((x, k) => sd[k]), pass = passOf(l), lecDone = lessonDone(c, l), leftR = roundsOf(l) - (P.round || 0);
-  const canDone = !!S.user && !sd[i] && (!isQ || qFinished(s, P, i));
+  const canDone = !!S.user && !sd[i] && (!isQ || qFinished(s, P, i)) && (s.type !== 'lab' || labAll(c, l, s, i));
   const result = last && allDone && hasQuiz(l) && !lecDone ? `<div class="callout" style="margin-top:20px"><b>${T('لم تحقق النتيجة المطلوبة', 'Required score not reached')}</b><br>${T('نتيجتك', 'Your score')} ${st.pct}% — ${T('المطلوب', 'required')} ${pass}%.<br>${leftR > 0 ? `<button class="btn primary sm" style="margin-top:10px" data-act="quizRetake" data-c="${c.id}" data-l="${l.id}">${T('إعادة الاختبار', 'Retake quiz')} (${leftR})</button>` : `${T('استُنفدت مرات الإعادة. تواصل مع الدعم لفتح المحاضرة التالية.', 'No retakes left. Contact support to unlock the next lecture.')} <a class="link" target="_blank" rel="noopener" href="${tgLink('quiz_' + c.id + '_' + l.id)}">${T('الدعم', 'Support')}</a>`}</div>` : (last && lecDone && hasQuiz(l) ? `<div class="callout" style="margin-top:20px">${T('نجحت بنتيجة', 'Passed with')} ${st.pct}% ✓</div>` : '');
   return learnNav() + `<div class="learn">${side}<div class="learn-main"><div class="crumb"><a href="#learning">${T('سرمد ليرننج', 'Sarmad Learning')}</a>${icon('chev')}<a href="#course-${c.id}">${L(c.t)}</a>${icon('chev')}<span>${T('محاضرة', 'Lecture')} ${idx + 1}/${ls_.length}</span></div><div class="row" style="margin:-6px 0 14px">${shareBtn('learn-' + c.id + '-' + l.id, L(l.t), 'chip', T('مشاركة المحاضرة', 'Share lecture'))}${shareBtn('learn-' + c.id + '-' + l.id + '-' + (i + 1), L(l.t) + ' · ' + T('مهمة ', 'Task ') + (i + 1), 'chip', T('مشاركة المهمة', 'Share task'))}</div>
     ${l.cover && /^https:\/\//.test(l.cover) ? `<figure class="lec-cover"><img src="${esc(l.cover)}" alt="" draggable="false"></figure>` : ''}<h1 class="h1" style="font-size:clamp(1.7rem,3.4vw,2.5rem);margin-bottom:18px">${L(l.t)}</h1>
@@ -2501,8 +2507,10 @@ Object.assign(A, {
     if (ans0(c, l, i)) return; await saveStepPatch(c, l, n => { const k = (n.tr[i] || 0) + 1; n.tr[i] = k; n.sq[i] = { txt, ok, n: k }; }); render();
   },
   async stepRetry(el) { const { c, l } = el.dataset, i = +el.dataset.i, s = allLessons(courseOf(c)).find(x => x.id === l).steps[i], P = lessonP(c, l), a = (P.sq || {})[i]; if (!a || a.ok || usedOf(P, i) >= triesOf(s) || (P.steps || {})[i]) return; await saveStepPatch(c, l, n => { delete n.sq[i]; }); render(); },
+  labTick(el) { const { c, l } = el.dataset, i = +el.dataset.i, k = +el.dataset.k, tk = labTicks(c, l, i).slice(); tk[k] = !tk[k]; ls.set('lab.' + c + '.' + l + '.' + i, tk); render(); },
   async stepDone(el) {
     if (!S.user) return needAuth(); const { c, l } = el.dataset, i = +el.dataset.i, s = allLessons(courseOf(c)).find(x => x.id === l).steps[i], P = lessonP(c, l);
+    if (s.type === 'lab' && !labAll(courseOf(c), allLessons(courseOf(c)).find(x => x.id === l), s, i)) return toast(T('نفّذ كل خطوات المعمل أولًا.', 'Complete all lab steps first.'));
     if (isQStep(s) && !qFinished(s, P, i)) return toast(T('أجب عن السؤال أولًا.', 'Answer the question first.'));
     await saveStepPatch(c, l, n => { n.steps[i] = true; }); const nl = lessonP(c, l); toast(T('تم إتمام المهمة ✓', 'Task completed ✓')); render();
   },
