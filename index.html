@@ -1495,8 +1495,13 @@ const DB = {
   },
   async invoice(ref) { const d = await fbDb.collection('invoices').doc(ref).get(); return d.exists ? { id: d.id, ...d.data(), paidAt: toMs(d.data().paidAt) } : null; },
   async cert(code) { const d = await fbDb.collection('certs').doc(code).get(); return d.exists ? { id: d.id, ...d.data(), at: toMs(d.data().at) } : null; },
+  async myAid() {
+    const u = fbAuth && fbAuth.currentUser; if (!u) return null;
+    const q = await fbDb.collection('aid').where('userId', '==', u.uid).limit(1).get();
+    let r = null; q.forEach(d => { r = { id: d.id, ...d.data() }; }); return r;
+  },
   async submitAid(d) {
-    const u = fbAuth && fbAuth.currentUser, { idFront, idBack, ...main } = d, ref = fbDb.collection('aid').doc(), b = fbDb.batch();
+    const u = fbAuth && fbAuth.currentUser, { idFront, idBack, ...main } = d, ref = fbDb.collection('aid').doc(u ? u.uid : 'anon'), b = fbDb.batch();
     b.set(ref, { ...main, status: 'new', userId: u ? u.uid : null, at: tsNow() }); b.set(ref.collection('docs').doc('front'), { d: idFront }); b.set(ref.collection('docs').doc('back'), { d: idBack }); await b.commit(); return ref.id;
   },
   async resubmitOrder(id, receipt) { await fbDb.collection('orders').doc(id).update({ receipt, status: 'pending', resubAt: tsNow() }); },
@@ -3159,13 +3164,21 @@ function aidSlot(side) {
   const img = AID.img[side];
   return `<div class="aid-slot ${img ? 'has' : ''}" id="slot-${side}"><div class="aid-th">${img ? `<img src="${img}" alt="">` : icon('camera')}</div><div class="stack" style="gap:8px"><b class="sm" id="slot-l-${side}">${docLabel(side)} *</b><div class="row" style="gap:8px"><button type="button" class="btn sm primary" data-act="scanOpen" data-v="${side}">${icon('camera')} ${img ? T('إعادة المسح', 'Rescan') : T('مسح بالكاميرا', 'Scan with camera')}</button></div></div></div>`;
 }
+function aidDone(r) {
+  const st = String((r && r.status) || 'new');
+  const msg = (st === 'accepted' || st === 'approved') ? T('تم قبول طلبك، وتفاصيل الدعم وصلتك على بريدك.', 'Your request was accepted and the support details were sent to your email.')
+    : (st === 'rejected') ? T('راجعنا طلبك ولم يُقبل هذه المرة. لو ظروفك اتغيرت، كلّم فريق الدعم.', 'We reviewed your request and it was not accepted this time. If your situation changes, contact support.')
+      : T('طلبك وصلنا وهو قيد المراجعة. مش محتاج تبعت تاني، وهنبلغك على بريدك أول ما يتراجع.', 'We received your request and it is under review. You do not need to send it again; we will email you once it is reviewed.');
+  return `<div class="card stack" style="text-align:center;justify-items:center;padding:34px 22px"><span class="done-check" role="img"></span><h2 class="h2">${T('طلبك مسجّل عندنا', 'Your request is already with us')}</h2><p class="muted" style="max-width:520px">${msg}</p><p class="muted sm">${T('طلب المساعدة بيتبعت مرة واحدة بس لكل حساب.', 'The support request can be sent only once per account.')}</p><a class="btn" href="#support">${T('كلّم الدعم', 'Contact support')}</a></div>`;
+}
 function vAid() {
   const u = S.user || {}, p = u.profile || {};
   const sec = (n, h, body) => `<div class="card stack" style="gap:16px"><h2 class="h3" style="margin:0"><span class="aid-n">${n}</span> ${h}</h2>${body}</div>`;
   const fld = (id, name, label, extra = '', type = 'text') => `<div class="field"><label for="${id}">${label}</label><input id="${id}" name="${name}" type="${type}" ${extra}></div>`;
   const incomes = [T('أقل من 2000 جنيه', 'Under EGP 2,000'), T('2000 إلى 4000', 'EGP 2,000 – 4,000'), T('4000 إلى 7000', 'EGP 4,000 – 7,000'), T('أكثر من 7000', 'Over EGP 7,000')];
+  if (S.user) { try { DB.myAid().then(r => { const w = $('#aidwrap'); if (w && r) w.innerHTML = aidDone(r); }).catch(() => { }); } catch (e) { } }
   return pageHead(T('نساعد بعض', 'We help each other'), T('ادعم رحلتك التعليمية', 'Support for your learning journey'), T('لو ظروفك المادية لا تسمح بدفع رسوم الكورسات، قدّم طلب دعم ويراجعه فريق سرمد. كل البيانات سرّية ولا يراها غير الفريق المختص.', 'If your financial situation does not allow you to pay course fees, submit a support request that the Sarmad team will review. All data is confidential and seen only by the responsible team.'))
-    + `<section class="sec" style="padding-top:0"><div class="wrap" style="max-width:860px"><div class="note" style="margin-bottom:18px">${icon('shield')}<span>${T('بطاقتك ورقمك القومي يُحفظان بسرّية، ويُخفى رقمك بعد التسجيل، ولا يراه إلا مراجع الطلب. بعد القبول ستصلك رسالة على بريدك: تابعه جيدًا.', 'Your ID and national number are stored confidentially; the number is masked after registration and only the reviewer can see it. After acceptance you will receive a message at your email: watch it closely.')}</span></div>
+    + `<section class="sec" style="padding-top:0"><div class="wrap" id="aidwrap" style="max-width:860px"><div class="note" style="margin-bottom:18px">${icon('shield')}<span>${T('بطاقتك ورقمك القومي يُحفظان بسرّية، ويُخفى رقمك بعد التسجيل، ولا يراه إلا مراجع الطلب. بعد القبول ستصلك رسالة على بريدك: تابعه جيدًا.', 'Your ID and national number are stored confidentially; the number is masked after registration and only the reviewer can see it. After acceptance you will receive a message at your email: watch it closely.')}</span></div>
     <form class="stack" style="gap:18px" data-form="aid" novalidate autocomplete="off">
       <input name="website" tabindex="-1" autocomplete="off" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;clip-path:inset(50%)" aria-hidden="true">
       ${sec(1, T('البيانات الشخصية', 'Personal details'), `${fld('a-name', 'name', T('الاسم الرباعي', 'Full name (four parts)') + ' *', `required value="${esc(u.name || '')}" autocomplete="name"`)}
@@ -3308,7 +3321,11 @@ FORMS.aid = async f => {
   err.textContent = '';
   if (!(await gateActive())) { needActive(T('لازم تفعّل حسابك قبل ما تبعت طلب المساعدة.', 'Activate your account before sending the aid request.')); return; }
   if (!(await actOtp('support'))) { err.textContent = T('لازم تأكيد الكود قبل إرسال الطلب.', 'Confirm the code before sending the request.'); return; }
-  const aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null });
+  let aidId; try { aidId = await DB.submitAid({ name: name.join(' '), natId: nid.n, birth: nid.birth, gender: nid.gender, phone: ph, whatsapp: wa, email: em, city: d.get('city'), address: d.get('address').trim(), study: st.data, gpa: (d.get('gpa') || '').trim(), famSize: fam, income: d.get('income'), famStatus: d.get('famstatus'), parentJob: d.get('parentjob').trim(), device: d.get('device'), internet: d.get('internet'), want, reason: why, docKind: d.get('dockind'), idFront: AID.img.front, idBack: AID.img.back, docFields: AID.fields || null }); } catch (e) {
+    const w = $('#aidwrap');
+    if (String((e && e.code) || '') === 'permission-denied' && w) { w.innerHTML = aidDone({ status: 'new' }); return; }
+    return bad(T('تعذر إرسال الطلب. جرّب تاني، ولو كنت بعت طلب قبل كده مش هينفع تبعت تاني.', 'Could not send the request. Try again; if you already sent one, it cannot be sent again.'));
+  }
   try { fetch(KYCN, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: aidId, kind: d.get('dockind') === 'nid' ? 'nid' : 'univ', fields: Object.assign({ _who: name.join(' ') }, AID.fields || {}) }) }); } catch (e) { }
   AID.fields = {};
   ls.set('aidSent', Date.now()); const masked = maskNid(nid.n); AID.img = {};
