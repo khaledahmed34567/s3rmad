@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f6b56">
+<title>الدخول - سرمد ليرننج</title>
+<link rel="preconnect" href="https://www.gstatic.com">
+<style>
+:root{
+  --bg:#fbf7ec;--bg2:#f3ecd9;--bg3:#e9dfc5;--fg:#1b2b25;--muted:#68705f;
+  --line:#e6dcc0;--line2:#cdbf98;--accent:#0f6b56;--accent-soft:#e2eee3;
+  --accent-ink:#fbf7ec;--gold:#b8892b;--ok:#2e7d32;--warn:#b45309;
+  --card:#ffffff;--shadow:0 10px 30px rgba(27,43,37,.10),0 2px 6px rgba(27,43,37,.06);
+  --r:16px;--r-sm:10px;
+  --f:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,"Noto Kufi Arabic",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--f);color:var(--fg);background:var(--bg);min-height:100vh;
+  display:flex;align-items:center;justify-content:center;padding:24px 16px 40px;
+  background-image:radial-gradient(900px 420px at 80% -10%,var(--accent-soft),transparent 70%),
+                   radial-gradient(700px 380px at 0% 110%,var(--bg2),transparent 70%);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{width:100%;max-width:430px}
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin:0 0 18px}
+.mark{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;font-weight:800;font-size:20px;box-shadow:0 4px 12px rgba(15,107,86,.25)}
+.brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.2px}
+.brand span{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:22px}
+.card h2{margin:0 0 4px;font-size:17px;font-weight:800}
+.card p.sub{margin:0 0 18px;font-size:13px;color:var(--muted);line-height:1.7}
+label{display:block;font-size:12.5px;font-weight:700;margin:0 0 6px;color:var(--fg)}
+input{width:100%;padding:13px 14px;font-size:15px;font-family:var(--f);color:var(--fg);
+  background:var(--bg);border:1px solid var(--line2);border-radius:var(--r-sm);outline:none;transition:.15s}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);background:#fff}
+input::placeholder{color:#9aa294}
+.code-input{letter-spacing:10px;text-align:center;font-size:22px;font-weight:800;direction:ltr;font-family:ui-monospace,Menlo,Consolas,monospace}
+.btn{width:100%;margin-top:14px;padding:13px 16px;font-size:15px;font-weight:800;font-family:var(--f);
+  color:var(--accent-ink);background:var(--accent);border:0;border-radius:var(--r-sm);cursor:pointer;transition:.15s}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line2);font-weight:700}
+.row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.link{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.mini{font-size:12px;color:var(--muted)}
+.msg{margin-top:14px;padding:10px 12px;border-radius:var(--r-sm);font-size:13px;line-height:1.6;display:none}
+.msg.err{display:block;background:#fdf1ee;border:1px solid #f3d3cb;color:#9c2f16}
+.msg.ok{display:block;background:var(--accent-soft);border:1px solid #c9e0cd;color:#145c46}
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0 6px;color:var(--muted);font-size:11.5px;font-weight:700}
+.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+.hidden{display:none!important}
+.foot{text-align:center;margin:16px 0 0;font-size:12px;color:var(--muted);line-height:1.8}
+.foot a{color:var(--accent);text-decoration:none;font-weight:700}
+.hint{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.7}
+.lang{position:fixed;top:14px;inset-inline-start:14px;background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;font:inherit;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer}
+@media (max-width:380px){.card{padding:18px}}
+</style>
+</head>
+<body>
+<button class="lang" id="langBtn" type="button">EN</button>
+<div class="wrap">
+  <div class="brand">
+    <div class="mark">س</div>
+    <div>
+      <h1 id="tName">سرمد ليرننج</h1>
+      <span id="tSub">منصة الكورسات والاختبارات</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="tTitle">الدخول إلى حسابك</h2>
+    <p class="sub" id="tDesc">اكتب إيميلك وهنبعتلك كود دخول. مش محتاج كلمة سر.</p>
+
+    <div id="stepEmail">
+      <label id="tEmailLbl" for="email">الإيميل</label>
+      <input id="email" type="email" inputmode="email" autocomplete="email" dir="ltr" placeholder="name@example.com">
+      <button class="btn" id="sendBtn" type="button">أرسل كود الدخول</button>
+      <div class="hint" id="tHint">الكود بيوصلك على إيميلك خلال دقيقة. لو مش لاقيه، شوف مجلد الرسائل غير المرغوب فيها.</div>
+    </div>
+
+    <div id="stepCode" class="hidden">
+      <label id="tCodeLbl" for="code">كود الدخول</label>
+      <input id="code" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+      <button class="btn" id="verifyBtn" type="button">دخول</button>
+      <div class="row">
+        <button class="link" id="backBtn" type="button">تغيير الإيميل</button>
+        <span class="mini" id="resendWrap"><button class="link" id="resendBtn" type="button">إعادة إرسال الكود</button></span>
+      </div>
+    </div>
+
+    <div class="msg" id="msg"></div>
+
+    <div class="divider" id="tOr">أو</div>
+    <button class="link" id="pwToggle" type="button">الدخول بكلمة السر</button>
+
+    <div id="stepPw" class="hidden">
+      <div style="margin-top:14px">
+        <label id="tPwLbl" for="pw">كلمة السر</label>
+        <input id="pw" type="password" autocomplete="current-password" dir="ltr" placeholder="••••••••">
+        <button class="btn ghost" id="pwBtn" type="button">دخول بكلمة السر</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">
+    <span id="tHelp">محتاج مساعدة؟</span> <a href="mailto:contact@sarmad.qd.je">contact@sarmad.qd.je</a>
+  </p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+(function(){
+  "use strict";
+  var API = "https://sarmad-bot.khaledahmedelbrbary80.workers.dev";
+  var CFG = {
+    apiKey: "AIzaSyDwo9ylUI7cq7DodekA0vM7iMw-6COp3BI",
+    authDomain: "saemad-8a204.firebaseapp.com",
+    projectId: "saemad-8a204",
+    storageBucket: "saemad-8a204.firebasestorage.app",
+    messagingSenderId: "676932025599",
+    appId: "1:676932025599:web:dc5a0a5302a353ad3a60ca"
+  };
+  var HOME = "/#learning";
+
+  firebase.initializeApp(CFG);
+  var auth = firebase.auth();
+
+  var $ = function(id){ return document.getElementById(id); };
+  var elEmail=$("email"), elCode=$("code"), elPw=$("pw"), elMsg=$("msg");
+  var stepEmail=$("stepEmail"), stepCode=$("stepCode"), stepPw=$("stepPw");
+  var sendBtn=$("sendBtn"), verifyBtn=$("verifyBtn"), resendBtn=$("resendBtn"), pwBtn=$("pwBtn");
+  var email = "", lang = "ar", timer = null, busy = false;
+
+  var TXT = {
+    ar: {
+      name:"سرمد ليرننج", sub:"منصة الكورسات والاختبارات",
+      title:"الدخول إلى حسابك",
+      desc:"اكتب إيميلك وهنبعتلك كود دخول. مش محتاج كلمة سر.",
+      emailLbl:"الإيميل", codeLbl:"كود الدخول", pwLbl:"كلمة السر",
+      send:"أرسل كود الدخول", verify:"دخول", back:"تغيير الإيميل", resend:"إعادة إرسال الكود",
+      or:"أو", pwToggle:"الدخول بكلمة السر", pwBtn:"دخول بكلمة السر", help:"محتاج مساعدة؟",
+      hint:"الكود بيوصلك على إيميلك خلال دقيقة. لو مش لاقيه، شوف مجلد الرسائل غير المرغوب فيها.",
+      sent:"بعتنالك كود على ", enter:"اكتب الكود اللي وصلك (6 أرقام).",
+      badEmail:"اكتب إيميل صحيح.", wrong:"الكود غلط. اتأكد منه وجرب تاني.",
+      expired:"الكود انتهت صلاحيته. اطلب كود جديد.", noAcct:"مفيش حساب بالإيميل ده. اتأكد من الإيميل أو كلّم الدعم.",
+      net:"حصلت مشكلة في الاتصال. جرب تاني.", slow:"استنى لحظة قبل ما تطلب كود جديد.",
+      pwBad:"الإيميل أو كلمة السر غلط.", pwNo:"مفيش حساب بالإيميل ده.", resendIn:"إعادة الإرسال بعد ", sec:"ث"
+    },
+    en: {
+      name:"Sarmad Learning", sub:"Courses and exams",
+      title:"Sign in to your account",
+      desc:"Enter your email and we'll send you a sign-in code. No password needed.",
+      emailLbl:"Email", codeLbl:"Sign-in code", pwLbl:"Password",
+      send:"Send sign-in code", verify:"Sign in", back:"Change email", resend:"Resend code",
+      or:"or", pwToggle:"Sign in with password", pwBtn:"Sign in with password", help:"Need help?",
+      hint:"The code arrives within a minute. If you can't find it, check your spam folder.",
+      sent:"We sent a code to ", enter:"Enter the 6-digit code.",
+      badEmail:"Enter a valid email.", wrong:"That code is wrong. Check it and try again.",
+      expired:"That code has expired. Request a new one.", noAcct:"No account with that email. Check it or contact support.",
+      net:"Connection problem. Try again.", slow:"Please wait a moment before requesting a new code.",
+      pwBad:"Wrong email or password.", pwNo:"No account with that email.", resendIn:"Resend in ", sec:"s"
+    }
+  };
+  function t(k){ return (TXT[lang] && TXT[lang][k]) || TXT.ar[k] || k; }
+
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    $("langBtn").textContent = lang === "ar" ? "EN" : "ع";
+    $("tName").textContent = t("name"); $("tSub").textContent = t("sub");
+    $("tTitle").textContent = t("title"); $("tDesc").textContent = t("desc");
+    $("tEmailLbl").textContent = t("emailLbl"); $("tCodeLbl").textContent = t("codeLbl");
+    $("tPwLbl").textContent = t("pwLbl"); $("tHint").textContent = t("hint");
+    sendBtn.textContent = t("send"); verifyBtn.textContent = t("verify");
+    $("backBtn").textContent = t("back"); resendBtn.textContent = t("resend");
+    $("tOr").textContent = t("or"); $("pwToggle").textContent = t("pwToggle");
+    pwBtn.textContent = t("pwBtn"); $("tHelp").textContent = t("help");
+  }
+
+  function show(kind, text){ elMsg.className = "msg " + kind; elMsg.textContent = text; }
+  function clearMsg(){ elMsg.className = "msg"; elMsg.textContent = ""; }
+  function lock(b){ busy = b; sendBtn.disabled = b; verifyBtn.disabled = b; resendBtn.disabled = b; pwBtn.disabled = b; }
+
+  function post(path, body){
+    return fetch(API + path, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function(r){ return r.json().catch(function(){ return {}; }); });
+  }
+
+  function goHome(){ location.replace(HOME); }
+
+  function startResend(){
+    var left = 60;
+    if (timer) clearInterval(timer);
+    resendBtn.disabled = true;
+    resendBtn.textContent = t("resendIn") + left + t("sec");
+    timer = setInterval(function(){
+      left--;
+      if (left <= 0){
+        clearInterval(timer); timer = null;
+        resendBtn.disabled = false; resendBtn.textContent = t("resend");
+        return;
+      }
+      resendBtn.textContent = t("resendIn") + left + t("sec");
+    }, 1000);
+  }
+
+  function sendCode(){
+    if (busy) return;
+    var em = (elEmail.value || "").trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { show("err", t("badEmail")); elEmail.focus(); return; }
+    clearMsg(); lock(true); sendBtn.textContent = "...";
+    post("/otplogin/start", { email: em }).then(function(j){
+      lock(false); sendBtn.textContent = t("send");
+      if (!j || !j.ok) { show("err", t("net")); return; }
+      if (!j.sent && j.why === "slow") { show("err", t("slow")); return; }
+      email = em;
+      stepEmail.classList.add("hidden"); stepCode.classList.remove("hidden");
+      show("ok", t("sent") + em);
+      startResend(); elCode.focus();
+    }).catch(function(){ lock(false); sendBtn.textContent = t("send"); show("err", t("net")); });
+  }
+
+  function verify(){
+    if (busy) return;
+    var code = (elCode.value || "").replace(/\D/g, "");
+    if (code.length !== 6) { show("err", t("enter")); elCode.focus(); return; }
+    clearMsg(); lock(true); verifyBtn.textContent = "...";
+    post("/otplogin/check", { email: email, code: code }).then(function(j){
+      if (j && j.ok && j.token){
+        return auth.signInWithCustomToken(j.token).then(function(){ goHome(); });
+      }
+      lock(false); verifyBtn.textContent = t("verify");
+      if (!j || !j.ok){
+        var w = (j && j.why) || "";
+        if (w === "expired") show("err", t("expired"));
+        else if (w === "bad") show("err", t("wrong"));
+        else if (w === "lookup") show("err", t("noAcct"));
+        else show("err", t("net"));
+      }
+    }).catch(function(e){
+      lock(false); verifyBtn.textContent = t("verify");
+      show("err", t("net"));
+    });
+  }
+
+  function pwLogin(){
+    if (busy) return;
+    var em = (elEmail.value || "").trim().toLowerCase(), pw = elPw.value || "";
+    if (!em || !pw) { show("err", t("pwBad")); return; }
+    clearMsg(); lock(true); pwBtn.textContent = "...";
+    auth.signInWithEmailAndPassword(em, pw).then(function(){ goHome(); }).catch(function(e){
+      lock(false); pwBtn.textContent = t("pwBtn");
+      var c = (e && e.code) || "";
+      if (/user-not-found/.test(c)) show("err", t("pwNo"));
+      else show("err", t("pwBad"));
+    });
+  }
+
+  sendBtn.addEventListener("click", sendCode);
+  elEmail.addEventListener("keydown", function(e){ if (e.key === "Enter") sendCode(); });
+  verifyBtn.addEventListener("click", verify);
+  elCode.addEventListener("keydown", function(e){ if (e.key === "Enter") verify(); });
+  elCode.addEventListener("input", function(){
+    var v = (elCode.value || "").replace(/\D/g, "").slice(0, 6);
+    if (elCode.value !== v) elCode.value = v;
+  });
+  resendBtn.addEventListener("click", function(){ if (busy) return; sendCode(); });
+  $("backBtn").addEventListener("click", function(){
+    stepCode.classList.add("hidden"); stepEmail.classList.remove("hidden");
+    elCode.value = ""; clearMsg(); elEmail.focus();
+  });
+  $("pwToggle").addEventListener("click", function(){ stepPw.classList.toggle("hidden"); if (!stepPw.classList.contains("hidden")) elPw.focus(); });
+  pwBtn.addEventListener("click", pwLogin);
+  elPw.addEventListener("keydown", function(e){ if (e.key === "Enter") pwLogin(); });
+  $("langBtn").addEventListener("click", function(){
+    lang = lang === "ar" ? "en" : "ar"; applyLang();
+    try { localStorage.setItem("learn_lang", lang); } catch (e) {}
+  });
+
+  try { var saved = localStorage.getItem("learn_lang"); if (saved === "en" || saved === "ar") lang = saved; } catch (e) {}
+  applyLang();
+
+  auth.onAuthStateChanged(function(u){ if (u) goHome(); });
+})();
+</script>
+</body>
+</html>
