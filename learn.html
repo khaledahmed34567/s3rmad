@@ -56,6 +56,14 @@ button{font-family:inherit}
 .pathcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--sh);margin-bottom:12px}
 .pathhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .pathhead b{font-size:16px;font-weight:500}
+.week{display:flex;justify-content:space-between;gap:6px;margin-bottom:12px}
+.day{display:grid;justify-items:center;gap:5px;flex:1}
+.day i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-style:normal;background:#f0ece2;color:#8a8375}
+.day i.on{background:var(--green2);color:#fff}
+.day i.today{box-shadow:0 0 0 2.5px var(--green2)}
+.day span{font-size:10.5px;color:var(--ink2)}
+.actrow{font-size:13px;color:var(--ink2)}
+.actrow b{color:var(--ink);font-weight:500;font-size:15px}
 .sel,.ta{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;font-size:14.5px;font-family:inherit;color:var(--ink);outline:none}
 .sel:focus,.ta:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
 .ta{resize:vertical;min-height:84px}
@@ -235,6 +243,13 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   <!-- home -->
   <div id="v-home">
     <div class="sec">
+      <h2 id="actT">نشاطك</h2>
+      <div class="card2">
+        <div class="week" id="weekStrip"></div>
+        <div class="actrow"><b id="streakN">0</b> <span id="streakL">يوم متتالي</span> · <b id="weekN">0</b> <span id="weekL">أيام نشاط هذا الأسبوع</span></div>
+      </div>
+    </div>
+    <div class="sec">
       <h2 id="hCont">تابع من حيث وقفت</h2>
       <div id="homeCourses"></div>
     </div>
@@ -367,6 +382,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"حصلت مشكلة في الاتصال. جرب تاني.", slow:"استنى لحظة قبل ما تطلب كود جديد.",
       pwBad:"الإيميل أو كلمة السر غلط.", pwNo:"مفيش حساب بالإيميل ده.", resendIn:"إعادة الإرسال بعد ", sec:"ث",
       nvHome:"لوحتي", nvCourses:"كورساتي", nvLabs:"المعمل", nvAi:"الذكاء الاصطناعي", nvAch:"إنجازاتي", nvCat:"الدورات", nvPaths:"المسارات", nvDisc:"النقاشات", tDid:"اسأل وناقش في دوراتك",
+      actT:"نشاطك", streakL:"يوم متتالي", weekL:"أيام نشاط هذا الأسبوع",
       labCodeLbl:"الكود", labHintSum:"محتاج تلميح؟", labNoteLbl:"ملاحظاتي", labRun:"تشغيل", labCheck:"تحقّق", labReset:"الكود الأصلي", labCopy:"نسخ الرابط", labBack:"رجوع", labSaved:"اتحفظت التجربة في حسابك ✓",
       diLbl:"اختار الدورة", diNew:"شارك في النقاش", diSend:"إرسال", diPh:"اكتب سؤالك أو ملاحظتك",
       diEmpty:"مفيش نقاشات في الدورة دي لسه. ابدأ إنت.", diShort:"اكتب 3 حروف على الأقل.", diSent:"تم إرسال تعليقك، هيظهر بعد المراجعة.",
@@ -400,6 +416,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       net:"Connection problem. Try again.", slow:"Please wait a moment before requesting a new code.",
       pwBad:"Wrong email or password.", pwNo:"No account with that email.", resendIn:"Resend in ", sec:"s",
       nvHome:"Dashboard", nvCourses:"My courses", nvLabs:"The lab", nvAi:"AI tasks", nvAch:"Achievements", nvCat:"Courses", nvPaths:"Paths", nvDisc:"Discussions", tDid:"Ask and discuss in your courses",
+      actT:"Your activity", streakL:"day streak", weekL:"active days this week",
       labCodeLbl:"Code", labHintSum:"Need a hint?", labNoteLbl:"My notes", labRun:"Run", labCheck:"Check", labReset:"Original code", labCopy:"Copy link", labBack:"Back", labSaved:"Lab saved to your account ✓",
       diLbl:"Pick a course", diNew:"Join the discussion", diSend:"Send", diPh:"Write your question or note",
       diEmpty:"No discussions here yet. Start one.", diShort:"Write at least 3 characters.", diSent:"Your comment was sent and will appear after review.",
@@ -450,6 +467,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("lLabs").textContent = t("sLabs"); $("lSub").textContent = t("sSub");
     $("hCont").textContent = t("hCont"); $("hGo").textContent = t("hGo");
     $("nvCat").textContent = t("nvCat"); $("nvPaths").textContent = t("nvPaths"); $("nvDisc").textContent = t("nvDisc");
+    $("actT").textContent = t("actT"); $("streakL").textContent = t("streakL"); $("weekL").textContent = t("weekL");
     $("labCodeLbl").textContent = t("labCodeLbl"); $("labHintSum").textContent = t("labHintSum"); $("labNoteLbl").textContent = t("labNoteLbl");
     $("labRun").textContent = t("labRun"); $("labCheck").textContent = t("labCheck"); $("labReset").textContent = t("labReset");
     $("labCopy").textContent = t("labCopy"); $("labClose").textContent = t("labBack");
@@ -691,6 +709,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       al.appendChild(row);
     });
 
+    /* activity */
+    renderActivity();
+
     /* catalog */
     var cl2 = $("catList"); cl2.innerHTML = "";
     Object.keys(COURSES).forEach(function(id){
@@ -792,6 +813,34 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id;
     row.appendChild(a);
     return row;
+  }
+
+  /* ---- activity strip ---- */
+  function dayKeyOf(d){ return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function activityDays(){
+    var set = {};
+    function add(at){ var ms = Number(at) || 0; if (!ms) return; if (ms < 1e11) ms *= 1000; set[dayKeyOf(new Date(ms))] = 1; }
+    var D = DATA || {};
+    Object.keys(D.myLabs || {}).forEach(function(k){ var v = D.myLabs[k]; if (v && v.done) add(v.at); });
+    Object.keys(D.myTasks || {}).forEach(function(k){ var v = D.myTasks[k]; if (v && v.done) add(v.at); });
+    return set;
+  }
+  function renderActivity(){
+    var days = activityDays();
+    var names = lang === "ar" ? ["ح","ن","ث","ر","خ","ج","س"] : ["S","M","T","W","T","F","S"];
+    var today = new Date(), tk = dayKeyOf(today), html = "", week = 0;
+    for (var i = 6; i >= 0; i--){
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      var k = dayKeyOf(d), on = !!days[k];
+      if (on) week++;
+      html += '<div class="day"><i class="' + (on ? "on" : "") + (k === tk ? " today" : "") + '">' + (on ? "✓" : "") + '</i><span>' + names[d.getDay()] + '</span></div>';
+    }
+    $("weekStrip").innerHTML = html;
+    var cur = new Date(), streak = 0;
+    if (!days[dayKeyOf(cur)]) cur.setDate(cur.getDate() - 1);
+    while (days[dayKeyOf(cur)]) { streak++; cur.setDate(cur.getDate() - 1); }
+    $("streakN").textContent = String(streak);
+    $("weekN").textContent = String(week);
   }
 
   /* ---- interactive lab ---- */
