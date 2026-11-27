@@ -154,6 +154,7 @@ button.chip:hover{border-color:var(--fg)} .chip.on{background:var(--fg);color:va
 .app{display:flex;flex-direction:column;gap:16px;padding:24px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);min-width:0}
 .app-top{display:flex;gap:16px;align-items:flex-start}
 .app-ico{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:1.6rem;font-weight:var(--wh);flex:none;background:var(--fg);color:var(--bg)}
+.app-ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;pointer-events:none}.app-ico.has-img{background:var(--bg2);overflow:hidden}
 .app-ico.c1{background:var(--accent);color:var(--accent-ink)} .app-ico.c2{background:var(--bg3);color:var(--fg)}
 .dl{display:flex;flex-wrap:wrap;gap:8px}
 .dl .btn{padding:.5em .95em;font-size:.82rem;gap:8px}
@@ -787,6 +788,7 @@ const PROCESS = [
 ];
 
 /* Download links: leave '' until the build is uploaded, the button then shows "Soon". */
+const appIcon = a => typeof a.icon === 'string' && /^https:\/\//.test(a.icon) ? `<img src="${a.icon.replace(/"/g, '&quot;')}" alt="" draggable="false" referrerpolicy="no-referrer" decoding="async" onerror="this.parentNode.classList.remove('has-img');this.replaceWith(document.createTextNode(this.dataset.l||''))" data-l="${esc(a.letter || '')}">` : esc(a.letter || '');
 const APPS = [
   { id: 'sabeel', letter: 'س', c: 'c1', cat: 'edu', status: 'live',
     name: { ar: 'سبيل', en: 'Sabeel' },
@@ -1672,7 +1674,7 @@ function appBtns(a) {
 function vApp(r) {
   const a = APPS.find(x => x.id === r.id); if (!a) return v404();
   return `<section class="sec" style="padding-top:clamp(28px,4vw,56px)"><div class="wrap"><div class="crumb"><a href="#apps">${T('التطبيقات', 'Apps')}</a>${icon('chev')}<span>${L(a.name)}</span></div>
-    <div class="app" style="max-width:720px;margin-top:20px"><div class="app-top"><div class="app-ico ${a.c}">${a.letter}</div><div style="min-width:0;flex:1"><div class="row" style="gap:8px;justify-content:space-between"><h1 class="h1" style="font-size:clamp(1.8rem,4vw,2.6rem)">${L(a.name)}</h1><span class="tag">v${a.version}</span></div><p class="lead" style="margin-top:10px">${L(a.d)}</p></div></div><div class="dl">${appBtns(a)}</div><div class="row">${shareBtn('app-' + a.id, L(a.name), 'btn')}</div></div></div></section>` + ctaBand();
+    <div class="app" style="max-width:720px;margin-top:20px"><div class="app-top"><div class="app-ico ${a.c}${a.icon ? ' has-img' : ''}">${appIcon(a)}</div><div style="min-width:0;flex:1"><div class="row" style="gap:8px;justify-content:space-between"><h1 class="h1" style="font-size:clamp(1.8rem,4vw,2.6rem)">${L(a.name)}</h1><span class="tag">v${a.version}</span></div><p class="lead" style="margin-top:10px">${L(a.d)}</p></div></div><div class="dl">${appBtns(a)}</div><div class="row">${shareBtn('app-' + a.id, L(a.name), 'btn')}</div></div></div></section>` + ctaBand();
 }
 function appCard(a) {
   const os = detectOS(); const order = [os, ...PLATFORMS.filter(p => p !== os)].filter(p => p in a.dl);
@@ -1680,7 +1682,7 @@ function appCard(a) {
     const u = a.dl[p], label = L(PLATFORM_NAMES[p]);
     return u ? `<a class="btn ${p === os ? 'primary' : ''}" href="${esc(u)}" target="_blank" rel="noopener">${icon(OSIC[p])} ${label}</a>` : `<span class="btn soon">${icon(OSIC[p])} ${label} · ${T('قريبًا', 'Soon')}</span>`;
   }).join('');
-  return `<article class="app" id="app-${a.id}"><div class="app-top"><div class="app-ico ${a.c}">${a.letter}</div><div style="min-width:0;flex:1"><div class="row" style="gap:8px;justify-content:space-between"><h3 class="h3"><a href="#app-${a.id}">${L(a.name)}</a></h3><span class="tag">v${a.version}</span></div><p class="muted sm" style="margin-top:6px">${L(a.d)}</p></div></div><div class="dl">${btns}</div><div class="row" style="margin-top:10px">${shareBtn('app-' + a.id, L(a.name))}</div></article>`;
+  return `<article class="app" id="app-${a.id}"><div class="app-top"><div class="app-ico ${a.c}${a.icon ? ' has-img' : ''}">${appIcon(a)}</div><div style="min-width:0;flex:1"><div class="row" style="gap:8px;justify-content:space-between"><h3 class="h3"><a href="#app-${a.id}">${L(a.name)}</a></h3><span class="tag">v${a.version}</span></div><p class="muted sm" style="margin-top:6px">${L(a.d)}</p></div></div><div class="dl">${btns}</div><div class="row" style="margin-top:10px">${shareBtn('app-' + a.id, L(a.name))}</div></article>`;
 }
 function courseCard(c) {
   const art = coverArt(c.art, c), soon = c.status === 'soon', enrolled = !!S.enr[c.id];
@@ -2701,6 +2703,7 @@ async function loadRemote() {
     const s = await fbDb.collection('settings').doc('site').get();
     if (s.exists) {
       const d = s.data();
+      if (typeof d.appicon === 'string' && /^https:\/\//.test(d.appicon)) try { const ic = d.appicon, hd = document.head, setL = (rel, extra) => { let l = hd.querySelector('link[rel="' + rel + '"]'); if (!l) { l = document.createElement('link'); l.rel = rel; hd.appendChild(l); } if (extra) l.sizes = extra; l.href = ic; }; setL('icon'); setL('apple-touch-icon', '180x180'); const mf = { name: 'سرمد Sarmad', short_name: 'سرمد', start_url: location.origin + '/', scope: location.origin + '/', display: 'standalone', background_color: '#fbf7ec', theme_color: '#fbf7ec', lang: 'ar', dir: 'rtl', icons: [{ src: ic, sizes: '512x512', type: 'image/png', purpose: 'any' }] }; let m = hd.querySelector('link[rel="manifest"]'); if (!m) { m = document.createElement('link'); m.rel = 'manifest'; hd.appendChild(m); } m.href = URL.createObjectURL(new Blob([JSON.stringify(mf)], { type: 'application/manifest+json' })); } catch (e) { }
       if (d.plans) LEARN_PLANS.forEach(pl => { const o = d.plans[pl.id]; if (o && +o.price > 0) pl.price = +o.price; });
       const plus = LEARN_PLANS.find(x => x.id === 'plus'), pro = LEARN_PLANS.find(x => x.id === 'pro');
       if (plus && pro) { const sv = plus.price * 2 - pro.price; pro.feats[2] = sv > 0 ? { ar: 'مدة 6 أشهر، وفّر ' + sv + ' جنيه مقارنة بباقتي Plus', en: '6 months, saving EGP ' + sv + ' versus two Plus plans' } : { ar: 'مدة 6 أشهر', en: '6 months of access' }; }
