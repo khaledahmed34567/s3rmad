@@ -738,6 +738,48 @@ html.dys body{letter-spacing:.06em;word-spacing:.18em}
 img.art{width:100%;height:100%;object-fit:cover;display:block}img.art.ov{position:absolute;inset:0}.post-art,.rc-cover,.cover{position:relative}
 
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style id="certv3">
+/* ===== certificate v3: light sheet, no ornaments ===== */
+.cert2.cv3{background:#fff!important;padding:0!important;border-radius:14px!important;box-shadow:0 24px 60px -30px rgba(18,37,27,.25)!important;color:#12251b!important;border:0;font-family:'IBM Plex Sans Arabic',sans-serif}
+.cv3-frame{position:absolute;inset:30px;border:1px solid #e8ece7;pointer-events:none}
+.cv3-in{position:relative;height:100%;padding:56px 92px 44px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.cv3-h{display:flex;flex-direction:column;align-items:center;gap:12px;color:#1f5c3a}
+.cv3-h .logo{--lw:170px}
+.cv3-cap{font-size:11px;letter-spacing:.42em;color:#5f6d63;font-weight:500;text-transform:uppercase;padding-inline-start:.42em;font-family:'IBM Plex Sans',sans-serif}
+.cv3-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0;width:100%}
+.cv3-k{color:#a9853f;font-size:13.5px;letter-spacing:.5em;font-weight:600;padding-inline-start:.5em;margin:0}
+.cv3-lead{margin:20px 0 0;color:#5f6d63;font-size:15.5px;font-weight:300}
+.cv3-n{margin:14px 0 0;font-size:54px;font-weight:600;color:#12251b;line-height:1.3;max-width:100%}
+.cv3-c{margin:10px 0 0;font-size:30px;font-weight:600;color:#1f5c3a;line-height:1.45}
+.cv3-m{margin:18px 0 0;color:#5f6d63;font-size:13.5px}
+.cv3-f{margin-top:auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;width:100%;gap:16px}
+.cv3-qr{justify-self:end;display:flex;align-items:center;gap:14px}
+.cv3-qr .box{padding:8px;border:1px solid #e8ece7;border-radius:10px;line-height:0;background:#fff}
+.cv3-qr .box svg{width:92px;height:92px;display:block}
+.cv3-qr .t{text-align:start}
+.cv3-qr small{display:block;font-size:10px;color:#5f6d63;letter-spacing:.14em}
+.cv3-qr b{display:block;font-family:'IBM Plex Sans',ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600;color:#12251b;margin-top:4px;letter-spacing:.06em}
+.cv3-qr em{display:block;font-style:normal;font-size:9.5px;color:#5f6d63;margin-top:6px}
+.cv3-seal{justify-self:center;width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid #e6ddc9;background:radial-gradient(circle at 50% 42%,#fff,#faf6ec 80%)}
+.cv3-seal svg{width:38px;height:38px;color:#1f5c3a}
+.cv3-seal small{font-size:9.5px;letter-spacing:.24em;color:#a9853f;font-weight:600}
+.cv3-sg{justify-self:start;display:grid;justify-items:center;gap:4px}
+.cv3-sg img{display:block;height:74px;width:auto;max-width:230px;object-fit:contain;pointer-events:none}
+.cv3-sg i{width:230px;height:1px;background:#e8ece7}
+.cv3-sg b{font-size:13.5px;font-weight:600;color:#12251b}
+.cv3-sg span{font-size:11.5px;color:#5f6d63;letter-spacing:.04em}
+.cv3-rev{position:absolute;inset:0;display:grid;place-items:center;font-size:6rem;font-weight:800;color:rgba(120,40,40,.22);transform:rotate(-16deg);pointer-events:none}
+.cert2.cv3.rev{filter:grayscale(.5)}
+@media(max-width:900px){
+  .cv3-in{padding:38px 40px 30px}
+  .cv3-n{font-size:44px}
+  .cv3-c{font-size:26px}
+  .cv3-f{gap:8px}
+  .cv3-qr .box svg{width:74px;height:74px}
+  .cv3-sg img{height:56px}
+}
+</style>
 </head>
 <body>
 <div id="announce"></div><div id="hdr"></div><main id="main"></main><footer id="ftr"></footer>
@@ -3330,25 +3372,28 @@ Object.assign(A, {
 });
 const certState = (icon_, h, p) => `<div class="card stack" style="text-align:center;justify-items:center;padding:36px 22px"><span class="done-check" style="${icon_}" role="img"></span><h2 class="h2">${h}</h2><p class="muted" style="max-width:46ch">${p}</p><a class="btn" href="#learning">${T('العودة لسرمد ليرننج', 'Back to Sarmad Learning')}</a></div>`;
 function certHtml(c) {
-  const d = new Date(c.approvedAt || c.at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' }), sg = c.sig || {}, url = certUrl(c.id);
-  const star = `<svg class="cert-star" viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2"><rect x="18" y="18" width="64" height="64"/><rect x="18" y="18" width="64" height="64" transform="rotate(45 50 50)"/><circle cx="50" cy="50" r="22"/><circle cx="50" cy="50" r="10"/></g></svg>`;
-  return `<div class="cert2 ${c.revoked ? 'rev' : ''}" id="cert-sheet"><div class="cert2-bd"><div class="cert2-in">
-    <i class="cc tl"></i><i class="cc tr"></i><i class="cc bl"></i><i class="cc br"></i>
-    <div class="cert2-wm">${star}</div>
-    <header class="cert2-h"><span class="logo" style="--lw:170px"></span><span class="cert2-tag">${T('سرمد ليرننج', 'Sarmad Learning')}</span></header>
-    <p class="cert2-k">${T('شهادة إتمام', 'Certificate of Completion')}</p>
-    <p class="cert2-s">${T('تشهد سرمد ليرننج بأن', 'Sarmad Learning proudly certifies that')}</p>
-    <h1 class="cert2-n">${esc(c.name || '—')}</h1><div class="cert2-ln"><i></i><b>◆</b><i></i></div>
-    <p class="cert2-s">${T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course')}</p>
-    <h2 class="cert2-c">${esc(lang === 'ar' ? c.courseAr : c.courseEn)}</h2>
-    <p class="cert2-m">${c.hours ? (T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours')) + ' · ' : ''}${d}</p>
-    <footer class="cert2-f">
-      <div class="cert2-sg">${sg.img ? `<img src="${esc(sg.img)}" alt="" draggable="false">` : '<span style="height:46px"></span>'}<i></i><b>${esc(sg.name || '')}</b><span>${esc(sg.title || '')}</span></div>
-      <div class="cert2-seal"><span>${icon('check')}</span><small>${T('معتمدة', 'Approved')}</small></div>
-      <div class="cert2-qr"><div class="qrbox">${qrSvg(url, 92)}</div><span class="xs">${T('رمز التحقق', 'Verification code')}</span><b class="mono" dir="ltr">${esc(c.id)}</b></div>
-    </footer>
-    ${c.revoked ? `<div class="cert2-rev">${T('ملغاة', 'REVOKED')}</div>` : ''}
-  </div></div></div>`;
+  const d = new Date(c.approvedAt || c.at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+  const sg = c.sig || {}, url = certUrl(c.id);
+  const hours = c.hours ? (T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours')) : '';
+  return `<div class="cert2 cv3 ${c.revoked ? 'rev' : ''}" id="cert-sheet">
+    <i class="cv3-frame"></i>
+    <div class="cv3-in">
+      <header class="cv3-h"><span class="logo" style="--lw:170px"></span><span class="cv3-cap">Sarmad Learning</span></header>
+      <div class="cv3-mid">
+        <p class="cv3-k">${T('شهادة إتمام', 'Certificate of Completion')}</p>
+        <p class="cv3-lead">${T('تشهد منصة سرمد ليرننج بأن', 'Sarmad Learning certifies that')}</p>
+        <h1 class="cv3-n">${esc(c.name || '—')}</h1>
+        <p class="cv3-lead">${T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course')}</p>
+        <h2 class="cv3-c">${esc(lang === 'ar' ? c.courseAr : c.courseEn)}</h2>
+        <p class="cv3-m">${hours ? hours + ' · ' : ''}${d}</p>
+      </div>
+      <footer class="cv3-f">
+        <div class="cv3-qr"><div class="box">${qrSvg(url, 92)}</div><div class="t"><small>${T('رمز التحقق', 'Verification code')}</small><b dir="ltr">${esc(c.id)}</b><em>${T('امسح للتحقق', 'Scan to verify')}</em></div></div>
+        <div class="cv3-seal"><span>${icon('check')}</span><small>${T('معتمدة', 'APPROVED')}</small></div>
+        <div class="cv3-sg">${sg.img ? `<img src="${esc(sg.img)}" alt="" draggable="false">` : '<span style="height:74px"></span>'}<i></i><b>${esc(sg.name || '')}</b><span>${esc(sg.title || '')}</span></div>
+      </footer>
+      ${c.revoked ? `<div class="cv3-rev">${T('ملغاة', 'REVOKED')}</div>` : ''}
+    </div></div>`;
 }
 function vResetPw(r) {
   const code = String(r.id || '');
@@ -3378,7 +3423,7 @@ addEventListener('resize', () => { const w = document.querySelector('.cert2-wrap
 ROUTE.cert = vCert;
 
 /* ---------- export: certificate and invoice as PNG / PDF (drawn on a canvas, no external service) ---------- */
-const _loadImg = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
+const _loadImg = src => new Promise((ok, no) => { const i = new Image(); if (!/^data:/i.test(src)) i.crossOrigin = 'anonymous'; i.onload = () => ok(i); i.onerror = no; i.src = src; });
 const _logoSrc = () => { const m = (getComputedStyle(document.documentElement).getPropertyValue('--logo') || '').match(/url\(\s*(["']?)(.*?)\1\s*\)/); return m ? m[2] : ''; };
 async function _logoTinted(color, w) {
   try { const im = await _loadImg(_logoSrc()), h = w / 4.861, c = document.createElement('canvas'); c.width = w * 2; c.height = h * 2; const x = c.getContext('2d'); x.drawImage(im, 0, 0, c.width, c.height); x.globalCompositeOperation = 'source-in'; x.fillStyle = color; x.fillRect(0, 0, c.width, c.height); return c; } catch (e) { return null; }
@@ -3390,31 +3435,57 @@ function _txt(x, s, px, py, font, size, color, align, maxW) { x.fillStyle = colo
 function _rr(x, a, b, w, h, r) { x.beginPath(); x.roundRect ? x.roundRect(a, b, w, h, r) : x.rect(a, b, w, h); }
 const _F = '#px Incise, Tahoma, sans-serif', _FB = '700 #px Incise, Tahoma, sans-serif', _FT = '#px Tafkir, Incise, serif';
 async function drawCert(c, k) {
-  await (document.fonts && document.fonts.ready); const W = 1000, H = 707, [cv, x] = _canvas(W, H, k), ar = lang === 'ar', GOLD = '#e8c872', GOLD2 = '#c9a24a', SOFT = '#cfe6dc';
-  let g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#031a15'); g.addColorStop(.55, '#07382c'); g.addColorStop(1, '#042a21'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-  x.save(); x.strokeStyle = GOLD2; x.globalAlpha = .1; x.lineWidth = 1.2; for (let i = 0; i * 70 < W + 70; i++) for (let j = 0; j * 70 < H + 70; j++) { x.save(); x.translate(i * 70, j * 70); x.strokeRect(-18, -18, 36, 36); x.rotate(Math.PI / 4); x.strokeRect(-18, -18, 36, 36); x.restore(); } x.restore();
-  g = x.createRadialGradient(W / 2, 300, 40, W / 2, 300, 520); g.addColorStop(0, 'rgba(10,80,60,.85)'); g.addColorStop(1, 'rgba(3,26,21,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-  g = x.createLinearGradient(0, 0, W, 0); g.addColorStop(0, '#9c7424'); g.addColorStop(.5, '#f6e3a1'); g.addColorStop(1, '#9c7424');
-  x.strokeStyle = g; x.lineWidth = 5; x.strokeRect(16, 16, W - 32, H - 32); x.lineWidth = 1.5; x.strokeRect(30, 30, W - 60, H - 60);
-  x.fillStyle = g; [[30, 30], [W - 30, 30], [30, H - 30], [W - 30, H - 30]].forEach(([a, b]) => { x.save(); x.translate(a, b); x.rotate(Math.PI / 4); x.fillRect(-14, -14, 28, 28); x.fillStyle = '#031a15'; x.fillRect(-8, -8, 16, 16); x.fillStyle = g; x.fillRect(-4, -4, 8, 8); x.restore(); });
-  const lg = await _logoTinted('#f6e3a1', 200); if (lg) x.drawImage(lg, W / 2 - 100, 52, 200, 200 / 4.861);
-  _txt(x, T('شهادة إتمام', 'Certificate of Completion'), W / 2, 178, _FT, 74, GOLD);
-  _txt(x, T('تشهد سرمد ليرننج بأن', 'Sarmad Learning proudly certifies that'), W / 2, 226, _F, 21, SOFT);
-  _txt(x, c.name || '—', W / 2, 304, _FT, 72, '#ffffff', 'center', 820);
-  x.strokeStyle = GOLD2; x.lineWidth = 2; x.beginPath(); x.moveTo(190, 332); x.lineTo(465, 332); x.moveTo(535, 332); x.lineTo(810, 332); x.stroke(); x.fillStyle = GOLD; x.save(); x.translate(W / 2, 332); x.rotate(Math.PI / 4); x.fillRect(-7, -7, 14, 14); x.restore();
-  _txt(x, T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course'), W / 2, 372, _F, 21, SOFT);
-  _txt(x, ar ? c.courseAr : c.courseEn, W / 2, 428, _FB, 42, GOLD, 'center', 840);
+  await (document.fonts && document.fonts.ready);
+  const W = 1000, H = 707, [cv, x] = _canvas(W, H, k), ar = lang === 'ar';
+  const INK = '#12251b', INK2 = '#5f6d63', LINE = '#e8ece7', GREEN = '#1f5c3a', GOLD = '#a9853f';
+  const FA = '"IBM Plex Sans Arabic", Tahoma, sans-serif', FL = '"IBM Plex Sans", Tahoma, sans-serif';
+  const F300 = '300 15.5px ' + FA, F400 = '400 13.5px ' + FA, F600 = '600 54px ' + FA, F600s = '600 30px ' + FA, FK = '600 13.5px ' + FA;
+  const track = (txt, cx, y, font, size, color, ls) => {
+    x.save(); x.font = font; x.fillStyle = color; x.textBaseline = 'alphabetic';
+    const chars = txt.split(''), wd = chars.reduce((a, ch) => a + x.measureText(ch).width, 0) + ls * (chars.length - 1);
+    let px = cx - wd / 2;
+    chars.forEach(ch => { x.fillText(ch, px, y); px += x.measureText(ch).width + ls; });
+    x.restore();
+  };
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
+  x.strokeStyle = LINE; x.lineWidth = 1; x.strokeRect(30.5, 30.5, W - 61, H - 61);
+  const lg = await _logoTinted(GREEN, 170); if (lg) x.drawImage(lg, W / 2 - 85, 56, 170, 170 / 4.861);
+  track('SARMAD LEARNING', W / 2, 122, '500 11px ' + FL, 11, INK2, 4.6);
+  _txt(x, T('شهادة إتمام', 'Certificate of Completion'), W / 2, 205, FK, 13.5, GOLD, 'center');
+  _txt(x, T('تشهد منصة سرمد ليرننج بأن', 'Sarmad Learning certifies that'), W / 2, 252, F300, 15.5, INK2, 'center');
+  _txt(x, c.name || '—', W / 2, 322, F600, 54, INK, 'center', 820);
+  _txt(x, T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course'), W / 2, 392, F300, 15.5, INK2, 'center');
+  _txt(x, ar ? c.courseAr : c.courseEn, W / 2, 438, F600s, 30, GREEN, 'center', 840);
   const d = new Date(c.approvedAt || c.at).toLocaleDateString(ar ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-  _txt(x, (c.hours ? T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours') + '  ·  ' : '') + d, W / 2, 466, _F, 21, SOFT);
-  const sg = c.sig || {}, sx = 190, qx = W - 190;
-  if (sg.img) { try { const im = await _loadImg(sg.img), h = 58, w = Math.min(170, im.width * h / im.height); x.fillStyle = '#fbf6e6'; _rr(x, sx - w / 2 - 10, 538 - h - 6, w + 20, h + 12, 8); x.fill(); x.drawImage(im, sx - w / 2, 538 - h, w, h); } catch (e) { } }
-  x.strokeStyle = GOLD2; x.lineWidth = 1.5; x.beginPath(); x.moveTo(sx - 95, 556); x.lineTo(sx + 95, 556); x.stroke(); _txt(x, sg.name || '', sx, 584, _FB, 19, '#fff'); _txt(x, sg.title || '', sx, 606, _F, 16, SOFT);
-  const cx = W / 2, cy = 580; x.save(); x.translate(cx, cy); const sp = 18; g = x.createRadialGradient(-14, -16, 4, 0, 0, 62); g.addColorStop(0, '#fff3c4'); g.addColorStop(.5, '#e0b650'); g.addColorStop(1, '#8e6a1c'); x.fillStyle = g; x.beginPath(); for (let i = 0; i < sp * 2; i++) { const r = i % 2 ? 54 : 62, an = Math.PI * i / sp; x.lineTo(Math.cos(an) * r, Math.sin(an) * r); } x.closePath(); x.fill();
-  x.strokeStyle = '#6b4c10'; x.lineWidth = 2; x.beginPath(); x.arc(0, 0, 44, 0, 7); x.stroke(); x.strokeStyle = '#fff3c4'; x.lineWidth = 1.5; x.beginPath(); x.arc(0, 0, 49, 0, 7); x.stroke();
-  x.strokeStyle = '#4a3408'; x.lineWidth = 7; x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.moveTo(-18, 2); x.lineTo(-5, 15); x.lineTo(20, -14); x.stroke(); x.restore();
-  _txt(x, T('معتمدة', 'Approved'), cx, 668, _FB, 16, GOLD);
-  const q = await _qrImg(certUrl(c.id), 112); x.fillStyle = '#fff'; _rr(x, qx - 66, 500, 132, 132, 12); x.fill(); x.strokeStyle = GOLD; x.lineWidth = 3; _rr(x, qx - 66, 500, 132, 132, 12); x.stroke(); if (q) x.drawImage(q, qx - 56, 510, 112, 112);
-  _txt(x, T('رمز التحقق', 'Verification code'), qx, 654, _F, 15, SOFT); _txt(x, c.id, qx, 676, '700 #px ui-monospace, Menlo, monospace', 17, '#fff');
+  const ad = str => ar ? String(str).replace(/[0-9]/g, n => '٠١٢٣٤٥٦٧٨٩'[+n]) : String(str);
+  _txt(x, (c.hours ? T('بمجوع ', 'Total ') + ad(c.hours) + T(' ساعة تدريبية', ' training hours') + '  ·  ' : '') + d, W / 2, 486, F400, 13.5, INK2, 'center');
+  // footer: qr (start) | seal (center) | signature (end)
+  const q = await _qrImg(certUrl(c.id), 92), qx = 92, qy = 520;
+  x.fillStyle = '#fff'; x.strokeStyle = LINE; x.lineWidth = 1; _rr(x, qx, qy, 108, 108, 10); x.fill(); x.stroke();
+  if (q) x.drawImage(q, qx + 8, qy + 8, 92, 92);
+  _txt(x, T('رمز التحقق', 'Verification code'), qx + 124, qy + 42, '400 10px ' + FA, 10, INK2, 'left');
+  _txt(x, c.id, qx + 124, qy + 64, '600 12.5px ' + FL, 12.5, INK, 'left');
+  _txt(x, T('امسح للتحقق', 'Scan to verify'), qx + 124, qy + 86, '400 9.5px ' + FA, 9.5, INK2, 'left');
+  const cx = W / 2, cy = qy + 54;
+  x.save(); x.beginPath(); x.arc(cx, cy, 52, 0, 7); x.fillStyle = '#fbf8f0'; x.fill(); x.strokeStyle = '#e6ddc9'; x.lineWidth = 1; x.stroke();
+  x.strokeStyle = GREEN; x.lineWidth = 3.4; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.beginPath(); x.moveTo(cx - 13, cy - 2); x.lineTo(cx - 3, cy + 9); x.lineTo(cx + 14, cy - 12); x.stroke(); x.restore();
+  _txt(x, T('معتمدة', 'APPROVED'), cx, cy + 34, '600 9.5px ' + FA, 9.5, GOLD, 'center');
+  const sg = c.sig || {}, sx = W - 92;
+  if (sg.img) {
+    try {
+      const im = await _loadImg(sg.img), h = 74, w = Math.min(230, im.width * h / im.height);
+      x.drawImage(im, sx - w, qy + 6, w, h);
+    } catch (e) { }
+  }
+  x.strokeStyle = LINE; x.lineWidth = 1; x.beginPath(); x.moveTo(sx - 230, qy + 92); x.lineTo(sx, qy + 92); x.stroke();
+  _txt(x, sg.name || '', sx - 115, qy + 112, '600 13.5px ' + FA, 13.5, INK, 'center');
+  _txt(x, sg.title || '', sx - 115, qy + 130, '400 11.5px ' + FA, 11.5, INK2, 'center');
+  if (c.revoked) {
+    x.save(); x.translate(W / 2, H / 2); x.rotate(-16 * Math.PI / 180);
+    x.fillStyle = 'rgba(140,50,50,.20)'; x.font = '800 96px ' + FA; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(T('ملغاة', 'REVOKED'), 0, 0); x.restore();
+  }
   return cv;
 }
 async function drawInvoice(o, u, k) {
@@ -4316,284 +4387,5 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
 })();
 </script>
-<style id="ui-polish">html{scroll-behavior:smooth}section[id],.sec[id],#main{scroll-margin-top:96px}a:focus-visible,button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:6px}@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}}.hdr.scrolled{box-shadow:0 10px 28px rgba(0,0,0,.10)}#toTopBtn{position:fixed;inset-inline-start:18px;bottom:18px;width:44px;height:44px;border-radius:50%;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);background:var(--bg,#fff);color:var(--fg,#16281c);font-size:18px;line-height:1;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:70;box-shadow:0 8px 22px rgba(0,0,0,.14)}#toTopBtn:hover{transform:translateY(-1px)}</style><script id="ui-polish-js">(function(){var b=document.createElement("button");b.id="toTopBtn";b.type="button";b.setAttribute("aria-label","Back to top");b.textContent="\u2191";document.body.appendChild(b);function upd(){var y=window.scrollY||document.documentElement.scrollTop||0;b.style.display=y>500?"flex":"none";var h=document.querySelector(".hdr");if(h){h.classList.toggle("scrolled",y>8);}}window.addEventListener("scroll",upd,{passive:true});window.addEventListener("resize",upd);upd();b.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});})();</script><style id="ui-polish2">.skiplink{position:fixed;inset-inline-start:12px;top:-80px;z-index:120;background:#0f7a4d;color:#fff;padding:10px 16px;border-radius:0 0 10px 10px;font:600 14px/1.2 inherit;text-decoration:none;transition:top .15s}.skiplink:focus{top:0}#readBar{position:fixed;top:0;inset-inline-start:0;height:3px;width:0;background:linear-gradient(90deg,#0f7a4d,#7ac79a);z-index:95;pointer-events:none;transition:width .08s linear}</style><script id="ui-polish2-js">(function(){
-  var doc=document;
-  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
-  if(!doc.getElementById('skipLink')){
-    var sk=doc.createElement('a');
-    sk.id='skipLink'; sk.className='skiplink'; sk.href='#main';
-    sk.textContent = isAr() ? '\u062a\u062e\u0637\u0651\u064e \u0625\u0644\u0649 \u0627\u0644\u0645\u062d\u062a\u0648\u0649' : 'Skip to content';
-    sk.addEventListener('click', function(e){
-      var m=doc.getElementById('main');
-      if(!m) return;
-      e.preventDefault();
-      m.setAttribute('tabindex','-1');
-      try{ m.focus({preventScroll:true}); }catch(_){ m.focus(); }
-      m.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-    doc.body.insertBefore(sk, doc.body.firstChild);
-  }
-  var pb=doc.getElementById('readBar');
-  if(!pb){ pb=doc.createElement('div'); pb.id='readBar'; doc.body.appendChild(pb); }
-  function tick(){
-    var h=doc.documentElement;
-    var max=(h.scrollHeight-h.clientHeight)||1;
-    var p=((window.scrollY||h.scrollTop||0)/max)*100;
-    if(p<0)p=0; if(p>100)p=100;
-    pb.style.width=p+'%';
-  }
-  window.addEventListener('scroll',tick,{passive:true});
-  window.addEventListener('resize',tick);
-  tick();
-  function imgs(){
-    var list=doc.querySelectorAll('img:not([loading])');
-    for(var i=0;i<list.length;i++){ list[i].setAttribute('loading','lazy'); list[i].setAttribute('decoding','async'); }
-  }
-  var LBL={theme:['\u0627\u0644\u0648\u0636\u0639 \u0627\u0644\u0644\u064a\u0644\u064a','Dark mode'],search:['\u0628\u062d\u062b','Search'],bell:['\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a','Notifications'],lang:['\u062a\u063a\u064a\u064a\u0631 \u0627\u0644\u0644\u063a\u0629','Change language'],drawer:['\u0627\u0644\u0642\u0627\u0626\u0645\u0629','Menu'],copy:['\u0646\u0633\u062e','Copy'],share:['\u0645\u0634\u0627\u0631\u0643\u0629','Share'],logout:['\u062e\u0631\u0648\u062c','Log out'],closeAnn:['\u0625\u063a\u0644\u0627\u0642','Close'],close:['\u0625\u063a\u0644\u0627\u0642','Close'],pop:['\u0627\u0644\u0645\u0632\u064a\u062f','More']};
-  function labels(){
-    var nodes=doc.querySelectorAll('button,a[role="button"],.ib');
-    for(var i=0;i<nodes.length;i++){
-      var n=nodes[i];
-      var name=(n.getAttribute('aria-label')||'').trim()||(n.textContent||'').trim();
-      if(name) continue;
-      var pair=LBL[n.getAttribute('data-act')||''];
-      if(!pair) continue;
-      var v=isAr()?pair[0]:pair[1];
-      n.setAttribute('aria-label',v);
-      if(!n.getAttribute('title')) n.setAttribute('title',v);
-    }
-  }
-  imgs(); labels();
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; imgs(); labels(); },250);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-})();
-</script><style id="ui-polish3">#skipLink{box-shadow:0 12px 28px rgba(0,0,0,.22);border-radius:0 0 12px 12px;z-index:130;letter-spacing:.2px}#kbdHelp{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,20,14,.45);z-index:140;padding:20px}#kbdHelp.on{display:flex}#kbdHelp .kbdcard{background:var(--bg,#fff);color:var(--fg,#16281c);border-radius:18px;padding:20px 22px;width:min(420px,92vw);box-shadow:0 26px 70px rgba(0,0,0,.30);font:14px/1.5 inherit}#kbdHelp .kbdt{font-weight:700;font-size:16px;margin-bottom:10px}#kbdHelp .kbdrow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 8%,transparent)}#kbdHelp .kbdrow:last-of-type{border-bottom:0}#kbdHelp kbd{background:color-mix(in srgb,var(--fg) 9%,transparent);border-radius:7px;padding:2px 9px;font:600 12.5px/1.6 ui-monospace,SFMono-Regular,monospace;direction:ltr}#kbdHelp .kbdh{margin-top:12px;font-size:12.5px;opacity:.65}</style><script id="ui-polish3-js">(function(){
-  var doc=document;
-  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
-  // 1. mobile browser chrome tint + native colour scheme
-  var meta=doc.querySelector('meta[name="theme-color"]');
-  if(!meta){ meta=doc.createElement('meta'); meta.setAttribute('name','theme-color'); doc.head.appendChild(meta); }
-  var cs=doc.querySelector('meta[name="color-scheme"]');
-  if(!cs){ cs=doc.createElement('meta'); cs.setAttribute('name','color-scheme'); cs.setAttribute('content','light dark'); doc.head.appendChild(cs); }
-  function tint(){
-    var r=getComputedStyle(doc.documentElement);
-    var c=(r.getPropertyValue('--accent')||'').trim();
-    if(!c){ c=getComputedStyle(doc.querySelector('.hdr')||doc.body).backgroundColor||''; }
-    if(c && c!=='rgba(0, 0, 0, 0)' && c!=='transparent') meta.setAttribute('content', c);
-  }
-  tint();
-  // 2. keyboard shortcuts help
-  if(!doc.getElementById('kbdHelp')){
-    var ov=doc.createElement('div'); ov.id='kbdHelp';
-    var rows = isAr()
-      ? [['Ctrl / Cmd + K','\u0628\u062d\u062b \u0633\u0631\u064a\u0639'],['Tab','\u0627\u0644\u062a\u0646\u0642\u0644 \u0628\u064a\u0646 \u0627\u0644\u0639\u0646\u0627\u0635\u0631'],['Home / End','\u0623\u0648\u0644 \u0627\u0644\u0635\u0641\u062d\u0629 / \u0622\u062e\u0631\u0647\u0627'],['Esc','\u0625\u063a\u0644\u0627\u0642'],['?','\u0647\u0630\u0647 \u0627\u0644\u0642\u0627\u0626\u0645\u0629']]
-      : [['Ctrl / Cmd + K','Quick search'],['Tab','Move between elements'],['Home / End','Top / bottom of page'],['Esc','Close'],['?','This list']];
-    var html='<div class="kbdcard" role="dialog" aria-modal="true" aria-label="'+(isAr()?'\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a':'\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a')+'">'
-      + '<div class="kbdt">'+(isAr()?'\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a \u0627\u0644\u0643\u064a\u0628\u0648\u0631\u062f':'\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a \u0627\u0644\u0643\u064a\u0628\u0648\u0631\u062f')+'</div>';
-    for(var i=0;i<rows.length;i++){ html+='<div class="kbdrow"><span>'+rows[i][1]+'</span><kbd>'+rows[i][0]+'</kbd></div>'; }
-    html+='<div class="kbdh">'+(isAr()?'\u062f\u0648\u0633 ? \u0641\u064a \u0623\u064a \u0648\u0642\u062a \u0644\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629':'\u062f\u0648\u0633 ? \u0641\u064a \u0623\u064a \u0648\u0642\u062a \u0644\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629')+'</div></div>';
-    ov.innerHTML=html;
-    doc.body.appendChild(ov);
-    ov.addEventListener('click', function(e){ if(e.target===ov || (e.target.closest && e.target.closest('.kbdcard') && e.target.tagName!=='KBD' && false)) ov.classList.remove('on'); if(e.target===ov) ov.classList.remove('on'); });
-  }
-  var ovl=doc.getElementById('kbdHelp');
-  function toggleKbd(force){
-    if(!ovl) return;
-    var show = force===true ? true : (force===false ? false : !ovl.classList.contains('on'));
-    ovl.classList.toggle('on', show);
-  }
-  doc.addEventListener('keydown', function(e){
-    var t=e.target||{};
-    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName||'') || t.isContentEditable;
-    if(e.key==='Escape'){ toggleKbd(false); return; }
-    if(typing) return;
-    if(e.key==='?' || (e.key==='/' && e.shiftKey)){ e.preventDefault(); toggleKbd(true); }
-  });
-  // 3. better mobile keyboards on email/phone fields
-  function fields(){
-    var list=doc.querySelectorAll('input[type="email"]:not([autocomplete]),input[type="tel"]:not([autocomplete])');
-    for(var i=0;i<list.length;i++){
-      var el=list[i];
-      if(el.type==='email'){ el.setAttribute('autocomplete','email'); el.setAttribute('inputmode','email'); }
-      else { el.setAttribute('autocomplete','tel'); el.setAttribute('inputmode','tel'); }
-    }
-  }
-  fields();
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; fields(); tint(); },300);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-  window.addEventListener('scroll',function(){ },{passive:true});
-})();
-</script><style id="ui-polish4">#kbdFoot{cursor:pointer;opacity:.85}#kbdFoot:hover{opacity:1}@media(max-width:760px){#toTopBtn{bottom:calc(78px + env(safe-area-inset-bottom,0px))}}</style><script id="ui-polish4-js">(function(){
-  var doc=document;
-  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
-  var ov=doc.getElementById('kbdHelp');
-  function toggleKbd(force){
-    if(!ov) return;
-    var show = force===true ? true : (force===false ? false : !ov.classList.contains('on'));
-    ov.classList.toggle('on', show);
-  }
-  window.__kbdToggle=toggleKbd;
-  function footChip(){
-    if(doc.getElementById('kbdFoot')) return;
-    var row=doc.querySelector('#ftr .ftr-bottom .row');
-    if(!row) return;
-    var b=doc.createElement('button');
-    b.id='kbdFoot'; b.type='button'; b.className='chip';
-    b.style.background='none'; b.style.color='inherit';
-    b.textContent = isAr() ? '\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a (?)' : 'Shortcuts (?)';
-    b.addEventListener('click', function(){ toggleKbd(true); });
-    row.appendChild(b);
-  }
-  footChip();
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; footChip(); },300);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-})();
-</script><style id="ui-polish5">nav.nav a.spy{color:var(--accent);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}#kbdHelp.on .kbdcard{animation:kbdIn .18s ease-out}@keyframes kbdIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}@media(max-width:760px){#toTopBtn{display:none!important}}</style><style id="ui-polish6">nav.nav a.routeOn{color:var(--accent);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}.tabbar a.routeOn{color:var(--accent)}input:user-invalid,textarea:user-invalid,select:user-invalid{border-color:#c0392b!important;box-shadow:0 0 0 3px rgba(192,57,43,.12)}input:user-valid,textarea:user-valid{border-color:color-mix(in srgb,var(--accent) 55%,transparent)}</style><script id="ui-polish6-js">(function(){
-  var doc=document;
-  function mark(){
-    var h=(location.hash||'').replace(/^#/,'');
-    var links=[].slice.call(doc.querySelectorAll('nav.nav a[href^="#"], .tabbar a[href^="#"]'));
-    for(var i=0;i<links.length;i++){
-      var href=(links[i].getAttribute('href')||'').replace(/^#/,'');
-      links[i].classList.toggle('routeOn', !!href && href===h);
-    }
-  }
-  window.addEventListener('hashchange',mark);
-  mark();
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; mark(); },300);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-})();
-</script><style id="ui-polish7">#fszBox{display:inline-flex;align-items:center;gap:6px;font-size:.85em}#fszBox #fszVal{min-width:42px;text-align:center;opacity:.8}#fszBox .chip{cursor:pointer}</style><script id="ui-polish7-js">(function(){
-  var doc=document, KEY='sarmad_fsz';
-  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
-  function get(){ var v=parseFloat(localStorage.getItem(KEY)||'100'); if(!(v>=85&&v<=125)) v=100; return v; }
-  function apply(v){
-    v=Math.round(Math.max(85,Math.min(125,v))/5)*5;
-    doc.documentElement.style.fontSize=(v/100*100)+'%';
-    try{ localStorage.setItem(KEY,String(v)); }catch(_){}
-    var lab=doc.getElementById('fszVal'); if(lab) lab.textContent=v+'%';
-  }
-  function bar(){
-    var row=doc.querySelector('#ftr .ftr-bottom .row');
-    if(!row || doc.getElementById('fszBox')) return;
-    var box=doc.createElement('span');
-    box.id='fszBox'; box.className='fszbox';
-    box.innerHTML='<button type="button" class="chip" data-fsz="-5" aria-label="'+(isAr()?'\u062a\u0635\u063a\u064a\u0631 \u0627\u0644\u062e\u0637':'\u062a\u0635\u063a\u064a\u0631 \u0627\u0644\u062e\u0637')+'">A\u2212</button>'
-      + '<span id="fszVal">'+get()+'%</span>'
-      + '<button type="button" class="chip" data-fsz="5" aria-label="'+(isAr()?'\u062a\u0643\u0628\u064a\u0631 \u0627\u0644\u062e\u0637':'\u062a\u0643\u0628\u064a\u0631 \u0627\u0644\u062e\u0637')+'">A+</button>';
-    row.appendChild(box);
-    box.addEventListener('click', function(e){
-      var b=e.target.closest && e.target.closest('[data-fsz]');
-      if(!b) return;
-      apply(get()+parseInt(b.getAttribute('data-fsz'),10));
-    });
-  }
-  apply(get());
-  bar();
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; bar(); },300);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-})();
-</script><style id="ui-polish8">#fphone{cursor:pointer;text-decoration:underline;text-underline-offset:3px}#fphone:hover{color:var(--accent)}</style><script id="ui-polish8-js">(function(){
-  var doc=document;
-  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
-  function norm(s){
-    return (s||'').replace(/[\u0660-\u0669]/g,function(d){return String(d.charCodeAt(0)-0x0660);})
-                   .replace(/[\u06F0-\u06F9]/g,function(d){return String(d.charCodeAt(0)-0x06F0);})
-                   .trim();
-  }
-  function aria(){
-    var h=(location.hash||'').replace(/^#/,'');
-    var links=[].slice.call(doc.querySelectorAll('nav.nav a[href^="#"]'));
-    for(var i=0;i<links.length;i++){
-      var href=(links[i].getAttribute('href')||'').replace(/^#/,'');
-      if(href && href===h) links[i].setAttribute('aria-current','page');
-      else links[i].removeAttribute('aria-current');
-    }
-  }
-  function phone(){
-    if(doc.getElementById('fphone')) return;
-    var lis=[].slice.call(doc.querySelectorAll('#ftr li.mono'));
-    for(var i=0;i<lis.length;i++){
-      var t=norm(lis[i].textContent);
-      if(/^\+?\d[\d\s\-]{6,}$/.test(t)){
-        var li=lis[i];
-        li.id='fphone';
-        li.setAttribute('role','button');
-        li.setAttribute('tabindex','0');
-        li.setAttribute('title', isAr()?'\u0627\u0636\u063a\u0637 \u0644\u0646\u0633\u062e \u0627\u0644\u0631\u0642\u0645':'\u0627\u0636\u063a\u0637 \u0644\u0646\u0633\u062e \u0627\u0644\u0631\u0642\u0645');
-        var copy=function(){
-          var v=norm(li.textContent);
-          var done=function(){ if(window.toast) window.toast(isAr()?'\u062a\u0645 \u0646\u0633\u062e \u0627\u0644\u0631\u0642\u0645':'\u062a\u0645 \u0646\u0633\u062e \u0627\u0644\u0631\u0642\u0645'); };
-          if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(v).then(done).catch(done); }
-          else { try{ var ta=doc.createElement('textarea'); ta.value=v; doc.body.appendChild(ta); ta.select(); doc.execCommand('copy'); ta.remove(); done(); }catch(_){} }
-        };
-        li.addEventListener('click',copy);
-        li.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); copy(); } });
-        break;
-      }
-    }
-  }
-  aria(); phone();
-  window.addEventListener('hashchange',aria);
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; aria(); phone(); },300);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-})();
-</script><style id="ui-polish9"></style><script id="ui-polish9-js">(function(){
-  var doc=document;
-  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
-  var sr=doc.getElementById('srRoute');
-  if(!sr){
-    sr=doc.createElement('div');
-    sr.id='srRoute'; sr.setAttribute('role','status'); sr.setAttribute('aria-live','polite');
-    sr.style.cssText='position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0';
-    doc.body.appendChild(sr);
-  }
-  function announce(){
-    var t=(doc.title||'').trim();
-    if(t && sr.textContent!==t) sr.textContent=t;
-  }
-  function tips(){
-    var links=[].slice.call(doc.querySelectorAll('#ftr .row a[href^="http"]'));
-    for(var i=0;i<links.length;i++){
-      var a=links[i];
-      if(a.getAttribute('title')) continue;
-      var lab=(a.getAttribute('aria-label')||a.textContent||'').trim();
-      if(!lab){ try{ lab=new URL(a.getAttribute('href')).hostname.replace(/^www\./,''); }catch(_){ lab=''; } }
-      if(lab) a.setAttribute('title',lab);
-    }
-  }
-  announce(); tips();
-  window.addEventListener('hashchange',function(){ setTimeout(announce,400); });
-  var t=null;
-  var mo=new MutationObserver(function(){
-    if(t) return;
-    t=setTimeout(function(){ t=null; announce(); tips(); },400);
-  });
-  mo.observe(doc.body,{childList:true,subtree:true});
-})();
-</script></body>
+</body>
 </html>
