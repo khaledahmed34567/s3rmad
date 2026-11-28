@@ -512,6 +512,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       totalProg:"إجمالي تقدمك", totalU:"درس", copySummary:"نسخ ملخص تقدمي", copied:"اتنسخ ✓", fsTitle:"حجم الخط",
       bestStreak:"أطول سلسلة", dayU:"يوم", remL:"فاضلك على ما تخلص الدورة",
       dlSummary:"تحميل الملخص", catDone:"المكتملة", nearDone:"قربت تخلص", badgesN:"شارة مفتوحة من",
+      myNotes:"ملاحظاتي على الدورة", notePh:"اكتب ملاحظاتك هنا…", saveNote:"حفظ الملاحظة", noteSaved:"اتحفظت ✓",
+      planT:"خطتك النهاردة", nearBadge:"أقرب شارة", needL:"فاضلك", estTime:"وقت تعلمك التقديري", hrU:"ساعة",
       b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
@@ -564,6 +566,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       totalProg:"Your overall progress", totalU:"lessons", copySummary:"Copy progress summary", copied:"Copied ✓", fsTitle:"Text size",
       bestStreak:"Best streak", dayU:"days", remL:"Left to finish the course",
       dlSummary:"Download summary", catDone:"Completed", nearDone:"Almost done", badgesN:"badges unlocked of",
+      myNotes:"My notes on this course", notePh:"Write your notes here…", saveNote:"Save note", noteSaved:"Saved ✓",
+      planT:"Today's plan", nearBadge:"Closest badge", needL:"left", estTime:"Estimated learning time", hrU:"h",
       b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
@@ -891,6 +895,16 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
         } catch(e){}
       });
       tcard.appendChild(dbtn);
+      var estMin = 0;
+      D.ids.forEach(function(id){
+        var p = D.prog[id] || 0;
+        courseLessons(id).forEach(function(l, i){ if (i < p) estMin += (Number(l.min) || 0); });
+      });
+      if (estMin > 0){
+        var hh = Math.floor(estMin / 60), mm = estMin % 60;
+        var est = (hh ? hh + " " + t("hrU") + " " : "") + (mm ? mm + " " + t("minU") : "").trim();
+        tcard.appendChild(el("div", "", '<div style="font-size:12.5px;color:var(--ink2);margin-top:8px">' + esc(t("estTime")) + ": " + esc(est) + '</div>'));
+      }
       cl.appendChild(tcard);
     }
     var lc = lastCourse();
@@ -1082,6 +1096,21 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var bc = el("div", "catcount", esc(won + " " + t("badgesN") + " " + B.length));
     bc.id = "badgeCount";
     bg.parentNode.insertBefore(bc, bg);
+    var cands = [
+      { n: D.lessons < 10 ? 10 - D.lessons : 0, nm: t("b2") },
+      { n: D.labsDone < 1 ? 1 - D.labsDone : 0, nm: t("b3") },
+      { n: D.labsDone < 3 ? 3 - D.labsDone : 0, nm: t("b4") },
+      { n: D.aiDone < 1 ? 1 - D.aiDone : 0, nm: t("b5") },
+      { n: D.labsDone < 5 ? 5 - D.labsDone : 0, nm: t("b8") },
+      { n: D.ids.length < 3 ? 3 - D.ids.length : 0, nm: t("b9") }
+    ].filter(function(x){ return x.n > 0; }).sort(function(a, b){ return a.n - b.n; });
+    if (cands.length){
+      var nb = el("div", "catcount", esc(t("nearBadge") + ": " + cands[0].nm + " · " + t("needL") + " " + cands[0].n));
+      nb.id = "nearBadgeRow";
+      var onb = document.getElementById("nearBadgeRow");
+      if (onb) onb.remove();
+      bg.parentNode.insertBefore(nb, bg.nextSibling);
+    }
 
     /* certs */
     var ce = $("certList"); ce.innerHTML = "";
@@ -1179,6 +1208,11 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     h += '<div style="margin-top:10px"><button class="btn done" id="cmFav" type="button">' + esc(favHas(cid) ? t("favSaved") : t("favSave")) + '</button>'
       + ' <button class="btn done" id="cmCopy" type="button">' + esc(t("share")) + '</button>'
       + ' <a href="/#course-' + esc(cid) + '" style="display:inline-block;margin-inline-start:8px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">' + esc(t("open")) + '</a></div>';
+    var nv = "";
+    try { nv = localStorage.getItem("sl_note_" + cid) || ""; } catch(e){}
+    h += '<div class="csec">' + esc(t("myNotes")) + '</div>'
+      + '<textarea id="cmNote" class="code" style="min-height:84px;font-family:inherit;font-size:13.5px">' + esc(nv) + '</textarea>'
+      + '<div style="margin-top:8px;display:flex;gap:8px;align-items:center"><button class="btn done" id="cmNoteSave" type="button">' + esc(t("saveNote")) + '</button><span id="cmNoteMsg" style="font-size:12.5px;color:var(--green)"></span></div>';
     if (det && det.outcomes && det.outcomes[lang]){
       h += '<div class="csec">' + esc(t("cmLearn")) + '</div><ul class="co">'
         + det.outcomes[lang].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
@@ -1204,6 +1238,11 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       var u = location.origin + "/#course-" + cid;
       var dn = function(){ cmc.textContent = t("shared"); setTimeout(function(){ cmc.textContent = t("share"); }, 1600); };
       try { navigator.clipboard.writeText(u).then(dn, dn); } catch(e){ dn(); }
+    });
+    var nsv = $("cmNoteSave");
+    if (nsv) nsv.addEventListener("click", function(){
+      try { localStorage.setItem("sl_note_" + cid, String($("cmNote").value || "").slice(0, 4000)); } catch(e){}
+      var m = $("cmNoteMsg"); m.textContent = t("noteSaved"); setTimeout(function(){ m.textContent = ""; }, 1800);
     });
     if (hl){
       var rows = $("courseBody").querySelectorAll(".cles");
@@ -1270,6 +1309,20 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       if (best === null || n < (D.prog[best] || 0)) best = id;
     });
     var id = pick || best;
+    var oldPlan = document.getElementById("planCard");
+    if (oldPlan) oldPlan.remove();
+    if (id){
+      var ls0 = courseLessons(id), nx0 = ls0[D.prog[id] || 0];
+      var pc = el("div", "card2");
+      pc.id = "planCard";
+      pc.style.marginBottom = "10px";
+      pc.appendChild(el("b", null, esc(t("planT"))));
+      pc.appendChild(el("div", "", '<div style="font-size:13px;color:var(--ink2);margin-top:6px">' + esc(courseTitle(id)) + (nx0 ? " · " + esc(L(nx0.t)) + (nx0.min ? " · " + nx0.min + " " + esc(t("minU")) : "") : "") + '</div>'));
+      var pa = el("a", null, esc(t("resume"))); pa.href = "/#course-" + id;
+      pa.style.cssText = "display:inline-block;margin-top:10px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600";
+      pc.appendChild(pa);
+      $("contCard").parentNode.insertBefore(pc, $("contCard"));
+    }
     if (!id){ $("contCard").classList.add("hidden"); return; }
     $("contCard").classList.remove("hidden");
     $("contTitle").textContent = courseTitle(id);
