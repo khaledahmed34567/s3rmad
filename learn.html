@@ -1030,7 +1030,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       det.modules.forEach(function(m){
         h += '<div class="cmod"><b>' + esc(L(m.t)) + '</b>';
         (m.lessons || []).forEach(function(l){
-          h += '<div class="cles"><span>' + esc(L(l.t)) + '</span><span>'
+          h += '<div class="cles" data-lid="' + esc(l.id) + '"><span>' + esc(L(l.t)) + '</span><span>'
              + (l.free ? esc(t("free")) : esc(t("paidB"))) + ' · ' + (l.min || 0) + ' ' + esc(t("minU")) + '</span></div>';
         });
         h += '</div>';
@@ -1372,6 +1372,19 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       var c = COURSES[id], ti = (lang === "ar" ? c.ar : c.en);
       if (ti.toLowerCase().indexOf(q) >= 0) out.push({ k:"c", title:ti, sub:(D.enr[id] ? t("joinedB") : t("startC")) + (D.prog[id] ? " · " + D.prog[id] + " " + t("lessonsDone") : ""), href:"/#course-" + id });
     });
+    if (typeof CDET !== "undefined"){
+      Object.keys(CDET).forEach(function(cid){
+        var det = CDET[cid]; if (!det || !det.modules) return;
+        det.modules.forEach(function(m){
+          (m.lessons || []).forEach(function(l){
+            var ti = L(l.t) || "";
+            if (ti.toLowerCase().indexOf(q) >= 0){
+              out.push({ k:"ls", title:ti, sub:courseTitle(cid) + " · " + (l.min || 0) + " " + t("minU"), course:cid, lesson:l.id });
+            }
+          });
+        });
+      });
+    }
     TRACKS.forEach(function(tr){
       var ti = (lang === "ar" ? tr.ar : tr.en);
       if (ti.toLowerCase().indexOf(q) >= 0) out.push({ k:"p", title:ti, sub:tr.courses.length + " " + t("trackCourses"), href:"/#track-" + tr.id });
@@ -1389,13 +1402,19 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     if (!out.length){ box.appendChild(el("div","empty", lang === "ar" ? "مفيش نتائج للبحث ده." : "Nothing matches that.")); return; }
     out.forEach(function(r){
       var row = el("div","item");
-      row.appendChild(el("div","ic", r.k === "c" ? "▶" : (r.k === "l" ? "⚗" : "✦")));
+      row.appendChild(el("div","ic", r.k === "c" ? "▶" : (r.k === "l" ? "⚗" : (r.k === "ls" ? "✎" : "✦"))));
       var tt = el("div","tt");
       tt.appendChild(el("b", null, esc(r.title)));
       if (r.sub) tt.appendChild(el("span", null, esc(r.sub)));
       row.appendChild(tt);
-      var a = el("a", null, esc(t("open"))); a.href = r.href;
-      row.appendChild(a);
+      if (r.k === "ls"){
+        var lb = el("button", "pact", esc(t("open"))); lb.type = "button";
+        lb.addEventListener("click", function(){ openCourse(r.course, r.lesson); });
+        row.appendChild(lb);
+      } else {
+        var a = el("a", null, esc(t("open"))); a.href = r.href;
+        row.appendChild(a);
+      }
       box.appendChild(row);
     });
   }
