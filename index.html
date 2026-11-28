@@ -4460,5 +4460,24 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
   mo.observe(doc.body,{childList:true,subtree:true});
 })();
-</script><style id="ui-polish5">nav.nav a.spy{color:var(--accent);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}#kbdHelp.on .kbdcard{animation:kbdIn .18s ease-out}@keyframes kbdIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}@media(max-width:760px){#toTopBtn{display:none!important}}</style></body>
+</script><style id="ui-polish5">nav.nav a.spy{color:var(--accent);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}#kbdHelp.on .kbdcard{animation:kbdIn .18s ease-out}@keyframes kbdIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}@media(max-width:760px){#toTopBtn{display:none!important}}</style><style id="ui-polish6">nav.nav a.routeOn{color:var(--accent);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}.tabbar a.routeOn{color:var(--accent)}input:user-invalid,textarea:user-invalid,select:user-invalid{border-color:#c0392b!important;box-shadow:0 0 0 3px rgba(192,57,43,.12)}input:user-valid,textarea:user-valid{border-color:color-mix(in srgb,var(--accent) 55%,transparent)}</style><script id="ui-polish6-js">(function(){
+  var doc=document;
+  function mark(){
+    var h=(location.hash||'').replace(/^#/,'');
+    var links=[].slice.call(doc.querySelectorAll('nav.nav a[href^="#"], .tabbar a[href^="#"]'));
+    for(var i=0;i<links.length;i++){
+      var href=(links[i].getAttribute('href')||'').replace(/^#/,'');
+      links[i].classList.toggle('routeOn', !!href && href===h);
+    }
+  }
+  window.addEventListener('hashchange',mark);
+  mark();
+  var t=null;
+  var mo=new MutationObserver(function(){
+    if(t) return;
+    t=setTimeout(function(){ t=null; mark(); },300);
+  });
+  mo.observe(doc.body,{childList:true,subtree:true});
+})();
+</script></body>
 </html>
