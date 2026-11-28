@@ -209,6 +209,14 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   .cacts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
   #courseModal .btn{background:var(--green);color:#fff;border:0;border-radius:999px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center}
   #courseModal .btn.done{background:var(--green3);color:var(--green)}
+
+  /* ---- path actions + weekly goal ---- */
+  .pact{background:var(--green);color:#fff;border:0;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .pact.done{background:var(--green3);color:var(--green)}
+  .goal{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .goaltop{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink2)}
+  .goaltop b{color:var(--ink);font-size:15px}
+  .goalchips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -300,6 +308,11 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       <div class="card2">
         <div class="week" id="weekStrip"></div>
         <div class="actrow"><b id="streakN">0</b> <span id="streakL">يوم متتالي</span> · <b id="weekN">0</b> <span id="weekL">أيام نشاط هذا الأسبوع</span></div>
+        <div class="goal">
+          <div class="goaltop"><b id="goalN">0 / 5</b><span id="goalL">هدف الأسبوع</span></div>
+          <div class="bar"><i id="goalBar" style="width:0%"></i></div>
+          <div class="goalchips" id="goalChips"></div>
+        </div>
       </div>
     </div>
     <div class="sec">
@@ -476,6 +489,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       catCountU:"دورة", catNone:"مفيش دورات في الفلتر ده.",
       cmDetails:"تفاصيل", cmLearn:"هتتعلم إيه", cmContent:"محتوى الدورة", cmSoon:"محتوى الدورة لسه بيتجهز.",
       paidB:"مدفوع", minU:"دقيقة",
+      goalL:"هدف الأسبوع", goalHint:"اختار هدفك", labNext:"التجربة التالية", labAllDone:"خلصت كل التجارب 👏",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
       out:"خروج", hi:"أهلًا، ", heroSub:"مساحتك في سرمد ليرننج: كورساتك، معملك، ومهامك.",
@@ -518,6 +532,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       catCountU:"courses", catNone:"No courses match this filter.",
       cmDetails:"Details", cmLearn:"What you will learn", cmContent:"Course content", cmSoon:"Course content is being prepared.",
       paidB:"Paid", minU:"min",
+      goalL:"Weekly goal", goalHint:"Pick your goal", labNext:"Next lab", labAllDone:"All labs finished 👏",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
       out:"Sign out", hi:"Hi, ", heroSub:"Your space in Sarmad Learning: courses, lab and tasks.",
@@ -883,12 +898,12 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       card.appendChild(el("div","bar", '<i style="width:' + Math.round(joined / Math.max(1, tr.courses.length) * 100) + '%"></i>'));
       var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px";
       var nxt = null; tr.courses.forEach(function(cid){ if (!nxt && !D.enr[cid]) nxt = cid; });
-      var st2 = el("a", nxt ? "" : "done", esc(nxt ? t("trackStart") : t("trackReview")));
+      var st2 = el("a", nxt ? "pact" : "pact done", esc(nxt ? t("trackStart") : t("trackReview")));
       st2.href = "/#course-" + (nxt || tr.courses[0]);
       acts.appendChild(st2);
       var trHrs = 0; tr.courses.forEach(function(cid){ if (COURSES[cid]) trHrs += (COURSES[cid].hours || 0); });
       acts.appendChild(el("span", "chip2 grey", esc(trHrs + " " + t("hoursU"))));
-      var sh2 = el("button", "btn done", esc(t("share"))); sh2.type = "button";
+      var sh2 = el("button", "pact done", esc(t("share"))); sh2.type = "button";
       sh2.addEventListener("click", function(){
         var u = location.origin + "/learn#track-" + tr.id;
         var done = function(){ sh2.textContent = t("shared"); setTimeout(function(){ sh2.textContent = t("share"); }, 1500); };
@@ -1103,6 +1118,50 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     while (days[dayKeyOf(cur)]) { streak++; cur.setDate(cur.getDate() - 1); }
     $("streakN").textContent = String(streak);
     $("weekN").textContent = String(week);
+    renderGoal(week);
+  }
+
+  function goalTarget(){
+    var g = 5;
+    try { g = parseInt(localStorage.getItem("sl_goal") || "5", 10) || 5; } catch(e){}
+    if ([3,5,7].indexOf(g) < 0) g = 5;
+    return g;
+  }
+  function renderGoal(week){
+    var g = goalTarget();
+    var box = $("goalN"), bar = $("goalBar"), chips = $("goalChips");
+    if (!box) return;
+    box.textContent = week + " / " + g;
+    if (bar) bar.style.width = Math.min(100, Math.round(week / g * 100)) + "%";
+    if (chips && !chips.getAttribute("data-built")){
+      chips.setAttribute("data-built", "1");
+      [3,5,7].forEach(function(n){
+        var b = el("button", "pact done", String(n));
+        b.type = "button";
+        b.setAttribute("data-goal", String(n));
+        b.addEventListener("click", function(){
+          try { localStorage.setItem("sl_goal", String(n)); } catch(e){}
+          renderGoal(week);
+        });
+        chips.appendChild(b);
+      });
+    }
+    if (chips){
+      Array.prototype.forEach.call(chips.querySelectorAll("button"), function(b){
+        var on = parseInt(b.getAttribute("data-goal"), 10) === g;
+        b.style.opacity = on ? "1" : "0.55";
+        b.style.fontWeight = on ? "700" : "600";
+      });
+    }
+  }
+
+  function nextLab(id){
+    var D = DATA || {}, list = D.labs || [], idx = -1, i;
+    for (i = 0; i < list.length; i++){ if (list[i].id === id){ idx = i; break; } }
+    if (idx < 0) return null;
+    for (i = idx + 1; i < list.length; i++){ if (!(D.myLabs && D.myLabs[list[i].id] && D.myLabs[list[i].id].done)) return list[i]; }
+    for (i = 0; i < idx; i++){ if (!(D.myLabs && D.myLabs[list[i].id] && D.myLabs[list[i].id].done)) return list[i]; }
+    return null;
   }
 
   /* ---- interactive lab ---- */
@@ -1202,6 +1261,16 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
         $("sLabs").textContent = String((DATA && DATA.labsDone) || 0);
         renderActivity();
         $("labRes").innerHTML += '<div class="ok" style="margin-top:6px">' + (lang === "ar" ? "اتحفظت التجربة في حسابك ✓" : "Lab saved to your account ✓") + '</div>';
+        var nx = nextLab(id);
+        var nwrap = el("div"); nwrap.style.marginTop = "10px";
+        if (nx){
+          var nb = el("button", "pact", esc(t("labNext"))); nb.type = "button";
+          nb.addEventListener("click", function(){ openLabPanel(nx.id); });
+          nwrap.appendChild(nb);
+        } else {
+          nwrap.appendChild(el("span", "ok", esc(t("labAllDone"))));
+        }
+        $("labRes").appendChild(nwrap);
       }).catch(function(){});
   }
   $("labRun").addEventListener("click", runLab);
