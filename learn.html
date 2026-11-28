@@ -27,6 +27,7 @@ body.dark .day i{background:#222a1e;color:#8d9a86}
 body.dark .badge.off{opacity:.4}
 body.dark .stat,body.dark .card2,body.dark .item,body.dark .pathcard{box-shadow:none}
 body.dark .item a,body.dark .item .btn,body.dark .primary,body.dark .pact{color:#fff}
+body.dark .lgo img,body.dark .lgo{filter:brightness(0) invert(1)}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{background:var(--cream);color:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",system-ui,-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
@@ -605,6 +606,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   function t(k){ return (TXT[lang] && TXT[lang][k]) || TXT.ar[k] || k; }
   var CATF = "all";
   var CATS = "def";
+  try { var _cf = localStorage.getItem("sl_catf"); if (_cf) CATF = _cf; var _cs = localStorage.getItem("sl_cats"); if (_cs) CATS = _cs; } catch(e){}
   var LABF = "all";
 
   var COURSES = {"cyber1": {"ar": "أساسيات الأمن السيبراني للمطورين", "en": "Cybersecurity Essentials for Developers", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "front1": {"ar": "واجهات سريعة ومتجاوبة بالعربية والإنجليزية", "en": "Fast Bilingual Responsive Interfaces", "level": "intermediate", "hours": 5, "price": 199, "status": "open"}, "pay1": {"ar": "ربط بوابات الدفع بأمان", "en": "Integrating Payment Gateways Safely", "level": "intermediate", "hours": 4, "price": 249, "status": "soon"}, "html1": {"ar": "أساسيات HTML وCSS", "en": "HTML & CSS Fundamentals", "level": "beginner", "hours": 4, "price": 0, "status": "open"}, "js1": {"ar": "JavaScript من الصفر", "en": "JavaScript from Scratch", "level": "beginner", "hours": 6, "price": 149, "status": "open"}, "net1": {"ar": "أساسيات الشبكات", "en": "Networking Fundamentals", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "ai1": {"ar": "مدخل إلى الذكاء الاصطناعي", "en": "Introduction to Artificial Intelligence", "level": "beginner", "hours": 4, "price": 249, "status": "open"}, "ml1": {"ar": "تعلّم الآلة من الصفر", "en": "Machine Learning from Scratch", "level": "intermediate", "hours": 5, "price": 299, "status": "open"}};
@@ -669,6 +671,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   var TAB = "home";
   function goTab(v){
     TAB = v;
+    try { localStorage.setItem("sl_tab", v); } catch(e){}
     ["home","cat","paths","disc","courses","labs","ai","ach","search"].forEach(function(k){
       $("v-" + k).classList.toggle("hidden", k !== v);
     });
@@ -829,7 +832,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("prMail").textContent = (lang === "ar" ? "الإيميل: " : "Email: ") + (u.email || "");
     var hash = (location.hash || "").replace("#", "");
     var hh = hash.indexOf("lab-") === 0 ? "labs" : (hash.indexOf("track-") === 0 ? "paths" : hash);
-    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : "home");
+    var savedTab = "";
+    try { savedTab = localStorage.getItem("sl_tab") || ""; } catch(e){}
+    var fallback = (["home","cat","paths","disc","courses","labs","ai","ach"].indexOf(savedTab) >= 0) ? savedTab : "home";
+    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : fallback);
     if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
     if (hash.indexOf("track-") === 0){ var trid = hash.slice(6); setTimeout(function(){
       var cards = document.querySelectorAll("#pathList .pathcard");
@@ -1213,7 +1219,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     [["all","catAll"],["free","catFree"],["paid","catPaid"],["beg","catBeg"],["int","catInt"],["mine","catMine"],["done","catDone"],["fav","catFav"]].forEach(function(p){
       var b = el("button", "fchip" + (CATF === p[0] ? " on" : ""), esc(t(p[1])));
       b.type = "button";
-      b.addEventListener("click", function(){ CATF = p[0]; render(); });
+      b.addEventListener("click", function(){ CATF = p[0]; try { localStorage.setItem("sl_catf", CATF); } catch(e){} render(); });
       box.appendChild(b);
     });
   }
@@ -1804,7 +1810,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var D = DATA || { ids:[], labs:[], tasks:[], myLabs:{}, myTasks:{}, prog:{} };
     Object.keys(COURSES).forEach(function(id){
       var c = COURSES[id], ti = (lang === "ar" ? c.ar : c.en);
-      if (ti.toLowerCase().indexOf(q) >= 0) out.push({ k:"c", title:ti, sub:(D.enr[id] ? t("joinedB") : t("startC")) + (D.prog[id] ? " · " + D.prog[id] + " " + t("lessonsDone") : ""), href:"/#course-" + id });
+      if ((String(c.ar || "") + " " + String(c.en || "")).toLowerCase().indexOf(q) >= 0) out.push({ k:"c", title:ti, sub:(D.enr[id] ? t("joinedB") : t("startC")) + (D.prog[id] ? " · " + D.prog[id] + " " + t("lessonsDone") : ""), href:"/#course-" + id });
     });
     if (typeof CDET !== "undefined"){
       Object.keys(CDET).forEach(function(cid){
@@ -1861,7 +1867,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   var selEl = $("catSort");
   if (selEl){
     selEl.value = CATS;
-    selEl.addEventListener("change", function(){ CATS = selEl.value || "def"; render(); });
+    selEl.addEventListener("change", function(){ CATS = selEl.value || "def"; try { localStorage.setItem("sl_cats", CATS); } catch(e){} render(); });
   }
   $("cmClose").addEventListener("click", closeCourse);
   $("courseModal").addEventListener("click", function(e){ if (e.target === $("courseModal")) closeCourse(); });
@@ -1871,6 +1877,17 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   });
   $("certClose").addEventListener("click", closeCert);
   $("certPrint").addEventListener("click", function(){ window.print(); });
+
+  /* ---- scroll to top ---- */
+  var toTop = document.createElement("button");
+  toTop.id = "toTop";
+  toTop.type = "button";
+  toTop.textContent = "↑";
+  toTop.setAttribute("aria-label", "back to top");
+  toTop.style.cssText = "position:fixed;left:18px;bottom:18px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:18px;cursor:pointer;display:none;z-index:9998;box-shadow:var(--sh)";
+  document.body.appendChild(toTop);
+  window.addEventListener("scroll", function(){ toTop.style.display = (window.scrollY > 400) ? "block" : "none"; });
+  toTop.addEventListener("click", function(){ window.scrollTo({ top: 0, behavior: "smooth" }); });
   $("certModal").addEventListener("click", function(e){ if (e.target === $("certModal")) closeCert(); });
   document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeCert(); });
 
