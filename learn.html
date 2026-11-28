@@ -230,6 +230,18 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   .sortrow select{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-family:inherit;font-size:12.5px}
   .trknext{font-size:12.5px;color:var(--ink2);margin-top:8px}
   .trknext b{color:var(--green)}
+
+/* phone width: header fits, nav gets its own scrollable row, no sideways page scroll (lh-phone) */
+html,body{overflow-x:clip}
+.lh-in{min-width:0}
+@media(max-width:600px){
+  .lh-in{flex-wrap:wrap;row-gap:6px;gap:6px;padding:8px 10px}
+  .lh-in>.lgo{order:1}
+  .lh-in>#q{order:2;flex:1 1 90px;min-width:0;width:auto}
+  .lh-in>.lact{order:3}
+  .lh-in>.ghost{order:3}
+  .lh-in>.lnav{order:5;flex:1 0 100%;min-width:0;overflow-x:auto}
+}
 </style>
 </head>
 <body>

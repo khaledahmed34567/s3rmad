@@ -1698,11 +1698,12 @@ function openModal(html, cls = '') {
   $('#overlay').appendChild(b); fixDigits(b); return b;
 }
 function closeModal() { const b = $('#modal-back'); if (b) b.remove(); }
+const routeHref = h => h === 'learning' ? '/learn' : '#' + h;
 function openDrawer() {
   const items = [['home', T('الرئيسية', 'Home')], ['services', T('الخدمات', 'Services')], ['apps', T('التطبيقات', 'Apps')], ['platform', T('سرمد بلاتفورم', 'Sarmad Platform')], ['learning', T('سرمد ليرننج', 'Sarmad Learning')],['aitasks', T('مهام الذكاء الاصطناعي', 'AI tasks')], ['whatsnew', T('الجديد في سرمد', "What's new")], ['dashboard', T('لوحتي', 'My dashboard')], ['achievements', T('إنجازاتي', 'My achievements')],['lab', T('المعمل التفاعلي', 'Interactive lab')], ['tam', T('تم للمدفوعات', 'Tam Payments')], ['pricing', T('الأسعار', 'Pricing')], ['about', T('من نحن', 'About')], ['contact', T('تواصل معنا', 'Contact')], [S.user ? 'account' : 'login', S.user ? T('حسابي', 'My account') : T('دخول / إنشاء حساب', 'Sign in / Sign up')]];
   const d = document.createElement('div'); d.className = 'drawer'; d.id = 'drawer';
   d.innerHTML = `<div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="logo" style="--lw:104px"></span><button class="ib" data-act="closeDrawer" aria-label="close">${icon('x')}</button></div>
-    ${items.map(([h, n]) => `<a href="#${h}" data-act="closeDrawer">${n}${icon('arrow', 'flip')}</a>`).join('')}
+    ${items.map(([h, n]) => `<a href="${routeHref(h)}" data-act="closeDrawer">${n}${icon('arrow', 'flip')}</a>`).join('')}
     <div class="row" style="margin-top:18px"><button class="btn ghost" data-act="lang">${icon('globe')} ${lang === 'ar' ? 'English' : 'العربية'}</button><button class="btn ghost" data-act="theme">${icon(isDark() ? 'sun' : 'moon')} ${isDark() ? T('فاتح', 'Light') : T('داكن', 'Dark')}</button></div>`;
   $('#overlay').appendChild(d); fixDigits(d);
 }
@@ -2329,7 +2330,7 @@ function renderTabbar() {
   if (!el) { el = document.createElement('nav'); el.id = 'tabbar'; el.className = 'tabbar'; el.setAttribute('aria-label', 'tabs'); document.body.appendChild(el); }
   const r = parse(), p = portalOf(r.name);
   const items = [['home', 'layout', T('الرئيسية', 'Home'), r.name === 'home'], ['apps', 'download', T('التطبيقات', 'Apps'), r.name === 'apps'], ['learning', 'book', T('ليرننج', 'Learning'), p === 'learning'], ['platform', 'pen', T('بلاتفورم', 'Platform'), p === 'platform'], [S.user ? 'account' : 'login', 'user', S.user ? T('حسابي', 'Account') : T('دخول', 'Sign in'), ['account', 'login', 'signup'].includes(r.name)]];
-  el.innerHTML = items.map(([h, i, n, on]) => `<a href="#${h}" class="${on ? 'on' : ''}">${icon(i)}<span>${n}</span></a>`).join('');
+  el.innerHTML = items.map(([h, i, n, on]) => `<a href="${routeHref(h)}" class="${on ? 'on' : ''}">${icon(i)}<span>${n}</span></a>`).join('');
   fixDigits(el);
 }
 const _renderHeader = renderHeader;
@@ -2943,7 +2944,7 @@ const stepMeta = s => { const m = STEP_META[s.type] || STEP_META.text; return [m
 function learnNav() {
   const r = parse();
   const items = [['learning', T('الرئيسية', 'Hub'), 'layout', ['learning', 'course', 'learn', 'track'].includes(r.name)], ['test-code', T('اختبار البرمجة', 'Coding test'), 'code', r.key === 'test-code'], ['test-cyber', T('اختبار الأمن والشبكات', 'Security test'), 'shield', r.key === 'test-cyber'], ['aid', T('نساعد بعض', 'We help each other'), 'heart', r.name === 'aid']];
-  return `<div class="lxnav"><div class="wrap">${items.map(([h, n, i, on]) => `<a href="#${h}" class="${on ? 'on' : ''}">${icon(i)} ${n}</a>`).join('')}<span class="sp"></span>${S.user ? `<a href="#account" class="who">${icon('user')} ${esc(S.user.name.split(' ')[0])}</a>` : `<a href="#lx-login" class="who">${icon('user')} ${T('دخول المتعلم', 'Learner sign in')}</a>`}</div></div>`;
+  return `<div class="lxnav"><div class="wrap">${items.map(([h, n, i, on]) => `<a href="${routeHref(h)}" class="${on ? 'on' : ''}">${icon(i)} ${n}</a>`).join('')}<span class="sp"></span>${S.user ? `<a href="#account" class="who">${icon('user')} ${esc(S.user.name.split(' ')[0])}</a>` : `<a href="#lx-login" class="who">${icon('user')} ${T('دخول المتعلم', 'Learner sign in')}</a>`}</div></div>`;
 }
 
 /* ---------- hub ---------- */
