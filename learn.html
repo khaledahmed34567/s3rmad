@@ -753,7 +753,7 @@ html,body{overflow-x:clip}
     $("tH").textContent = t("nvAch"); $("tHd").textContent = t("tHd");
     $("cT").textContent = t("nvCourses"); $("lbT").textContent = t("nvLabs");
     $("aiT").textContent = t("nvAi"); $("acT").textContent = t("nvAch"); $("ceT").textContent = lang === "ar" ? "شهاداتي" : "My certificates";
-    if (DATA) render();
+    if (DATA) render(); try { if (typeof renderLesson === "function" && DATA && !$("v-lesson").classList.contains("hidden")) renderLesson(); } catch(e){}
   }
 
   function show(kind, text){ elMsg.className = "msg " + kind; elMsg.textContent = text; }
