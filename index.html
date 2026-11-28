@@ -4390,8 +4390,8 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   if(!doc.getElementById('kbdHelp')){
     var ov=doc.createElement('div'); ov.id='kbdHelp';
     var rows = isAr()
-      ? [['Ctrl / \u2318 + K','\u0628\u062d\u062b \u0633\u0631\u064a\u0639'],['Tab','\u0627\u0644\u062a\u0646\u0642\u0644 \u0628\u064a\u0646 \u0627\u0644\u0639\u0646\u0627\u0635\u0631'],['Home / End','\u0623\u0648\u0644 \u0627\u0644\u0635\u0641\u062d\u0629 / \u0622\u062e\u0631\u0647\u0627'],['Esc','\u0625\u063a\u0644\u0627\u0642'],['?','\u0647\u0630\u0647 \u0627\u0644\u0642\u0627\u0626\u0645\u0629']]
-      : [['Ctrl / \u2318 + K','Quick search'],['Tab','Move between elements'],['Home / End','Top / bottom of page'],['Esc','Close'],['?','This list']];
+      ? [['Ctrl / Cmd + K','\u0628\u062d\u062b \u0633\u0631\u064a\u0639'],['Tab','\u0627\u0644\u062a\u0646\u0642\u0644 \u0628\u064a\u0646 \u0627\u0644\u0639\u0646\u0627\u0635\u0631'],['Home / End','\u0623\u0648\u0644 \u0627\u0644\u0635\u0641\u062d\u0629 / \u0622\u062e\u0631\u0647\u0627'],['Esc','\u0625\u063a\u0644\u0627\u0642'],['?','\u0647\u0630\u0647 \u0627\u0644\u0642\u0627\u0626\u0645\u0629']]
+      : [['Ctrl / Cmd + K','Quick search'],['Tab','Move between elements'],['Home / End','Top / bottom of page'],['Esc','Close'],['?','This list']];
     var html='<div class="kbdcard" role="dialog" aria-modal="true" aria-label="'+(isAr()?'\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a':'\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a')+'">'
       + '<div class="kbdt">'+(isAr()?'\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a \u0627\u0644\u0643\u064a\u0628\u0648\u0631\u062f':'\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a \u0627\u0644\u0643\u064a\u0628\u0648\u0631\u062f')+'</div>';
     for(var i=0;i<rows.length;i++){ html+='<div class="kbdrow"><span>'+rows[i][1]+'</span><kbd>'+rows[i][0]+'</kbd></div>'; }
@@ -4430,6 +4430,35 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
   mo.observe(doc.body,{childList:true,subtree:true});
   window.addEventListener('scroll',function(){ },{passive:true});
+})();
+</script><style id="ui-polish4">#kbdFoot{cursor:pointer;opacity:.85}#kbdFoot:hover{opacity:1}@media(max-width:760px){#toTopBtn{bottom:calc(78px + env(safe-area-inset-bottom,0px))}}</style><script id="ui-polish4-js">(function(){
+  var doc=document;
+  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
+  var ov=doc.getElementById('kbdHelp');
+  function toggleKbd(force){
+    if(!ov) return;
+    var show = force===true ? true : (force===false ? false : !ov.classList.contains('on'));
+    ov.classList.toggle('on', show);
+  }
+  window.__kbdToggle=toggleKbd;
+  function footChip(){
+    if(doc.getElementById('kbdFoot')) return;
+    var row=doc.querySelector('#ftr .ftr-bottom .row');
+    if(!row) return;
+    var b=doc.createElement('button');
+    b.id='kbdFoot'; b.type='button'; b.className='chip';
+    b.style.background='none'; b.style.color='inherit';
+    b.textContent = isAr() ? '\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a (?)' : 'Shortcuts (?)';
+    b.addEventListener('click', function(){ toggleKbd(true); });
+    row.appendChild(b);
+  }
+  footChip();
+  var t=null;
+  var mo=new MutationObserver(function(){
+    if(t) return;
+    t=setTimeout(function(){ t=null; footChip(); },300);
+  });
+  mo.observe(doc.body,{childList:true,subtree:true});
 })();
 </script></body>
 </html>
