@@ -220,6 +220,13 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   /* global fallback so buttons outside the app shell are not browser-default */
   .btn{background:var(--green);color:#fff;border:0;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center}
   .btn.done{background:var(--green3);color:var(--green)}
+
+  /* ---- lesson highlight + catalog sort ---- */
+  .cles.hl{background:var(--green3);border-radius:8px;padding-inline:8px;font-weight:600}
+  .sortrow{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:12.5px;color:var(--ink2)}
+  .sortrow select{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-family:inherit;font-size:12.5px}
+  .trknext{font-size:12.5px;color:var(--ink2);margin-top:8px}
+  .trknext b{color:var(--green)}
 </style>
 </head>
 <body>
@@ -347,7 +354,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   <!-- catalog -->
   <div id="v-cat" class="hidden">
-    <div class="sec"><h2 id="catT">الدورات</h2><div id="catFilters" class="chipsrow"></div><div id="catCount" class="catcount"></div><div id="catList"></div></div>
+    <div class="sec"><h2 id="catT">الدورات</h2><div id="catFilters" class="chipsrow"></div>
+    <div class="sortrow"><span id="sortL">ترتيب</span><select id="catSort"><option value="def">الافتراضي</option><option value="short">الأقصر أولًا</option><option value="cheap">الأرخص أولًا</option></select></div><div id="catCount" class="catcount"></div><div id="catList"></div></div>
   </div>
 
   <!-- paths -->
@@ -493,6 +501,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       cmDetails:"تفاصيل", cmLearn:"هتتعلم إيه", cmContent:"محتوى الدورة", cmSoon:"محتوى الدورة لسه بيتجهز.",
       paidB:"مدفوع", minU:"دقيقة",
       goalL:"هدف الأسبوع", goalHint:"اختار هدفك", labNext:"التجربة التالية", labAllDone:"خلصت كل التجارب 👏",
+      sortL:"ترتيب", sortDef:"الافتراضي", sortShort:"الأقصر أولًا", sortCheap:"الأرخص أولًا", trkNext:"الخطوة الجاية",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
       out:"خروج", hi:"أهلًا، ", heroSub:"مساحتك في سرمد ليرننج: كورساتك، معملك، ومهامك.",
@@ -536,6 +545,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       cmDetails:"Details", cmLearn:"What you will learn", cmContent:"Course content", cmSoon:"Course content is being prepared.",
       paidB:"Paid", minU:"min",
       goalL:"Weekly goal", goalHint:"Pick your goal", labNext:"Next lab", labAllDone:"All labs finished 👏",
+      sortL:"Sort", sortDef:"Default", sortShort:"Shortest first", sortCheap:"Cheapest first", trkNext:"Next step",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
       out:"Sign out", hi:"Hi, ", heroSub:"Your space in Sarmad Learning: courses, lab and tasks.",
@@ -553,6 +563,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   };
   function t(k){ return (TXT[lang] && TXT[lang][k]) || TXT.ar[k] || k; }
   var CATF = "all";
+  var CATS = "def";
 
   var COURSES = {"cyber1": {"ar": "أساسيات الأمن السيبراني للمطورين", "en": "Cybersecurity Essentials for Developers", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "front1": {"ar": "واجهات سريعة ومتجاوبة بالعربية والإنجليزية", "en": "Fast Bilingual Responsive Interfaces", "level": "intermediate", "hours": 5, "price": 199, "status": "open"}, "pay1": {"ar": "ربط بوابات الدفع بأمان", "en": "Integrating Payment Gateways Safely", "level": "intermediate", "hours": 4, "price": 249, "status": "soon"}, "html1": {"ar": "أساسيات HTML وCSS", "en": "HTML & CSS Fundamentals", "level": "beginner", "hours": 4, "price": 0, "status": "open"}, "js1": {"ar": "JavaScript من الصفر", "en": "JavaScript from Scratch", "level": "beginner", "hours": 6, "price": 149, "status": "open"}, "net1": {"ar": "أساسيات الشبكات", "en": "Networking Fundamentals", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "ai1": {"ar": "مدخل إلى الذكاء الاصطناعي", "en": "Introduction to Artificial Intelligence", "level": "beginner", "hours": 4, "price": 249, "status": "open"}, "ml1": {"ar": "تعلّم الآلة من الصفر", "en": "Machine Learning from Scratch", "level": "intermediate", "hours": 5, "price": 299, "status": "open"}};
   var TRACKS = [{"id": "web", "level": "beginner", "courses": ["html1", "js1", "front1"], "ar": "مسار تطوير الويب", "en": "Web Development Track"}, {"id": "cyber", "level": "beginner", "courses": ["net1", "cyber1"], "ar": "مسار الأمن السيبراني والشبكات", "en": "Cybersecurity & Networking Track"}, {"id": "pay", "level": "intermediate", "courses": ["pay1"], "ar": "مسار الخلفية والمدفوعات", "en": "Backend & Payments Track"}, {"id": "ai", "level": "beginner", "courses": ["ai1"], "ar": "مسار الذكاء الاصطناعي", "en": "Artificial Intelligence Track"}, {"id": "ml", "level": "intermediate", "courses": ["ml1"], "ar": "مسار تعلّم الآلة", "en": "Machine Learning Track"}];
@@ -853,6 +864,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       if (CATF === "mine") return !!D.enr[id];
       return true;
     });
+    if (CATS === "short") cids.sort(function(a, b){ return (COURSES[a].hours || 0) - (COURSES[b].hours || 0); });
+    if (CATS === "cheap") cids.sort(function(a, b){ return (COURSES[a].price || 0) - (COURSES[b].price || 0); });
     var cco = $("catCount"); if (cco) cco.textContent = cids.length + " " + t("catCountU");
     if (!cids.length){ cl2.appendChild(el("div","empty", esc(t("catNone")))); }
     cids.forEach(function(id){
@@ -913,6 +926,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
         try { navigator.clipboard.writeText(u).then(done, done); } catch(e){ done(); }
       });
       acts.appendChild(sh2);
+      if (nxt){ card.appendChild(el("div", "trknext", esc(t("trkNext")) + ": <b>" + esc(courseTitle(nxt)) + "</b>")); }
       card.appendChild(acts);
       var list = el("div"); list.style.marginTop = "10px";
       tr.courses.forEach(function(cid){
@@ -1009,7 +1023,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   function closeCert(){ $("certModal").classList.add("hidden"); }
 
-  function openCourse(cid){
+  function openCourse(cid, hl){
     var c = COURSES[cid]; if (!c) return;
     var det = (typeof CDET !== "undefined" && CDET[cid]) || null;
     var D = DATA || {};
@@ -1039,6 +1053,12 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       h += '<p class="cdesc" style="margin-top:14px">' + esc(t("cmSoon")) + '</p>';
     }
     $("courseBody").innerHTML = h;
+    if (hl){
+      var rows = $("courseBody").querySelectorAll(".cles");
+      Array.prototype.forEach.call(rows, function(r){
+        if (r.getAttribute("data-lid") === hl){ r.classList.add("hl"); setTimeout(function(){ try { r.scrollIntoView({ block: "center" }); } catch(e){} }, 120); }
+      });
+    }
     var o = $("cmOpen");
     o.href = "/#course-" + cid;
     o.textContent = t(c.status === "soon" ? "view" : (D.enr && D.enr[cid] ? "open" : "startC"));
@@ -1424,6 +1444,11 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   /* ---- boot ---- */
   try { var sv = localStorage.getItem("sl_lang"); if (sv === "en" || sv === "ar") lang = sv; } catch(e){}
   applyLang();
+  var selEl = $("catSort");
+  if (selEl){
+    selEl.value = CATS;
+    selEl.addEventListener("change", function(){ CATS = selEl.value || "def"; render(); });
+  }
   $("cmClose").addEventListener("click", closeCourse);
   $("courseModal").addEventListener("click", function(e){ if (e.target === $("courseModal")) closeCourse(); });
   document.addEventListener("keydown", function(e){
