@@ -909,6 +909,13 @@ html,body{overflow-x:clip}
     $("q").value = "";
     DATA = null;
   }
+  document.addEventListener("click", function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href*="#course-"]') : null;
+    if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
+    var m = (a.getAttribute("href") || "").match(/^(?:\/learn)?#course-(.+)$/);
+    if (!m || $("app").classList.contains("hidden")) return;
+    e.preventDefault(); openCourse(m[1]);
+  });
   addEventListener("hashchange", function(){
     var h = (location.hash || "").replace("#", "");
     if (h.indexOf("course-") === 0 && !$("app").classList.contains("hidden")) openCourse(h.slice(7));
@@ -1427,7 +1434,7 @@ html,body{overflow-x:clip}
     $("courseModal").classList.remove("hidden");
   }
 
-  function closeCourse(){ $("courseModal").classList.add("hidden"); }
+  function closeCourse(){ $("courseModal").classList.add("hidden"); try { if (/^#course-/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search); } catch(e){} }
 
   function courseRow(id){
     var D = DATA || { prog: {} }, n = D.prog[id] || 0, total = courseLessons(id).length;
