@@ -612,6 +612,71 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   var COURSES = {"cyber1": {"ar": "أساسيات الأمن السيبراني للمطورين", "en": "Cybersecurity Essentials for Developers", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "front1": {"ar": "واجهات سريعة ومتجاوبة بالعربية والإنجليزية", "en": "Fast Bilingual Responsive Interfaces", "level": "intermediate", "hours": 5, "price": 199, "status": "open"}, "pay1": {"ar": "ربط بوابات الدفع بأمان", "en": "Integrating Payment Gateways Safely", "level": "intermediate", "hours": 4, "price": 249, "status": "soon"}, "html1": {"ar": "أساسيات HTML وCSS", "en": "HTML & CSS Fundamentals", "level": "beginner", "hours": 4, "price": 0, "status": "open"}, "js1": {"ar": "JavaScript من الصفر", "en": "JavaScript from Scratch", "level": "beginner", "hours": 6, "price": 149, "status": "open"}, "net1": {"ar": "أساسيات الشبكات", "en": "Networking Fundamentals", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "ai1": {"ar": "مدخل إلى الذكاء الاصطناعي", "en": "Introduction to Artificial Intelligence", "level": "beginner", "hours": 4, "price": 249, "status": "open"}, "ml1": {"ar": "تعلّم الآلة من الصفر", "en": "Machine Learning from Scratch", "level": "intermediate", "hours": 5, "price": 299, "status": "open"}};
   var TRACKS = [{"id": "web", "level": "beginner", "courses": ["html1", "js1", "front1"], "ar": "مسار تطوير الويب", "en": "Web Development Track"}, {"id": "cyber", "level": "beginner", "courses": ["net1", "cyber1"], "ar": "مسار الأمن السيبراني والشبكات", "en": "Cybersecurity & Networking Track"}, {"id": "pay", "level": "intermediate", "courses": ["pay1"], "ar": "مسار الخلفية والمدفوعات", "en": "Backend & Payments Track"}, {"id": "ai", "level": "beginner", "courses": ["ai1"], "ar": "مسار الذكاء الاصطناعي", "en": "Artificial Intelligence Track"}, {"id": "ml", "level": "intermediate", "courses": ["ml1"], "ar": "مسار تعلّم الآلة", "en": "Machine Learning Track"}];
   var CDET = {"cyber1":{"d":{"ar":"تعلّم كيف تفكر كمهاجم وتبني كمدافع: تسجيل الدخول والجلسات وحماية البيانات.","en":"Learn to think like an attacker and build like a defender: login, sessions and data protection."},"outcomes":{"ar":["بناء نموذج تهديدات لتطبيقك","تأمين تسجيل الدخول والجلسات","مراجعة تطبيقك بقائمة فحص عملية"],"en":["Build a threat model for your app","Secure login and sessions","Review your app with a practical checklist"]},"modules":[{"t":{"ar":"الأساس","en":"Foundations"},"lessons":[{"id":"l1","t":{"ar":"لماذا الأمان؟ ونموذج التهديدات","en":"Why security? Threat modeling"},"min":8,"free":true},{"id":"l2","t":{"ar":"فيديو: كيف يعمل هجوم الحقن","en":"Video: how an injection attack works"},"min":6,"free":false}]},{"t":{"ar":"تسجيل الدخول والجلسات","en":"Login and sessions"},"lessons":[{"id":"l3","t":{"ar":"ملخص صوتي: ملفات الارتباط والجلسات","en":"Audio brief: cookies and sessions"},"min":5,"free":false},{"id":"l4","t":{"ar":"قائمة فحص تسجيل الدخول (PDF)","en":"Login security checklist (PDF)"},"min":10,"free":false}]},{"t":{"ar":"التقييم","en":"Assessment"},"lessons":[{"id":"l5","t":{"ar":"اختبار: الأساسيات","en":"Quiz: the basics"},"min":8,"free":false},{"id":"l6","t":{"ar":"مهمة: راجع تسجيل الدخول في مشروعك","en":"Task: review your project’s login"},"min":20,"free":false}]}]},"front1":{"d":{"ar":"ابنِ واجهة ثنائية الاتجاه (RTL/LTR) بأداء ممتاز وتجربة سلسة على الهاتف.","en":"Build a bidirectional (RTL/LTR) interface with great performance and a smooth mobile experience."},"outcomes":{"ar":["بناء تخطيط يعمل بالاتجاهين","استخدام الخصائص المنطقية في CSS","قياس الأداء وتحسينه"],"en":["Build a layout that works in both directions","Use CSS logical properties","Measure and improve performance"]},"modules":[{"t":{"ar":"الاتجاهان","en":"Both directions"},"lessons":[{"id":"l1","t":{"ar":"مقدمة: كيف يفكر المتصفح في الاتجاه","en":"Intro: how the browser thinks about direction"},"min":7,"free":true},{"id":"l2","t":{"ar":"تطبيق: بناء الهيدر ثنائي الاتجاه","en":"Hands-on: a bidirectional header"},"min":12,"free":false},{"id":"l3","t":{"ar":"اختبار: الخصائص المنطقية","en":"Quiz: logical properties"},"min":10,"free":false}]},{"t":{"ar":"الأداء","en":"Performance"},"lessons":[{"id":"l4","t":{"ar":"مهمة: حسّن صفحة حقيقية","en":"Task: speed up a real page"},"min":15,"free":false}]}]},"pay1":{"d":{"ar":"من صفحة الدفع إلى الـ Webhooks وسجل الطلبات، مع قائمة فحص قبل الإطلاق.","en":"From checkout to webhooks and order history, with a pre-launch checklist."},"outcomes":{"ar":[],"en":[]},"modules":[]},"html1":{"d":{"ar":"ابنِ أول صفحة ويب بهيكل سليم وتنسيق أنيق، وافهم صندوق العناصر.","en":"Build your first web page with solid structure and clean styling, and understand the box model."},"outcomes":{"ar":["كتابة هيكل صفحة صحيح","استخدام الروابط والنماذج","فهم صندوق العناصر وتنسيقه"],"en":["Write a correct page structure","Use links and forms","Understand and style the box model"]},"modules":[{"t":{"ar":"HTML","en":"HTML"},"lessons":[{"id":"l1","t":{"ar":"هيكل صفحة HTML","en":"The structure of an HTML page"},"min":25,"free":true},{"id":"l2","t":{"ar":"الروابط والنماذج","en":"Links and forms"},"min":20,"free":false}]},{"t":{"ar":"CSS","en":"CSS"},"lessons":[{"id":"l3","t":{"ar":"صندوق العناصر (Box Model)","en":"The box model"},"min":25,"free":false}]}]},"js1":{"d":{"ar":"المتغيرات والأنواع والدوال والشروط، مع تحدي من 15 مهمة.","en":"Variables, types, functions and conditions, with a 15-task challenge."},"outcomes":{"ar":["فهم المتغيرات والأنواع","كتابة دوال وشروط","حل تحدٍّ شامل"],"en":["Understand variables and types","Write functions and conditions","Solve a full challenge"]},"modules":[{"t":{"ar":"الأساسيات","en":"Basics"},"lessons":[{"id":"l1","t":{"ar":"المتغيرات والأنواع","en":"Variables and types"},"min":20,"free":true},{"id":"l2","t":{"ar":"تحدي JavaScript: 15 مهمة","en":"JavaScript challenge: 15 tasks"},"min":40,"free":false}]}]},"net1":{"d":{"ar":"كيف يصل طلبك إلى الخادم؟ العناوين والبروتوكولات والمنافذ والجدران النارية.","en":"How does your request reach the server? Addresses, protocols, ports and firewalls."},"outcomes":{"ar":["فهم رحلة الطلب عبر الإنترنت","التفريق بين IP وDNS وHTTP","معرفة المنافذ الشائعة"],"en":["Understand a request’s journey across the internet","Tell IP, DNS and HTTP apart","Know common ports"]},"modules":[{"t":{"ar":"الأساسيات","en":"Foundations"},"lessons":[{"id":"l1","t":{"ar":"كيف يعمل الإنترنت","en":"How the internet works"},"min":25,"free":true},{"id":"l2","t":{"ar":"العناوين والبروتوكولات والمنافذ","en":"Addresses, protocols and ports"},"min":25,"free":false}]}]},"ai1":{"d":{"ar":"ما الذكاء الاصطناعي، وأنواعه، وكيف تكتب طلبات فعالة وتتعامل مع حدوده بأمان.","en":"What AI is, its kinds, how to write effective prompts and handle its limits safely."},"outcomes":{"ar":["التفريق بين الذكاء الاصطناعي وتعلّم الآلة","كتابة طلبات واضحة","معرفة حدود النماذج ومخاطرها"],"en":["Tell AI and machine learning apart","Write clear prompts","Know the limits and risks of models"]},"modules":[{"t":{"ar":"الأساسيات","en":"Basics"},"lessons":[{"id":"l1","t":{"ar":"ما هو الذكاء الاصطناعي؟","en":"What is AI?"},"min":15,"free":true},{"id":"l2","t":{"ar":"كتابة الطلبات واستخدام النماذج بأمان","en":"Prompting and using models safely"},"min":20,"free":false}]}]},"ml1":{"d":{"ar":"البيانات والنماذج والتدريب والتقييم، بأمثلة مبسطة.","en":"Data, models, training and evaluation, with simple examples."},"outcomes":{"ar":["فهم دورة تعلّم الآلة","التفريق بين التعلم بإشراف وبدونه","قياس جودة النموذج"],"en":["Understand the ML cycle","Tell supervised from unsupervised learning","Measure model quality"]},"modules":[{"t":{"ar":"المفاهيم","en":"Concepts"},"lessons":[{"id":"l1","t":{"ar":"كيف تتعلم الآلة؟","en":"How do machines learn?"},"min":18,"free":true},{"id":"l2","t":{"ar":"التقييم والمشكلات الشائعة","en":"Evaluation and common pitfalls"},"min":20,"free":false}]}]}};
+  /* ---- admin-managed catalog: read content_courses / content_tracks, same merge as the main site ---- */
+  var BUILTIN_COURSES = COURSES, BUILTIN_TRACKS = TRACKS, BUILTIN_CDET = CDET;
+  var CATALOG_P = null;
+  function mapModules(mods){
+    var n = 0;
+    return (mods || []).map(function(m){
+      return { t: m.t || {}, lessons: (m.lessons || []).map(function(l){
+        n++;
+        var lt = l.t;
+        if (typeof lt === "string") lt = { ar: lt, en: lt };
+        return { id: l.id || ("l" + n), t: lt || {}, min: Number(l.min) || 0, free: !!l.free };
+      })};
+    });
+  }
+  function applyCatalog(rc, rt){
+    var hidC = {}, remC = {};
+    (rc || []).forEach(function(x){ if (x.hidden) hidC[x.id] = 1; remC[x.id] = x; });
+    var out = {}, det = {};
+    Object.keys(BUILTIN_COURSES).forEach(function(id){
+      if (hidC[id] || remC[id]) return;
+      out[id] = BUILTIN_COURSES[id];
+      if (BUILTIN_CDET[id]) det[id] = BUILTIN_CDET[id];
+    });
+    (rc || []).forEach(function(x){
+      if (x.hidden) return;
+      var tt = x.t || {}, fb = BUILTIN_CDET[x.id] || null;
+      out[x.id] = { ar: tt.ar || tt.en || x.id, en: tt.en || tt.ar || x.id, level: x.level || "beginner",
+                    hours: Number(x.hours) || 0, price: Number(x.price) || 0, status: x.status || "open", cover: x.cover || "" };
+      det[x.id] = { d: x.d || (fb && fb.d) || null,
+                    outcomes: x.outcomes || (fb && fb.outcomes) || { ar: [], en: [] },
+                    modules: (x.modules && x.modules.length) ? mapModules(x.modules) : ((fb && fb.modules) || []) };
+    });
+    COURSES = out; CDET = det;
+    var hidT = {}, remT = {};
+    (rt || []).forEach(function(x){ if (x.hidden) hidT[x.id] = 1; remT[x.id] = x; });
+    var trs = [];
+    BUILTIN_TRACKS.forEach(function(tr){
+      if (hidT[tr.id] || remT[tr.id]) return;
+      trs.push({ id: tr.id, level: tr.level, ar: tr.ar, en: tr.en, courses: tr.courses.slice() });
+    });
+    (rt || []).forEach(function(x){
+      if (x.hidden) return;
+      var tt = x.t || {};
+      trs.push({ id: x.id, level: x.level || "beginner", ar: tt.ar || tt.en || x.id, en: tt.en || tt.ar || x.id, courses: (x.courses || []).slice() });
+    });
+    TRACKS = trs.filter(function(tr){
+      tr.courses = tr.courses.filter(function(cid){ return !!COURSES[cid]; });
+      return tr.courses.length > 0;
+    });
+  }
+  function loadCatalog(){
+    if (CATALOG_P) return CATALOG_P;
+    var fs = firebase.firestore();
+    CATALOG_P = Promise.all([
+      fs.collection("content_courses").get().catch(function(){ return null; }),
+      fs.collection("content_tracks").get().catch(function(){ return null; })
+    ]).then(function(r){
+      var rc = [], rt = [];
+      if (r[0]) r[0].forEach(function(d){ rc.push(Object.assign({ id: d.id }, d.data())); });
+      if (r[1]) r[1].forEach(function(d){ rt.push(Object.assign({ id: d.id }, d.data())); });
+      applyCatalog(rc, rt);
+    }).catch(function(){});
+    return CATALOG_P;
+  }
+
   function courseTitle(id){ var c = COURSES[id]; return c ? (lang === "ar" ? c.ar : c.en) : id; }
   function fmtDate(ms){ try { return new Date(ms).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", { day:"numeric", month:"long", year:"numeric" }); } catch(e){ return ""; } }
   function el(tag, cls, html){ var d = document.createElement(tag); if (cls) d.className = cls; if (html != null) d.innerHTML = html; return d; }
@@ -847,6 +912,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   }
 
   function load(u){
+    return loadCatalog().then(function(){ return loadInner(u); });
+  }
+
+  function loadInner(u){
     var db = firebase.firestore();
     var uref = db.collection("users").doc(u.uid);
     Promise.all([
