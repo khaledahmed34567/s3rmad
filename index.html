@@ -2374,7 +2374,7 @@ ROUTE.resetpw = vResetPw;
 let lastKey = null;
 const LEARN_URL = r => r.name === 'learning' ? '/learn'
   : r.name === 'course' ? (r.id ? '/learn#course-' + r.id : '/learn#cat')
-  : r.name === 'learn' ? (r.cid ? '/learn#course-' + r.cid : '/learn')
+  : r.name === 'learn' ? (r.cid && r.lid ? '/learn#learn-' + r.cid + '-' + r.lid + (r.step != null ? '-' + (r.step + 1) : '') : r.cid ? '/learn#course-' + r.cid : '/learn')
   : r.name === 'track' ? '/learn#paths'
   : r.name === 'test' ? '/learn#cat'
   : (r.name === 'lxlogin' || r.name === 'lxsignup' || r.name === 'lxcomplete') ? '/learn'

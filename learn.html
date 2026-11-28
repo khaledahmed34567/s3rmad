@@ -200,6 +200,31 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   /* ---- course details ---- */
   #courseModal{position:fixed;inset:0;background:rgba(10,24,16,.55);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;z-index:81;overflow:auto}
   #courseModal.hidden{display:none}
+  #v-lesson .lv-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;align-items:start}
+  @media(max-width:860px){#v-lesson .lv-wrap{grid-template-columns:1fr}}
+  .lv-side{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;position:sticky;top:76px;max-height:calc(100vh - 100px);overflow:auto}
+  @media(max-width:860px){.lv-side{position:static;max-height:none}}
+  .lv-back{display:block;font-size:12.5px;color:var(--green);margin-bottom:10px;text-decoration:none}.lv-ct{display:block;line-height:1.5;margin-bottom:10px}
+  .lv-mut{font-size:12.5px;color:var(--ink2);margin:6px 0}.lv-mod{margin-top:14px;font-size:11.5px;font-weight:700;color:var(--ink2);letter-spacing:.04em}
+  .lv-les{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:12px;margin-top:6px;text-decoration:none;color:var(--ink);font-size:13.5px;line-height:1.5}
+  .lv-les small{display:block;font-size:11px;color:var(--ink2)}.lv-les.on{background:var(--green3)}.lv-les.lock{opacity:.6}
+  .lv-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:0 0 20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px}.lv-les.done .lv-dot{background:var(--green);color:#fff;border-color:var(--green)}
+  .lv-main{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,28px);min-width:0}
+  .lv-crumb{font-size:12.5px;color:var(--ink2);margin-bottom:10px}.lv-crumb a{color:var(--green);text-decoration:none}
+  .lv-h1{font-size:clamp(22px,3.4vw,32px);margin:0 0 16px}.lv-row{display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--ink2);margin-bottom:8px}
+  .lv-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.lv-pill{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-family:inherit;cursor:pointer}.lv-pill.on{border-color:var(--green);box-shadow:0 0 0 2px var(--green3)}.lv-pill.ok{background:var(--green);color:#fff;border-color:var(--green)}
+  .lv-step{margin-top:22px}.lv-kind{font-size:12px;color:var(--ink2)}.lv-st{font-size:clamp(19px,2.6vw,26px);margin:6px 0 16px}
+  .lv-prose{font-size:16px;line-height:2}.lv-prose h2{font-size:20px;margin:18px 0 8px}.lv-prose pre{background:var(--green3);border-radius:12px;padding:12px;overflow:auto;text-align:left}.lv-prose img,.lv-prose figure img{max-width:100%;height:auto;border-radius:12px}
+  .lv-prose mark.hl{background:#f6e7b4;color:inherit;border-radius:4px;padding:0 3px}.lv-prose .cg{color:var(--green);font-weight:700}.lv-prose .cy{color:var(--gold);font-weight:700}.lv-prose .cb{color:#2a62a8;font-weight:700}
+  .lv-callout{background:var(--green3);border-radius:12px;padding:12px 14px;margin:14px 0;font-size:14px;line-height:1.8}.lv-q{font-size:17px;margin:0 0 14px}
+  .lv-opts{display:grid;gap:10px}.lv-opt{text-align:start;font-family:inherit;font-size:15px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}.lv-opt.good{border-color:var(--green);background:var(--green3)}.lv-opt.bad{border-color:var(--red)}
+  .lv-blank{font-family:inherit;font-size:15px;padding:4px 10px;border:1.5px solid var(--line);border-radius:10px;min-width:120px;background:var(--paper);color:var(--ink)}.lv-blank.good{border-color:var(--green)}.lv-blank.bad{border-color:var(--red)}
+  .lv-media{position:relative}.lv-media video,.lv-media audio{width:100%;border-radius:14px;background:#000}.lv-media audio{background:none}.lv-pdf{width:100%;height:70vh;border:1px solid var(--line);border-radius:14px}.lv-pct{position:absolute;top:8px;inset-inline-start:10px;font-size:12px;color:var(--ink2)}
+  .lv-btn{font-family:inherit;font-size:14px;font-weight:600;padding:10px 18px;border-radius:999px;border:0;background:var(--green3);color:var(--green);cursor:pointer;text-decoration:none;display:inline-block}.lv-btn.pri,.lv-btn.acc{background:var(--green);color:#fff}.lv-btn:disabled{opacity:.45;cursor:not-allowed}
+  .lv-btn.acc{margin-top:18px}.lv-tag{margin-top:16px;color:var(--green);font-weight:700}.lv-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);margin-top:26px;padding-top:18px;flex-wrap:wrap}
+  .lv-nav .lv-row{margin:0}.lv-empty{text-align:center;padding:40px 10px}.lv-empty h2{margin:6px 0}
+  #lvToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;font-size:13.5px;opacity:0;pointer-events:none;transition:.2s;z-index:99}#lvToast.on{opacity:1;transform:translateX(-50%)}
+
   .cbox{background:var(--paper);border:1px solid var(--line);border-radius:18px;max-width:660px;width:100%;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.25)}
   .cbox h3{margin:0;font-size:20px;font-weight:900;line-height:1.5}
   .cbox .cdesc{font-size:13.5px;color:var(--ink2);margin:8px 0 0;line-height:1.75}
@@ -317,6 +342,8 @@ html,body{overflow-x:clip}
       <div class="stat" id="stSub"><div class="n" id="sSub">—</div><div class="l" id="lSub">الاشتراك</div></div>
     </div>
   </section>
+
+  <div id="v-lesson" class="hidden"></div>
 
   <!-- home -->
   <div id="v-home">
@@ -627,7 +654,7 @@ html,body{overflow-x:clip}
         n++;
         var lt = l.t;
         if (typeof lt === "string") lt = { ar: lt, en: lt };
-        return { id: l.id || ("l" + n), t: lt || {}, min: Number(l.min) || 0, free: !!l.free };
+        return { id: l.id || ("l" + n), t: lt || {}, min: Number(l.min) || 0, free: !!l.free, steps: l.steps || [], pass: l.pass, rounds: l.rounds };
       })};
     });
   }
@@ -742,7 +769,7 @@ html,body{overflow-x:clip}
   function goTab(v){
     TAB = v;
     try { localStorage.setItem("sl_tab", v); } catch(e){}
-    ["home","cat","paths","disc","courses","labs","ai","ach","search"].forEach(function(k){
+    ["home","cat","paths","disc","courses","labs","ai","ach","search","lesson"].forEach(function(k){
       $("v-" + k).classList.toggle("hidden", k !== v);
     });
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){
@@ -910,15 +937,18 @@ html,body{overflow-x:clip}
     DATA = null;
   }
   document.addEventListener("click", function(e){
-    var a = e.target && e.target.closest ? e.target.closest('a[href*="#course-"]') : null;
+    var a = e.target && e.target.closest ? e.target.closest('a[href*="#course-"],a[href*="#learn-"]') : null;
     if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
-    var m = (a.getAttribute("href") || "").match(/^(?:\/learn)?#course-(.+)$/);
+    var hr = a.getAttribute("href") || "", ll = lessonFromHash(hr.replace(/^(?:\/learn)?#/, ""));
+    if (ll && !$("app").classList.contains("hidden")){ e.preventDefault(); openLesson(ll.cid, ll.lid, ll.step); return; }
+    var m = hr.match(/^(?:\/learn)?#course-(.+)$/);
     if (!m || $("app").classList.contains("hidden")) return;
     e.preventDefault(); openCourse(m[1]);
   });
   addEventListener("hashchange", function(){
     var h = (location.hash || "").replace("#", "");
     if (h.indexOf("course-") === 0 && !$("app").classList.contains("hidden")) openCourse(h.slice(7));
+    var ll2 = lessonFromHash(h); if (ll2 && !$("app").classList.contains("hidden")) openLesson(ll2.cid, ll2.lid, ll2.step);
   });
   function showApp(u){
     uid = u.uid;
@@ -936,6 +966,8 @@ html,body{overflow-x:clip}
     var fallback = (["home","cat","paths","disc","courses","labs","ai","ach"].indexOf(savedTab) >= 0) ? savedTab : "home";
     goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : fallback);
     if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
+    var llD = lessonFromHash(hash);
+    if (llD){ var tries = 0, iv = setInterval(function(){ tries++; if (DATA || tries > 40){ clearInterval(iv); openLesson(llD.cid, llD.lid, llD.step); } }, 250); }
     if (hash.indexOf("course-") === 0){ var dlCid = hash.slice(7); setTimeout(function(){ openCourse(dlCid); }, 700); }
     if (hash.indexOf("track-") === 0){ var trid = hash.slice(6); setTimeout(function(){
       var cards = document.querySelectorAll("#pathList .pathcard");
@@ -1206,7 +1238,7 @@ html,body{overflow-x:clip}
       var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px";
       var nxt = null; tr.courses.forEach(function(cid){ if (!nxt && !D.enr[cid]) nxt = cid; });
       var st2 = el("a", nxt ? "pact" : "pact done", esc(nxt ? t("trackStart") : t("trackReview")));
-      st2.href = "/learn#course-" + (nxt || tr.courses[0]);
+      st2.href = lessonHref(nxt || tr.courses[0]);
       acts.appendChild(st2);
       var trHrs = 0; tr.courses.forEach(function(cid){ if (COURSES[cid]) trHrs += (COURSES[cid].hours || 0); });
       acts.appendChild(el("span", "chip2 grey", esc(trHrs + " " + t("hoursU"))));
@@ -1240,7 +1272,7 @@ html,body{overflow-x:clip}
         tt.appendChild(el("span", null, esc((D.prog[cid] || 0) + " " + t("lessonsDone"))));
         row.appendChild(tt);
         var a = el("a", D.enr[cid] ? "" : "done", esc(D.enr[cid] ? t("open") : t("startC")));
-        a.href = "/learn#course-" + cid;
+        a.href = lessonHref(cid);
         row.appendChild(a);
         list.appendChild(row);
       });
@@ -1355,6 +1387,7 @@ html,body{overflow-x:clip}
     return out;
   }
 
+  function lessonHref(cid){ var ls = courseLessons(cid), n = (DATA && DATA.prog && DATA.prog[cid]) || 0, l = ls[Math.min(n, ls.length - 1)] || ls[0]; return l ? "/learn#learn-" + cid + "-" + l.id : "/learn#course-" + cid; }
   function favList(){ try { var a = JSON.parse(localStorage.getItem("sl_favs") || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
   function favHas(id){ return favList().indexOf(id) >= 0; }
   function favToggle(id){ var a = favList(), i = a.indexOf(id); if (i >= 0) a.splice(i, 1); else a.push(id); try { localStorage.setItem("sl_favs", JSON.stringify(a)); } catch(e){} return i < 0; }
@@ -1385,7 +1418,7 @@ html,body{overflow-x:clip}
     }
     h += '<div style="margin-top:10px"><button class="btn done" id="cmFav" type="button">' + esc(favHas(cid) ? t("favSaved") : t("favSave")) + '</button>'
       + ' <button class="btn done" id="cmCopy" type="button">' + esc(t("share")) + '</button>'
-      + ' <a href="/learn#course-' + esc(cid) + '" style="display:inline-block;margin-inline-start:8px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">' + esc(t("open")) + '</a></div>';
+      + ' <a href="' + esc(lessonHref(cid)) + '" style="display:inline-block;margin-inline-start:8px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">' + esc(t("open")) + '</a></div>';
     var nv = "";
     try { nv = localStorage.getItem("sl_note_" + cid) || ""; } catch(e){}
     h += '<div class="csec">' + esc(t("myNotes")) + '</div>'
@@ -1429,10 +1462,217 @@ html,body{overflow-x:clip}
       });
     }
     var o = $("cmOpen");
-    o.href = "/learn#course-" + cid;
+    o.href = c.status === "soon" ? "/learn#course-" + cid : lessonHref(cid);
     o.textContent = t(c.status === "soon" ? "view" : (D.enr && D.enr[cid] ? "open" : "startC"));
     $("courseModal").classList.remove("hidden");
   }
+
+  /* ============ lesson player (inside /learn, own session) ============ */
+  var LV = { cid:"", lid:"", i:null }, PRG = {}, LVSTEP = {}, LVBUSY = false;
+  function tt(a, e){ return lang === "ar" ? a : e; }
+  function Lx(o){ if (typeof o === "string") return o; return o ? (o[lang] != null ? o[lang] : (o.ar != null ? o.ar : "")) : ""; }
+  function rich(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/==(.+?)==/g,'<mark class="hl">$1</mark>').replace(/\{g:(.+?)\}/g,'<span class="cg">$1</span>').replace(/\{y:(.+?)\}/g,'<span class="cy">$1</span>').replace(/\{b:(.+?)\}/g,'<span class="cb">$1</span>'); }
+  function lvBlocks(bs){
+    return (bs || []).map(function(b){
+      if (b.h) return "<h2>" + rich(b.h) + "</h2>";
+      if (b.p) return "<p>" + rich(b.p) + "</p>";
+      if (b.ul) return "<ul>" + b.ul.map(function(x){ return "<li>" + rich(x) + "</li>"; }).join("") + "</ul>";
+      if (b.code) return '<pre dir="ltr">' + esc(b.code) + "</pre>";
+      if (b.note) return '<div class="lv-callout">' + rich(b.note) + "</div>";
+      if (b.src && /^https:\/\//.test(b.src)) return '<figure><img draggable="false" loading="lazy" src="' + esc(b.src) + '" alt="' + esc(b.cap || "") + '">' + (b.cap ? "<figcaption>" + esc(b.cap) + "</figcaption>" : "") + "</figure>";
+      return "";
+    }).join("");
+  }
+  function hashStr(s){ var h = 2166136261; s = String(s); for (var i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function permute(n, seed){ var idx = [], i; for (i = 0; i < n; i++) idx.push(i); var h = hashStr(seed); for (i = n - 1; i > 0; i--){ h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0; var j = h % (i + 1), x = idx[i]; idx[i] = idx[j]; idx[j] = x; } return idx; }
+  function isQ(s){ return s.type === "choose" || s.type === "complete"; }
+  function triesOf(s){ return Math.max(1, +s.tries || 2); }
+  function passOf(l){ return (l.pass == null || l.pass === "") ? 60 : +l.pass; }
+  function roundsOf(l){ return (l.rounds == null || l.rounds === "") ? 1 : +l.rounds; }
+  function lp(cid, lid){ return (PRG[cid] && PRG[cid][lid]) || {}; }
+  function usedOf(P, i){ return (P.tr && P.tr[i]) || ((P.sq || {})[i] ? ((P.sq || {})[i].n || 1) : 0); }
+  function qFin(s, P, i){ var a = (P.sq || {})[i]; return !!a && (a.ok || usedOf(P, i) >= triesOf(s)); }
+  function quizStat(l, P){ var sq = P.sq || {}, n = 0, right = 0; l.steps.forEach(function(s, i){ if (isQ(s)){ n++; if (sq[i] && sq[i].ok) right++; } }); return { n:n, right:right, pct: n ? Math.round(right / n * 100) : 100 }; }
+  function hasQuiz(l){ return !!(l.steps && l.steps.some(isQ)); }
+  function lvLessons(cid){ return courseLessons(cid); }
+  function seqLocked(cid, l){ var ls = lvLessons(cid), i = ls.indexOf(l); if (i <= 0) return false; var pv = ls[i - 1]; return hasQuiz(pv) && !lp(cid, pv.id).done; }
+  function canAcc(cid, l){ return !!(l.free || (DATA && DATA.enr && DATA.enr[cid])) && !seqLocked(cid, l); }
+  function lvToast(m){ var d = $("lvToast"); if (!d){ d = el("div"); d.id = "lvToast"; document.body.appendChild(d); } d.textContent = m; d.className = "on"; clearTimeout(d._t); d._t = setTimeout(function(){ d.className = ""; }, 2200); }
+  function loadPrg(cid){
+    if (PRG[cid]) return Promise.resolve();
+    return firebase.firestore(learnApp).collection("users").doc(uid).collection("progress").doc(cid).get().then(function(d){ PRG[cid] = d.exists ? (d.data().lessons || {}) : {}; }).catch(function(){ PRG[cid] = {}; });
+  }
+  function writePrg(cid, lid, val){
+    var ref = firebase.firestore(learnApp).collection("users").doc(uid).collection("progress").doc(cid);
+    return ref.get().then(function(s){
+      if (s.exists){ var o = {}; o["lessons." + lid] = val; return ref.update(o); }
+      var m = {}; m[lid] = val; return ref.set({ lessons: m });
+    }).then(function(){
+      PRG[cid] = PRG[cid] || {}; PRG[cid][lid] = val;
+      if (DATA){ var n = 0; Object.keys(PRG[cid]).forEach(function(k){ if (PRG[cid][k] && PRG[cid][k].done) n++; }); DATA.prog[cid] = n; var lsn = 0; Object.keys(DATA.prog).forEach(function(k){ lsn += DATA.prog[k] || 0; }); DATA.lessons = lsn; try { render(); } catch(e){} }
+    });
+  }
+  function saveStep(cid, lid, mut){
+    var l = lvLessons(cid).filter(function(x){ return x.id === lid; })[0], P = lp(cid, lid);
+    var nx = { steps: Object.assign({}, P.steps), sq: Object.assign({}, P.sq), tr: Object.assign({}, P.tr), round: P.round || 0 };
+    mut(nx);
+    var all = l.steps.every(function(s, k){ return nx.steps[k]; }), st = quizStat(l, nx), pass = all && st.pct >= passOf(l);
+    var val = Object.assign({}, P, { steps: nx.steps, sq: nx.sq, tr: nx.tr, round: nx.round }); if (pass) val.done = true;
+    return writePrg(cid, lid, val);
+  }
+  var FSC = {};
+  function fsParts(id, onp){
+    var ref = firebase.firestore(learnApp).collection("files").doc(id);
+    return ref.get().then(function(m){
+      if (!m.exists || m.data().status !== "ready") throw new Error("missing");
+      var n = m.data().chunks, parts = new Array(n), q = [], got = 0, i; for (i = 0; i < n; i++) q.push(i);
+      var w = function(){ if (!q.length) return Promise.resolve(); var k = q.shift(); return ref.collection("chunks").doc(String(k).padStart(4, "0")).get().then(function(d){ parts[k] = d.data().d.toUint8Array(); got++; if (onp) onp(got / n); return w(); }); };
+      return Promise.all([w(), w(), w(), w()]).then(function(){ return { parts: parts, type: m.data().type }; });
+    });
+  }
+  function fsUrl(id, onp){ if (FSC[id]) return Promise.resolve(FSC[id]); return fsParts(id, onp).then(function(r){ return (FSC[id] = URL.createObjectURL(new Blob(r.parts, { type: r.type }))); }); }
+  function mediaTag(kind, src){
+    var fsid = /^fs:[A-Za-z0-9]{20}$/.test(src || "") ? src.slice(3) : "";
+    var a = fsid ? 'data-fs="' + fsid + '"' : 'src="' + esc(src) + '"';
+    if (kind === "video") return '<div class="lv-media"><video controls playsinline preload="metadata" controlsList="nodownload" ' + a + '></video><span class="lv-pct"></span></div>';
+    if (kind === "audio") return '<div class="lv-media"><audio controls preload="metadata" controlsList="nodownload" ' + a + '></audio><span class="lv-pct"></span></div>';
+    return '<div class="lv-media"><iframe class="lv-pdf" title="PDF" ' + a + '></iframe><span class="lv-pct"></span></div>';
+  }
+  function lvHydrate(root){
+    Array.prototype.forEach.call(root.querySelectorAll("[data-fs]"), function(m){
+      var pc = m.parentNode.querySelector(".lv-pct");
+      fsUrl(m.getAttribute("data-fs"), function(f){ if (pc) pc.textContent = Math.round(f * 100) + "%"; }).then(function(u){ m.src = u; if (pc) pc.textContent = ""; }).catch(function(){ if (pc) pc.textContent = tt("تعذر تحميل الملف", "Could not load the file"); });
+    });
+  }
+  var STYPE = { text:["📖","نص","Text"], article:["📖","مقال","Article"], video:["🎬","فيديو","Video"], audio:["🎧","صوت","Audio"], pdf:["📄","PDF","PDF"], choose:["❓","اختر","Choose"], complete:["✏️","أكمل","Complete"], lab:["🧪","معمل","Lab"] };
+  function labTicks(cid, lid, i){ try { var a = JSON.parse(localStorage.getItem("sl_lab_" + cid + "_" + lid + "_" + i) || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function stepHtml(cid, l, s, i, P){
+    var sq = P.sq || {}, ans = sq[i], m = STYPE[s.type] || STYPE.text;
+    var head = '<div class="lv-kind">' + m[0] + " " + tt(m[1], m[2]) + " · " + tt("المهمة", "Task") + " " + (i + 1) + "/" + l.steps.length + '</div><h2 class="lv-st">' + esc(Lx(s.t)) + "</h2>";
+    if (s.type === "text") return head + '<div class="lv-prose">' + lvBlocks(Lx(s.body)) + "</div>";
+    if (s.type === "article") return head + '<article class="lv-prose">' + (s.min ? '<div class="lv-mut">' + s.min + " " + tt("د قراءة", "min read") + "</div>" : "") + lvBlocks(Lx(s.body)) + "</article>";
+    if (s.type === "video") return head + mediaTag("video", s.src) + (s.note ? '<p class="lv-mut">' + esc(Lx(s.note)) + "</p>" : "");
+    if (s.type === "audio") return head + mediaTag("audio", s.src) + (s.body ? '<div class="lv-prose">' + lvBlocks(Lx(s.body)) + "</div>" : "");
+    if (s.type === "pdf") return head + mediaTag("pdf", s.src);
+    if (s.type === "choose"){
+      var ord = permute(s.o.length, cid + l.id + i);
+      return head + '<p class="lv-q">' + esc(Lx(s.q)) + '</p><div class="lv-opts">' + ord.map(function(k){
+        var cls = ans ? (k === s.a ? "good" : (ans.v === k ? "bad" : "")) : "";
+        return '<button class="lv-opt ' + cls + '" ' + (ans ? "disabled" : "") + ' data-lv="pick" data-v="' + k + '">' + (ans ? (k === s.a ? "✓ " : (ans.v === k ? "✗ " : "")) : "") + esc(Lx(s.o[k])) + "</button>";
+      }).join("") + "</div>" + (ans ? '<div class="lv-callout">' + (ans.ok ? tt("إجابة صحيحة.", "Correct.") : tt("إجابة غير صحيحة.", "Not correct.")) + " " + (s.x ? esc(Lx(s.x)) : "") + "</div>" + retryBtn(s, P, i, ans) + '<p class="lv-mut">' + triesHint(s, P, i) + "</p>" : '<p class="lv-mut">' + triesHint(s, P, i) + "</p>");
+    }
+    if (s.type === "complete"){
+      var parts = esc(Lx(s.q)).split("___"), inp = '<input id="lvIn" class="lv-blank ' + (ans ? (ans.ok ? "good" : "bad") : "") + '" ' + (ans ? "readonly" : "") + ' value="' + esc(ans ? ans.txt : "") + '" dir="ltr" autocomplete="off">';
+      return head + '<p class="lv-q" style="line-height:2.4">' + parts.join(inp) + "</p>" + (ans ? '<div class="lv-callout">' + (ans.ok ? tt("إجابة صحيحة.", "Correct.") : tt("الإجابة الصحيحة: ", "Correct answer: ") + '<b dir="ltr">' + esc((s.ans || [""])[0]) + "</b>") + " " + (s.x ? esc(Lx(s.x)) : "") + "</div>" + retryBtn(s, P, i, ans) : '<button class="lv-btn pri" data-lv="check">' + tt("تحقق", "Check") + "</button>") + '<p class="lv-mut">' + triesHint(s, P, i) + "</p>";
+    }
+    if (s.type === "lab"){
+      var tk = labTicks(cid, l.id, i), tasks = Lx(s.tasks) || [];
+      return head + (s.goal && Lx(s.goal) ? '<div class="lv-callout"><b>' + tt("الهدف", "Goal") + "</b><br>" + esc(Lx(s.goal)) + "</div>" : "") + '<div class="lv-opts">' + tasks.map(function(x, k){ return '<button class="lv-opt ' + (tk[k] ? "good" : "") + '" data-lv="tick" data-k="' + k + '">' + (tk[k] ? "✓" : (k + 1)) + " " + esc(x) + "</button>"; }).join("") + "</div>";
+    }
+    return head;
+  }
+  function triesHint(s, P, i){ return tt("المحاولات المتبقية: ", "Attempts left: ") + Math.max(0, triesOf(s) - usedOf(P, i)) + "/" + triesOf(s); }
+  function retryBtn(s, P, i, ans){
+    if (ans.ok || (P.steps || {})[i]) return "";
+    var left = triesOf(s) - usedOf(P, i);
+    return left > 0 ? '<button class="lv-btn" style="margin-top:12px" data-lv="retry">' + tt("أعد المحاولة", "Try again") + " (" + left + ")</button>" : '<p class="lv-mut">' + tt("استُنفدت محاولات هذا السؤال.", "No attempts left for this question.") + "</p>";
+  }
+  function showLessonView(){
+    ["home","cat","paths","disc","courses","labs","ai","ach","search"].forEach(function(k){ $("v-" + k).classList.add("hidden"); });
+    $("v-lesson").classList.remove("hidden");
+    Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){ b.classList.remove("on"); });
+  }
+  function openLesson(cid, lid, step){
+    if (!uid) return;
+    loadCatalog().then(function(){ return loadPrg(cid); }).then(function(){
+      var c = COURSES[cid], ls = lvLessons(cid);
+      if (!c || !ls.length){ lvToast(tt("الدورة غير متاحة الآن", "Course not available")); return; }
+      var l = ls.filter(function(x){ return x.id === lid; })[0] || ls[0];
+      LV.cid = cid; LV.lid = l.id;
+      var key = cid + "." + l.id;
+      if (step != null && step > 0) LVSTEP[key] = step - 1;
+      try { closeCourse(); } catch(e){}
+      showLessonView();
+      try { history.replaceState(null, "", "/learn#learn-" + cid + "-" + l.id); } catch(e){}
+      window.scrollTo(0, 0);
+      renderLesson();
+    });
+  }
+  function renderLesson(){
+    var cid = LV.cid, c = COURSES[cid], ls = lvLessons(cid), l = ls.filter(function(x){ return x.id === LV.lid; })[0], v = $("v-lesson");
+    if (!c || !l){ v.innerHTML = ""; return; }
+    var P = lp(cid, l.id), sd = P.steps || {}, key = cid + "." + l.id, idx = ls.indexOf(l);
+    var det = CDET[cid] || { modules: [] };
+    var side = '<aside class="lv-side"><a class="lv-back" href="#" data-lv="course">← ' + tt("تفاصيل الكورس", "Course details") + '</a><b class="lv-ct">' + esc(courseTitle(cid)) + "</b>";
+    var doneAll = 0; ls.forEach(function(x){ if (lp(cid, x.id).done) doneAll++; });
+    side += '<div class="bar"><i style="width:' + (ls.length ? Math.round(doneAll / ls.length * 100) : 0) + '%"></i></div><div class="lv-mut">' + doneAll + "/" + ls.length + " " + tt("محاضرات مكتملة", "lectures done") + "</div>";
+    (det.modules || []).forEach(function(m){
+      side += '<div class="lv-mod">' + esc(Lx(m.t)) + "</div>";
+      (m.lessons || []).forEach(function(x){
+        var ok = canAcc(cid, x), dn = !!lp(cid, x.id).done;
+        side += '<a href="#" class="lv-les ' + (x.id === l.id ? "on " : "") + (dn ? "done " : "") + (ok ? "" : "lock") + '" data-lv="lesson" data-l="' + esc(x.id) + '"><span class="lv-dot">' + (dn ? "✓" : (ok ? "" : "🔒")) + "</span><span>" + esc(Lx(x.t)) + "<small>" + ((x.steps || []).length) + " " + tt("مهمة", "tasks") + "</small></span></a>";
+      });
+    });
+    side += "</aside>";
+    var main = "";
+    if (!canAcc(cid, l)){
+      var free0 = !(Number(c.price) > 0), lockedSeq = seqLocked(cid, l);
+      main = '<div class="lv-empty"><div style="font-size:30px">🔒</div><h2>' + (lockedSeq ? tt("هذه المحاضرة مقفلة", "This lecture is locked") : tt("هذه المحاضرة للمسجلين في الكورس", "This lecture is for enrolled learners")) + "</h2><p>" +
+        (lockedSeq ? tt("حقّق النسبة المطلوبة في اختبار المحاضرة السابقة لفتحها.", "Reach the required score in the previous lecture quiz to unlock it.") : (free0 ? tt("الكورس مجاني. سجّل فيه وابدأ الآن.", "The course is free. Enroll and start now.") : tt("الكورس مدفوع. تقدر تشترك من صفحة الأسعار في الموقع الرئيسي.", "This course is paid. You can subscribe from the pricing page on the main site."))) + "</p>" +
+        (!lockedSeq && free0 ? '<button class="lv-btn pri" data-lv="enroll">' + tt("سجّلني في الكورس", "Enroll me") + "</button>" : "") + (!lockedSeq && !free0 ? '<a class="lv-btn pri" href="/#pricing">' + tt("الأسعار", "Pricing") + "</a>" : "") + "</div>";
+    } else if (!l.steps || !l.steps.length){
+      main = '<div class="lv-empty"><h2>' + esc(Lx(l.t)) + "</h2><p>" + tt("محتوى هذه المحاضرة قيد الإعداد.", "This lecture's content is being prepared.") + "</p></div>";
+    } else {
+      var i = LVSTEP[key]; if (i == null || i >= l.steps.length){ i = -1; l.steps.forEach(function(x, k){ if (i < 0 && !sd[k]) i = k; }); if (i < 0) i = 0; LVSTEP[key] = i; }
+      var s = l.steps[i], q = isQ(s), doneN = 0; l.steps.forEach(function(x, k){ if (sd[k]) doneN++; });
+      var pct = Math.round(doneN / l.steps.length * 100), last = i === l.steps.length - 1, answered = !!sd[i];
+      var st = quizStat(l, P), allDone = doneN === l.steps.length, pass = passOf(l), lecDone = !!P.done, leftR = roundsOf(l) - (P.round || 0);
+      var canDone = !sd[i] && (!q || qFin(s, P, i)) && (s.type !== "lab" || (function(){ var n = (Lx(s.tasks) || []).length; return n === 0 || labTicks(cid, l.id, i).filter(Boolean).length >= n; })());
+      var pills = l.steps.map(function(x, k){ return '<button class="lv-pill ' + (k === i ? "on " : "") + (sd[k] ? "ok" : "") + '" data-lv="go" data-i="' + k + '" aria-label="' + (k + 1) + '">' + (sd[k] ? "✓" : (k + 1)) + "</button>"; }).join("");
+      var result = (last && allDone && hasQuiz(l) && !lecDone) ? '<div class="lv-callout"><b>' + tt("لم تحقق النتيجة المطلوبة", "Required score not reached") + "</b><br>" + tt("نتيجتك ", "Your score ") + st.pct + "% — " + tt("المطلوب ", "required ") + pass + "%." + (leftR > 0 ? '<br><button class="lv-btn pri" style="margin-top:10px" data-lv="retake">' + tt("إعادة الاختبار", "Retake quiz") + " (" + leftR + ")</button>" : "<br>" + tt("استُنفدت مرات الإعادة.", "No retakes left.")) + "</div>" : "";
+      main = '<div class="lv-crumb"><a href="#" data-lv="home">' + tt("سرمد ليرننج", "Sarmad Learning") + "</a> › <a href=\"#\" data-lv=\"course\">" + esc(courseTitle(cid)) + "</a> › " + tt("محاضرة ", "Lecture ") + (idx + 1) + "/" + ls.length + "</div>" +
+        '<h1 class="lv-h1">' + esc(Lx(l.t)) + "</h1>" +
+        '<div class="lv-bar"><div class="lv-row"><span>' + doneN + "/" + l.steps.length + " " + tt("مهمة مكتملة", "tasks done") + "</span><span>" + pct + '%</span></div><div class="bar"><i style="width:' + pct + '%"></i></div><div class="lv-pills">' + pills + "</div></div>" +
+        '<div class="lv-step">' + stepHtml(cid, l, s, i, P) + (sd[i] ? '<p class="lv-tag">✓ ' + tt("تمت هذه المهمة", "Task completed") + "</p>" : (canDone ? '<button class="lv-btn acc" data-lv="done">✓ ' + tt("إتمام المهمة", "Complete task") + "</button>" : "")) + result + "</div>" +
+        '<div class="lv-nav"><button class="lv-btn" data-lv="prev" ' + (i === 0 ? "disabled" : "") + ">" + tt("السابق", "Previous") + '</button><div class="lv-row">' + (!answered ? '<span class="lv-mut">' + tt("أتمم المهمة لتتابع", "Complete the task to continue") + "</span>" : "") + '<button class="lv-btn pri" data-lv="next" ' + (answered ? "" : "disabled") + ">" + (last ? tt("إنهاء المحاضرة", "Finish lecture") : tt("التالي", "Next")) + "</button></div></div>";
+    }
+    v.innerHTML = '<div class="lv-wrap">' + side + '<div class="lv-main">' + main + "</div></div>";
+    lvHydrate(v);
+  }
+  function lvAct(btn){
+    var a = btn.getAttribute("data-lv"), cid = LV.cid, ls = lvLessons(cid), l = ls.filter(function(x){ return x.id === LV.lid; })[0];
+    var key = cid + "." + LV.lid, i = LVSTEP[key] || 0, s = l && l.steps ? l.steps[i] : null, P = lp(cid, LV.lid);
+    if (a === "home"){ goTab("home"); return; }
+    if (a === "course"){ goTab("courses"); openCourse(cid); return; }
+    if (a === "lesson"){ var nid = btn.getAttribute("data-l"), nl = ls.filter(function(x){ return x.id === nid; })[0]; if (nl && !canAcc(cid, nl)){ lvToast(tt("المحاضرة مقفلة", "Locked")); } openLesson(cid, nid); return; }
+    if (a === "enroll"){ firebase.firestore(learnApp).collection("users").doc(uid).collection("enroll").doc(cid).set({ at: firebase.firestore.FieldValue.serverTimestamp() }).then(function(){ if (DATA){ DATA.enr[cid] = 1; } lvToast(tt("تم تسجيلك في الكورس", "You are enrolled")); renderLesson(); }).catch(function(){ lvToast(tt("تعذر التسجيل الآن", "Could not enroll now")); }); return; }
+    if (!l || !s) return;
+    if (LVBUSY) return;
+    var done = function(){ LVBUSY = false; renderLesson(); }, fail = function(){ LVBUSY = false; lvToast(tt("تعذر الحفظ، جرّب تاني", "Could not save, try again")); };
+    if (a === "go"){ var k = +btn.getAttribute("data-i"); var okp = true; for (var j = 0; j < k; j++){ if (!(P.steps || {})[j]) okp = false; } if (!okp){ lvToast(tt("أتمم المهام السابقة أولًا.", "Complete the previous tasks first.")); return; } LVSTEP[key] = k; renderLesson(); return; }
+    if (a === "prev"){ LVSTEP[key] = Math.max(0, i - 1); renderLesson(); return; }
+    if (a === "next"){
+      if (!(P.steps || {})[i]){ lvToast(tt("اضغط «إتمام المهمة» أولًا.", "Press “Complete task” first.")); return; }
+      if (i < l.steps.length - 1){ LVSTEP[key] = i + 1; renderLesson(); return; }
+      if (!P.done){ renderLesson(); lvToast(tt("لم تحقق النتيجة المطلوبة بعد.", "You have not reached the required score yet.")); return; }
+      lvToast(tt("أحسنت! انتهت المحاضرة", "Great! Lecture finished"));
+      var nx = ls[ls.indexOf(l) + 1]; if (nx) openLesson(cid, nx.id); else { goTab("courses"); openCourse(cid); }
+      return;
+    }
+    LVBUSY = true;
+    if (a === "pick"){ var v = +btn.getAttribute("data-v"); if ((P.sq || {})[i]){ LVBUSY = false; return; } saveStep(cid, LV.lid, function(n){ var kk = (n.tr[i] || 0) + 1; n.tr[i] = kk; n.sq[i] = { v: v, ok: v === s.a, n: kk }; }).then(done, fail); return; }
+    if (a === "check"){ var inp = $("lvIn"), txt = ((inp && inp.value) || "").trim(); if (!txt){ LVBUSY = false; lvToast(tt("اكتب إجابتك أولًا", "Type your answer first")); return; } var ok = (s.ans || []).some(function(x){ return String(x).toLowerCase() === txt.toLowerCase(); }); if ((P.sq || {})[i]){ LVBUSY = false; return; } saveStep(cid, LV.lid, function(n){ var kk = (n.tr[i] || 0) + 1; n.tr[i] = kk; n.sq[i] = { txt: txt, ok: ok, n: kk }; }).then(done, fail); return; }
+    if (a === "retry"){ var aa = (P.sq || {})[i]; if (!aa || aa.ok || usedOf(P, i) >= triesOf(s) || (P.steps || {})[i]){ LVBUSY = false; return; } saveStep(cid, LV.lid, function(n){ delete n.sq[i]; }).then(done, fail); return; }
+    if (a === "tick"){ var kt = +btn.getAttribute("data-k"), tk = labTicks(cid, LV.lid, i).slice(); tk[kt] = !tk[kt]; try { localStorage.setItem("sl_lab_" + cid + "_" + LV.lid + "_" + i, JSON.stringify(tk)); } catch(e){} LVBUSY = false; renderLesson(); return; }
+    if (a === "done"){
+      if (isQ(s) && !qFin(s, P, i)){ LVBUSY = false; lvToast(tt("أجب عن السؤال أولًا.", "Answer the question first.")); return; }
+      saveStep(cid, LV.lid, function(n){ n.steps[i] = true; }).then(function(){ lvToast(tt("تم إتمام المهمة ✓", "Task completed ✓")); done(); }, fail); return;
+    }
+    if (a === "retake"){ if ((P.round || 0) >= roundsOf(l)){ LVBUSY = false; lvToast(tt("استُنفدت مرات الإعادة.", "No retakes left.")); return; } saveStep(cid, LV.lid, function(n){ n.round = (n.round || 0) + 1; l.steps.forEach(function(x, k){ if (isQ(x)){ delete n.sq[k]; delete n.tr[k]; delete n.steps[k]; } }); }).then(function(){ var f = -1; l.steps.forEach(function(x, k){ if (f < 0 && isQ(x)) f = k; }); LVSTEP[key] = Math.max(0, f); done(); }, fail); return; }
+    LVBUSY = false;
+  }
+  $("v-lesson").addEventListener("click", function(e){ var b = e.target.closest("[data-lv]"); if (!b) return; e.preventDefault(); lvAct(b); });
+  function lessonFromHash(h){ var m = /^learn-([^-]+)-([^-]+)(?:-(\d+))?$/.exec(h || ""); return m ? { cid: m[1], lid: m[2], step: m[3] ? +m[3] : null } : null; }
 
   function closeCourse(){ $("courseModal").classList.add("hidden"); try { if (/^#course-/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search); } catch(e){} }
 
@@ -1496,7 +1736,7 @@ html,body{overflow-x:clip}
       pc.style.marginBottom = "10px";
       pc.appendChild(el("b", null, esc(t("planT"))));
       pc.appendChild(el("div", "", '<div style="font-size:13px;color:var(--ink2);margin-top:6px">' + esc(courseTitle(id)) + (nx0 ? " · " + esc(L(nx0.t)) + (nx0.min ? " · " + nx0.min + " " + esc(t("minU")) : "") : "") + '</div>'));
-      var pa = el("a", null, esc(t("resume"))); pa.href = "/learn#course-" + id;
+      var pa = el("a", null, esc(t("resume"))); pa.href = lessonHref(id);
       pa.style.cssText = "display:inline-block;margin-top:10px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600";
       pc.appendChild(pa);
       $("contCard").parentNode.insertBefore(pc, $("contCard"));
@@ -1508,7 +1748,7 @@ html,body{overflow-x:clip}
     var sub = (D.prog[id] || 0) + " " + t("lessonsDone");
     if (nx) sub += " · " + t("nextUp") + ": " + (L(nx.t) || "");
     $("contSub").textContent = sub;
-    $("contBtn").href = "/learn#course-" + id;
+    $("contBtn").href = lessonHref(id);
   }
 
   /* ---- activity strip ---- */
