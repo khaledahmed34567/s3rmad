@@ -4562,5 +4562,38 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
   mo.observe(doc.body,{childList:true,subtree:true});
 })();
+</script><style id="ui-polish9"></style><script id="ui-polish9-js">(function(){
+  var doc=document;
+  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
+  var sr=doc.getElementById('srRoute');
+  if(!sr){
+    sr=doc.createElement('div');
+    sr.id='srRoute'; sr.setAttribute('role','status'); sr.setAttribute('aria-live','polite');
+    sr.style.cssText='position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0';
+    doc.body.appendChild(sr);
+  }
+  function announce(){
+    var t=(doc.title||'').trim();
+    if(t && sr.textContent!==t) sr.textContent=t;
+  }
+  function tips(){
+    var links=[].slice.call(doc.querySelectorAll('#ftr .row a[href^="http"]'));
+    for(var i=0;i<links.length;i++){
+      var a=links[i];
+      if(a.getAttribute('title')) continue;
+      var lab=(a.getAttribute('aria-label')||a.textContent||'').trim();
+      if(!lab){ try{ lab=new URL(a.getAttribute('href')).hostname.replace(/^www\./,''); }catch(_){ lab=''; } }
+      if(lab) a.setAttribute('title',lab);
+    }
+  }
+  announce(); tips();
+  window.addEventListener('hashchange',function(){ setTimeout(announce,400); });
+  var t=null;
+  var mo=new MutationObserver(function(){
+    if(t) return;
+    t=setTimeout(function(){ t=null; announce(); tips(); },400);
+  });
+  mo.observe(doc.body,{childList:true,subtree:true});
+})();
 </script></body>
 </html>
