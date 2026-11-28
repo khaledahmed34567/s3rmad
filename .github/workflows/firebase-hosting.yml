@@ -34,11 +34,14 @@ jobs:
           mkdir public
           cp index.html public/index.html
           cp learn.html public/learn.html
+          cp version.txt public/version.txt
+          cp learn-logo.png public/learn-logo.png
+          cp sarmad-logo.png public/sarmad-logo.png
           cp robots.txt public/robots.txt
           cp sitemap.xml public/sitemap.xml
           cp googlec2df2677c632442d.html public/googlec2df2677c632442d.html
-          test "$(find public -type f | wc -l)" -eq 5
-          test "$(find public -type f | sort)" = "$(printf 'public/googlec2df2677c632442d.html\npublic/index.html\npublic/learn.html\npublic/robots.txt\npublic/sitemap.xml')"
+          test "$(find public -type f | wc -l)" -eq 8
+          test "$(find public -type f | sort)" = "$(printf 'public/googlec2df2677c632442d.html\npublic/index.html\npublic/learn-logo.png\npublic/learn.html\npublic/robots.txt\npublic/sarmad-logo.png\npublic/sitemap.xml\npublic/version.txt')"
           test ! -L public/index.html
       - name: Deploy Hosting only
         run: npx --yes firebase-tools@15.37.0 deploy --only hosting --project saemad-8a204 --non-interactive
