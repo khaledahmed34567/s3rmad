@@ -4460,5 +4460,44 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
   mo.observe(doc.body,{childList:true,subtree:true});
 })();
+</script><style id="ui-polish5">nav.nav a.spy{color:var(--accent);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}#kbdHelp.on .kbdcard{animation:kbdIn .18s ease-out}@keyframes kbdIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}@media(max-width:760px){#toTopBtn{display:none!important}}</style><script id="ui-polish5-js">(function(){
+  var doc=document;
+  var pairs=[];
+  function setup(){
+    var links=[].slice.call(doc.querySelectorAll('nav.nav a[href^="#"]'));
+    pairs=[];
+    for(var i=0;i<links.length;i++){
+      var id=(links[i].getAttribute('href')||'').slice(1);
+      if(!id) continue;
+      var sec=doc.getElementById(id);
+      if(sec) pairs.push({a:links[i],sec:sec});
+    }
+    spy();
+  }
+  var raf=null;
+  function spy(){
+    if(raf) return;
+    raf=requestAnimationFrame(function(){
+      raf=null;
+      if(!pairs.length) return;
+      var y=(window.scrollY||doc.documentElement.scrollTop||0)+140;
+      var cur=null;
+      for(var i=0;i<pairs.length;i++){
+        var top=pairs[i].sec.getBoundingClientRect().top+(window.scrollY||0);
+        if(top<=y) cur=pairs[i];
+      }
+      for(var j=0;j<pairs.length;j++){ pairs[j].a.classList.toggle('spy', pairs[j]===cur); }
+    });
+  }
+  window.addEventListener('scroll',spy,{passive:true});
+  window.addEventListener('resize',spy);
+  setup();
+  var t=null;
+  var mo=new MutationObserver(function(){
+    if(t) return;
+    t=setTimeout(function(){ t=null; setup(); },350);
+  });
+  mo.observe(doc.body,{childList:true,subtree:true});
+})();
 </script></body>
 </html>
