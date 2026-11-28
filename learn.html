@@ -506,6 +506,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       sortL:"ترتيب", sortDef:"الافتراضي", sortShort:"الأقصر أولًا", sortCheap:"الأرخص أولًا", trkNext:"الخطوة الجاية",
       labAll:"الكل", labTodo:"لسه", labDoneF:"خلصت", goalDone:"خلصت هدف الأسبوع 👏", goalLeft:"فاضلك", goalDays:"أيام على هدفك",
       lessonsAll:"درس في الدورة", nextUp:"الجاي",
+      catFav:"المحفوظات", favSave:"حفظ", favSaved:"محفوظ ✓", lastOpen:"آخر كورس فتحته", resume:"كمّل",
+      leftL:"باقي", courseDone:"خلصت الدورة ✓", modalProg:"تقدمك في الدورة", favNone:"مفيش كورسات محفوظة. اضغط «حفظ» على أي دورة.",
       b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
@@ -553,6 +555,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       sortL:"Sort", sortDef:"Default", sortShort:"Shortest first", sortCheap:"Cheapest first", trkNext:"Next step",
       labAll:"All", labTodo:"To do", labDoneF:"Done", goalDone:"Weekly goal reached 👏", goalLeft:"", goalDays:"days to go",
       lessonsAll:"lessons in course", nextUp:"Next up",
+      catFav:"Saved", favSave:"Save", favSaved:"Saved ✓", lastOpen:"Last opened", resume:"Resume",
+      leftL:"left", courseDone:"Course complete ✓", modalProg:"Your progress", favNone:"No saved courses yet. Tap Save on any course.",
       b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
@@ -822,16 +826,34 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     /* courses */
     var cl = $("courseList"); cl.innerHTML = "";
     if (!D.ids.length){ cl.appendChild(el("div","empty", esc(t("noCourse")))); }
+    var lc = lastCourse();
+    if (lc && COURSES[lc] && D.ids.indexOf(lc) >= 0){
+      var lrow = el("div","item");
+      lrow.appendChild(el("div","ic","⟲"));
+      var ltt = el("div","tt");
+      ltt.appendChild(el("b", null, esc(t("lastOpen"))));
+      ltt.appendChild(el("span", null, esc(courseTitle(lc))));
+      lrow.appendChild(ltt);
+      var la = el("a", null, esc(t("resume"))); la.href = "/#course-" + lc;
+      lrow.appendChild(la);
+      cl.appendChild(lrow);
+    }
     D.ids.forEach(function(id){
-      var n = D.prog[id] || 0;
+      var n = D.prog[id] || 0, total = courseLessons(id).length;
+      var pct = total ? Math.min(100, Math.round(n / total * 100)) : Math.min(100, n * 10);
       var row = el("div","card2");
       row.style.marginBottom = "10px";
       row.appendChild(el("b", null, esc(courseTitle(id))));
-      row.appendChild(el("div","", '<span style="font-size:12.5px;color:var(--ink2)">' + n + " " + esc(t("lessonsDone")) + '</span>'));
-      var pct = Math.min(100, n * 10);
+      row.appendChild(el("div","", '<span style="font-size:12.5px;color:var(--ink2)">' + n + " " + esc(t("lessonsDone")) + (total ? " · " + total + " " + esc(t("lessonsAll")) + " · " + pct + '%' : "") + '</span>'));
       row.appendChild(el("div","bar", '<i style="width:' + pct + '%"></i>'));
-      var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id; a.style.cssText = "display:inline-block;margin-top:10px";
-      row.appendChild(a);
+      if (total) row.appendChild(el("div","", '<span style="font-size:12px;color:' + (n >= total ? "var(--green)" : "var(--ink2)") + '">' + esc(n >= total ? t("courseDone") : (t("leftL") + " " + (total - n) + " " + t("lessonsAll"))) + '</span>'));
+      var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px";
+      var fv = el("button", "btn done", favHas(id) ? t("favSaved") : t("favSave")); fv.type = "button";
+      fv.addEventListener("click", function(){ var now = favToggle(id); fv.textContent = now ? t("favSaved") : t("favSave"); });
+      acts.appendChild(fv);
+      var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id;
+      acts.appendChild(a);
+      row.appendChild(acts);
       cl.appendChild(row);
     });
 
@@ -870,13 +892,14 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       if (CATF === "paid") return !!c.price;
       if (CATF === "beg") return c.level === "beginner";
       if (CATF === "int") return c.level !== "beginner";
+      if (CATF === "fav") return favHas(id);
       if (CATF === "mine") return !!D.enr[id];
       return true;
     });
     if (CATS === "short") cids.sort(function(a, b){ return (COURSES[a].hours || 0) - (COURSES[b].hours || 0); });
     if (CATS === "cheap") cids.sort(function(a, b){ return (COURSES[a].price || 0) - (COURSES[b].price || 0); });
     var cco = $("catCount"); if (cco) cco.textContent = cids.length + " " + t("catCountU");
-    if (!cids.length){ cl2.appendChild(el("div","empty", esc(t("catNone")))); }
+    if (!cids.length){ cl2.appendChild(el("div","empty", esc(CATF === "fav" ? t("favNone") : t("catNone")))); }
     cids.forEach(function(id){
       var c = COURSES[id], mine = !!D.enr[id], n = D.prog[id] || 0;
       var row = el("div","item");
@@ -894,6 +917,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       dt.style.marginInlineEnd = "8px";
       dt.addEventListener("click", function(){ openCourse(id); });
       row.appendChild(dt);
+      var fv = el("button","btn done", favHas(id) ? t("favSaved") : t("favSave")); fv.type = "button";
+      fv.style.marginInlineEnd = "8px";
+      fv.addEventListener("click", function(){ var now = favToggle(id); fv.textContent = now ? t("favSaved") : t("favSave"); if (CATF === "fav") render(); });
+      row.appendChild(fv);
       if (c.status === "soon"){ var s = el("span","btn done", esc(t("soon"))); row.appendChild(s); }
       else {
         var sh = el("button", "btn done", esc(t("share")));
@@ -1006,7 +1033,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   function renderCatFilters(){
     var box = $("catFilters"); if (!box) return;
     box.innerHTML = "";
-    [["all","catAll"],["free","catFree"],["paid","catPaid"],["beg","catBeg"],["int","catInt"],["mine","catMine"]].forEach(function(p){
+    [["all","catAll"],["free","catFree"],["paid","catPaid"],["beg","catBeg"],["int","catInt"],["mine","catMine"],["fav","catFav"]].forEach(function(p){
       var b = el("button", "fchip" + (CATF === p[0] ? " on" : ""), esc(t(p[1])));
       b.type = "button";
       b.addEventListener("click", function(){ CATF = p[0]; render(); });
@@ -1041,8 +1068,14 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     return out;
   }
 
+  function favList(){ try { var a = JSON.parse(localStorage.getItem("sl_favs") || "[]"); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+  function favHas(id){ return favList().indexOf(id) >= 0; }
+  function favToggle(id){ var a = favList(), i = a.indexOf(id); if (i >= 0) a.splice(i, 1); else a.push(id); try { localStorage.setItem("sl_favs", JSON.stringify(a)); } catch(e){} return i < 0; }
+  function lastCourse(){ try { return localStorage.getItem("sl_last") || ""; } catch(e){ return ""; } }
+
   function openCourse(cid, hl){
     var c = COURSES[cid]; if (!c) return;
+    try { localStorage.setItem("sl_last", cid); } catch(e){}
     var det = (typeof CDET !== "undefined" && CDET[cid]) || null;
     var D = DATA || {};
     var h = '<h3>' + esc(lang === "ar" ? c.ar : c.en) + '</h3>';
@@ -1053,6 +1086,13 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
          : '<span class="chip2">' + esc(c.price ? (c.price + " " + (lang === "ar" ? "ج.م" : "EGP")) : t("free")) + '</span>')
       + '</div>';
     if (det && det.d) h += '<p class="cdesc">' + esc(L(det.d)) + '</p>';
+    var np = ((DATA && DATA.prog) || {})[cid] || 0, tp = courseLessons(cid).length;
+    if (tp){
+      var pp = Math.min(100, Math.round(np / tp * 100));
+      h += '<div class="csec">' + esc(t("modalProg")) + '</div>'
+        + '<div style="font-size:12.5px;color:var(--ink2);margin-bottom:6px">' + np + ' ' + esc(t("lessonsDone")) + ' · ' + tp + ' ' + esc(t("lessonsAll")) + ' · ' + pp + '%</div>'
+        + '<div class="bar"><i style="width:' + pp + '%"></i></div>';
+    }
     if (det && det.outcomes && det.outcomes[lang]){
       h += '<div class="csec">' + esc(t("cmLearn")) + '</div><ul class="co">'
         + det.outcomes[lang].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
