@@ -67,7 +67,7 @@ button{font-family:inherit}
 .sel,.ta{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 13px;font-size:14.5px;font-family:inherit;color:var(--ink);outline:none}
 .sel:focus,.ta:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(47,125,79,.12)}
 .ta{resize:vertical;min-height:84px}
-.chip{font-size:12px;color:var(--ink2);background:#f1ebdc;border-radius:999px;padding:5px 11px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{font-size:12px;color:var(--ink2);background:#f1ebdc;border-radius:999px;padding:5px 11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ghost{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
 .ghost:hover{border-color:var(--green2);color:var(--green)}
 
@@ -249,8 +249,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       <span class="chip" id="dEmail2"></span>
       <button class="ghost" id="outBtn">خروج</button>
     </div>
-    <button class="ghost" id="fsBtn" title="حجم الخط" style="margin-inline-start:auto">A+</button>
-    <button class="ghost" id="langBtn">EN</button>
+    <button class="ghost" id="fsBtn" title="حجم الخط" style="margin-inline-start:auto;padding:6px 9px;font-size:12.5px;flex:0 0 auto">A+</button>
+    <button class="ghost" id="langBtn" style="flex:0 0 auto">EN</button>
   </div>
 </header>
 
@@ -357,7 +357,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   <!-- catalog -->
   <div id="v-cat" class="hidden">
     <div class="sec"><h2 id="catT">الدورات</h2><div id="catFilters" class="chipsrow"></div>
-    <div class="sortrow"><span id="sortL">ترتيب</span><select id="catSort"><option value="def">الافتراضي</option><option value="short">الأقصر أولًا</option><option value="cheap">الأرخص أولًا</option></select></div><div id="catCount" class="catcount"></div><div id="catList"></div></div>
+    <div class="sortrow"><span id="sortL">ترتيب</span><select id="catSort"><option value="def">الافتراضي</option><option value="short">الأقصر أولًا</option><option value="cheap">الأرخص أولًا</option><option value="prog">الأكثر تقدمًا</option></select></div><div id="catCount" class="catcount"></div><div id="catList"></div></div>
   </div>
 
   <!-- paths -->
@@ -510,6 +510,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       catFav:"المحفوظات", favSave:"حفظ", favSaved:"محفوظ ✓", lastOpen:"آخر كورس فتحته", resume:"كمّل",
       leftL:"باقي", courseDone:"خلصت الدورة ✓", modalProg:"تقدمك في الدورة", favNone:"مفيش كورسات محفوظة. اضغط «حفظ» على أي دورة.",
       totalProg:"إجمالي تقدمك", totalU:"درس", copySummary:"نسخ ملخص تقدمي", copied:"اتنسخ ✓", fsTitle:"حجم الخط",
+      bestStreak:"أطول سلسلة", dayU:"يوم", remL:"فاضلك على ما تخلص الدورة",
       b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
@@ -560,6 +561,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       catFav:"Saved", favSave:"Save", favSaved:"Saved ✓", lastOpen:"Last opened", resume:"Resume",
       leftL:"left", courseDone:"Course complete ✓", modalProg:"Your progress", favNone:"No saved courses yet. Tap Save on any course.",
       totalProg:"Your overall progress", totalU:"lessons", copySummary:"Copy progress summary", copied:"Copied ✓", fsTitle:"Text size",
+      bestStreak:"Best streak", dayU:"days", remL:"Left to finish the course",
       b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
@@ -940,6 +942,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     });
     if (CATS === "short") cids.sort(function(a, b){ return (COURSES[a].hours || 0) - (COURSES[b].hours || 0); });
     if (CATS === "cheap") cids.sort(function(a, b){ return (COURSES[a].price || 0) - (COURSES[b].price || 0); });
+    if (CATS === "prog") cids.sort(function(a, b){
+      function pc(id){ var tot = courseLessons(id).length, n = (DATA.prog || {})[id] || 0; return tot ? n / tot : 0; }
+      return pc(b) - pc(a);
+    });
     var cco = $("catCount"); if (cco) cco.textContent = cids.length + " " + t("catCountU");
     if (!cids.length){ cl2.appendChild(el("div","empty", esc(CATF === "fav" ? t("favNone") : t("catNone")))); }
     cids.forEach(function(id){
@@ -1129,12 +1135,16 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       + '</div>';
     if (det && det.d) h += '<p class="cdesc">' + esc(L(det.d)) + '</p>';
     var np = ((DATA && DATA.prog) || {})[cid] || 0, tp = courseLessons(cid).length;
+    var rem = 0;
+    courseLessons(cid).forEach(function(l, i){ if (i >= np) rem += (Number(l.min) || 0); });
     if (tp){
       var pp = Math.min(100, Math.round(np / tp * 100));
       h += '<div class="csec">' + esc(t("modalProg")) + '</div>'
         + '<div style="font-size:12.5px;color:var(--ink2);margin-bottom:6px">' + np + ' ' + esc(t("lessonsDone")) + ' · ' + tp + ' ' + esc(t("lessonsAll")) + ' · ' + pp + '%</div>'
         + '<div class="bar"><i style="width:' + pp + '%"></i></div>';
+      if (np < tp && rem > 0) h += '<div style="font-size:12.5px;color:var(--ink2);margin-top:6px">' + esc(t("remL")) + ' ' + rem + ' ' + esc(t("minU")) + '</div>';
     }
+    h += '<div style="margin-top:10px"><button class="btn done" id="cmFav" type="button">' + esc(favHas(cid) ? t("favSaved") : t("favSave")) + '</button></div>';
     if (det && det.outcomes && det.outcomes[lang]){
       h += '<div class="csec">' + esc(t("cmLearn")) + '</div><ul class="co">'
         + det.outcomes[lang].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
@@ -1153,6 +1163,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       h += '<p class="cdesc" style="margin-top:14px">' + esc(t("cmSoon")) + '</p>';
     }
     $("courseBody").innerHTML = h;
+    var cmf = $("cmFav");
+    if (cmf) cmf.addEventListener("click", function(){ var nw = favToggle(cid); cmf.textContent = nw ? t("favSaved") : t("favSave"); });
     if (hl){
       var rows = $("courseBody").querySelectorAll(".cles");
       Array.prototype.forEach.call(rows, function(r){
@@ -1253,6 +1265,21 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     if (!days[dayKeyOf(cur)]) cur.setDate(cur.getDate() - 1);
     while (days[dayKeyOf(cur)]) { streak++; cur.setDate(cur.getDate() - 1); }
     $("streakN").textContent = String(streak);
+    var allKeys = Object.keys(days).sort();
+    var best = 0, run = 0, prev = null;
+    allKeys.forEach(function(k){
+      var parts = k.split("-"), d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      if (prev && Math.round((d - prev) / 86400000) === 1) run++; else run = 1;
+      if (run > best) best = run;
+      prev = d;
+    });
+    var ar = $("streakN").parentNode, ob = document.getElementById("bestStreakL");
+    if (ob) ob.remove();
+    if (best > 1){
+      var bsp = el("span", null, ' · <b style="color:var(--ink);font-weight:500">' + best + '</b> ' + esc(t("bestStreak")));
+      bsp.id = "bestStreakL";
+      ar.appendChild(bsp);
+    }
     $("weekN").textContent = String(week);
     renderGoal(week);
   }
