@@ -1552,11 +1552,11 @@ const DB = {
   },
   async coupon(code) { const d = await fbDb.collection('coupons').doc(code).get(); return d.exists ? d.data() : null; },
   async myCert(cid) { const u = cu(), q = await fbDb.collection('certs').where('userId', '==', u.uid).get(); let r = null; q.forEach(d => { if (d.data().courseId === cid) r = { id: d.id, ...d.data() }; }); return r; },
-  async makeCert(c) {
+  async makeCert(c, nameEn) {
     const u = cu(), ex = await this.myCert(c.id); if (ex) return ex.id;
     const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', code = 'CRT-' + Array.from(crypto.getRandomValues(new Uint8Array(10)), x => A[x % A.length]).join('');
     const p = (S.user && S.user.profile) || {};
-    await fbDb.collection('certs').doc(code).set({ userId: u.uid, name: (S.user && S.user.name) || u.displayName || '', sid: (S.user && S.user.sid) || '', courseId: c.id, courseAr: c.t.ar, courseEn: c.t.en || c.t.ar, hours: c.hours || 0, status: 'pending', revoked: false, at: tsNow() });
+    await fbDb.collection('certs').doc(code).set({ userId: u.uid, name: (S.user && S.user.name) || u.displayName || '', nameAr: (S.user && S.user.name) || u.displayName || '', nameEn: nameEn || '', sid: (S.user && S.user.sid) || '', courseId: c.id, courseAr: c.t.ar, courseEn: c.t.en || c.t.ar, hours: c.hours || 0, status: 'pending', revoked: false, at: tsNow() });
     return code;
   },
   async invoice(ref) { const d = await fbDb.collection('invoices').doc(ref).get(); return d.exists ? { id: d.id, ...d.data(), paidAt: toMs(d.data().paidAt) } : null; },
@@ -3412,25 +3412,36 @@ Object.assign(A, {
     const c = COURSES.find(x => x.id === el.dataset.c); if (!c || !S.user) return needAuth();
     if (courseProgress(c) < 100) return toast(T('أكمل الكورس أولًا.', 'Finish the course first.'));
     if (!(await needActive(T('لازم تفعّل حسابك قبل طلب الشهادة.', 'Activate your account before requesting the certificate.'), () => A.getCert(el)))) return;
-    el.disabled = true; try { const code = await DB.makeCert(c); sendReceipt('cert'); go('cert-' + code); } catch (e) { el.disabled = false; toast(T('تعذر إرسال الطلب.', 'Could not send the request.')); }
+    askCertEn(slEnGuess((S.user && S.user.nameEn) || '') || slEnGuess((S.user && S.user.name) || ''), async (nameEn, b) => { el.disabled = true; try { const code = await DB.makeCert(c, nameEn); closeModal(); sendReceipt('cert'); go('cert-' + code); } catch (e) { el.disabled = false; b.disabled = false; toast(T('تعذر إرسال الطلب.', 'Could not send the request.')); } });
   }
 });
+
+const AR2EN = { "ا":"a","أ":"a","إ":"i","آ":"a","ب":"b","ت":"t","ث":"th","ج":"g","ح":"h","خ":"kh","د":"d","ذ":"z","ر":"r","ز":"z","س":"s","ش":"sh","ص":"s","ض":"d","ط":"t","ظ":"z","ع":"a","غ":"gh","ف":"f","ق":"q","ك":"k","ل":"l","م":"m","ن":"n","ه":"h","ة":"a","و":"w","ي":"y","ى":"a","ئ":"e","ؤ":"o","ء":"" };
+function slEnGuess(ar) { let o = ''; String(ar || '').split('').forEach(ch => { o += (ch in AR2EN) ? AR2EN[ch] : (/[A-Za-z \-']/.test(ch) ? ch : ''); }); return o.replace(/\s+/g, ' ').trim().replace(/(^|\s)([a-z])/g, (m, a, b) => a + b.toUpperCase()); }
+const certNameOk = v => /^[A-Za-z][A-Za-z '\-]{2,59}$/.test(v) && v.trim().split(/\s+/).length >= 2;
+function askCertEn(def, cb) {
+  const m = openModal(`<div class="stack" style="padding:22px;gap:12px"><h2 class="h2" style="margin:0">${T('اسمك بالإنجليزي للشهادة', 'Your name in English for the certificate')}</h2><p class="muted" style="margin:0;font-size:.9rem">${T('سيظهر على الشهادة بجانب اسمك بالعربي. اكتب اسمك الصحيح، يراجعه الفريق قبل الاعتماد.', 'It appears on the certificate next to your Arabic name. The team reviews it before approval.')}</p><div class="field"><input id="cen-in" dir="ltr" maxlength="60" autocomplete="off" value="${esc(def || '')}" placeholder="Full Name"></div><p id="cen-er" class="xs" style="color:var(--warn);margin:0;min-height:1em"></p><div class="row" style="gap:8px"><button class="btn" id="cen-ok" type="button">${T('إرسال الطلب', 'Send request')}</button><button class="btn ghost" id="cen-no" type="button">${T('إلغاء', 'Cancel')}</button></div></div>`);
+  const ok = m.querySelector('#cen-ok'), inp = m.querySelector('#cen-in');
+  m.querySelector('#cen-no').onclick = closeModal;
+  ok.onclick = () => { const v = inp.value.replace(/\s+/g, ' ').trim(); if (!certNameOk(v)) { m.querySelector('#cen-er').textContent = T('اكتب الاسم بحروف إنجليزية، كلمتين على الأقل.', 'Use English letters, at least two words.'); return; } ok.disabled = true; cb(v, ok); };
+  setTimeout(() => inp.focus(), 40);
+}
 const certState = (icon_, h, p) => `<div class="card stack" style="text-align:center;justify-items:center;padding:36px 22px"><span class="done-check" style="${icon_}" role="img"></span><h2 class="h2">${h}</h2><p class="muted" style="max-width:46ch">${p}</p><a class="btn" href="/learn">${T('العودة لسرمد ليرننج', 'Back to Sarmad Learning')}</a></div>`;
 function certHtml(c) {
   const d = new Date(c.approvedAt || c.at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+  const dAr = new Date(c.approvedAt || c.at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }), dEn = new Date(c.approvedAt || c.at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
   const sg = c.sig || {}, url = certUrl(c.id);
   const hours = c.hours ? (T('بمجموع ', 'Total ') + c.hours + T(' ساعة تدريبية', ' training hours')) : '';
   return `<div class="cert2 cv3 ${c.revoked ? 'rev' : ''}" id="cert-sheet">
     <i class="cv3-frame"></i>
     <div class="cv3-in">
       <header class="cv3-h"><span class="logo" style="--lw:170px"></span><span class="cv3-cap">Sarmad Learning</span></header>
-      <div class="cv3-mid">
+      <div class="cv3-mid cv3-bi">
         <p class="cv3-k">${T('شهادة إتمام', 'Certificate of Completion')}</p>
-        <p class="cv3-lead">${T('تشهد منصة سرمد ليرننج بأن', 'Sarmad Learning certifies that')}</p>
-        <h1 class="cv3-n">${esc(c.name || '—')}</h1>
-        <p class="cv3-lead">${T('قد أتمّ بنجاح الدورة التدريبية', 'has successfully completed the course')}</p>
-        <h2 class="cv3-c">${esc(lang === 'ar' ? c.courseAr : c.courseEn)}</h2>
-        <p class="cv3-m">${hours ? hours + ' · ' : ''}${d}</p>
+        <div class="cv3-blk" dir="rtl" lang="ar"><p class="cv3-lead">تشهد منصة سرمد ليرننج بأن</p><h1 class="cv3-n">${esc(c.nameAr || c.name || '—')}</h1><p class="cv3-lead">قد أتمّ بنجاح الدورة التدريبية</p><h2 class="cv3-c">${esc(c.courseAr || c.courseEn || '')}</h2></div>
+        <i class="cv3-dv"></i>
+        <div class="cv3-blk" dir="ltr" lang="en"><p class="cv3-lead">Sarmad Learning certifies that</p><h1 class="cv3-n en">${esc(c.nameEn || c.name || '—')}</h1><p class="cv3-lead">has successfully completed the course</p><h2 class="cv3-c en">${esc(c.courseEn || c.courseAr || '')}</h2></div>
+        <p class="cv3-m"><span dir="rtl">${c.hours ? 'بمجموع ' + c.hours + ' ساعة تدريبية · ' : ''}${dAr}</span><br><span dir="ltr">${c.hours ? 'Total ' + c.hours + ' training hours · ' : ''}${dEn}</span></p>
       </div>
       <footer class="cv3-f">
         <div class="cv3-qr"><div class="box">${qrSvg(url, 92)}</div><div class="t"><small>${T('رمز التحقق', 'Verification code')}</small><b dir="ltr">${esc(c.id)}</b><em>${T('امسح للتحقق', 'Scan to verify')}</em></div></div>
@@ -4542,5 +4553,6 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
 </script>
 <style id="legal-sel-css">.legal-nocopy ::selection,.legal-nocopy::selection{background:#0f6b56;color:#fff}.legal-nocopy,.legal-nocopy *{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:none}html[data-theme=dark] .legal-nocopy ::selection{background:#d9ae55;color:#1d1604}</style>
 <script id="legal-nocopy-js">(function(){function inl(e){var n=e.target;if(n&&n.nodeType===3)n=n.parentNode;var sel=window.getSelection&&window.getSelection(),a=sel&&sel.anchorNode;if(a&&a.nodeType===3)a=a.parentNode;return !!((n&&n.closest&&n.closest(".legal-nocopy"))||(a&&a.closest&&a.closest(".legal-nocopy")))}["copy","cut","contextmenu","dragstart"].forEach(function(t){document.addEventListener(t,function(e){if(inl(e)){e.preventDefault();if(e.clipboardData&&e.clipboardData.setData){try{e.clipboardData.setData("text/plain","")}catch(x){}}}},true)});document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="c"||e.key==="x"||e.key==="C"||e.key==="X")){var sel=window.getSelection&&window.getSelection(),a=sel&&sel.anchorNode;if(a&&a.nodeType===3)a=a.parentNode;if(a&&a.closest&&a.closest(".legal-nocopy"))e.preventDefault()}},true)})();</script>
+<style id="cv3-bi-css">.cv3-bi .cv3-n{font-size:40px;margin:6px 0 0}.cv3-bi .cv3-n.en{font-size:34px;font-family:"IBM Plex Sans",sans-serif}.cv3-bi .cv3-c{font-size:22px;margin:4px 0 0}.cv3-bi .cv3-c.en{font-size:19px;font-family:"IBM Plex Sans",sans-serif}.cv3-bi .cv3-lead{margin:8px 0 0;font-size:13.5px}.cv3-bi .cv3-k{margin-bottom:2px}.cv3-dv{display:block;width:120px;height:1px;background:#e6ddc9;margin:14px 0 6px}.cv3-bi .cv3-m{margin:12px 0 0;font-size:12.5px;line-height:1.7}.cv3-blk{text-align:center;width:100%}</style>
 </body>
 </html>
