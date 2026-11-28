@@ -473,8 +473,7 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
     messagingSenderId: "676932025599",
     appId: "1:676932025599:web:dc5a0a5302a353ad3a60ca"
   };
-  firebase.initializeApp(CFG);
-  var auth = firebase.auth();
+  var learnApp = firebase.initializeApp(CFG, 'learn');   var auth = firebase.auth(learnApp);
   var $ = function(id){ return document.getElementById(id); };
   var elEmail=$("email"), elCode=$("code"), elPw=$("pw"), elMsg=$("msg");
   var stepEmail=$("stepEmail"), stepCode=$("stepCode"), stepPw=$("stepPw");
@@ -658,7 +657,7 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   }
   function loadCatalog(){
     if (CATALOG_P) return CATALOG_P;
-    var fs = firebase.firestore();
+    var fs = firebase.firestore(learnApp);
     CATALOG_P = Promise.all([
       fs.collection("content_courses").get().catch(function(){ return null; }),
       fs.collection("content_tracks").get().catch(function(){ return null; })
@@ -789,9 +788,9 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
 
   /* ---- password reset ---- */
   $("prPw").addEventListener("click", function(){
-    var u = firebase.auth().currentUser; if (!u || !u.email) return;
+    var u = auth.currentUser; if (!u || !u.email) return;
     var msg = $("prMsg"); msg.textContent = "";
-    firebase.auth().sendPasswordResetEmail(u.email).then(function(){
+    auth.sendPasswordResetEmail(u.email).then(function(){
       msg.style.color = "var(--green)";
       msg.textContent = lang === "ar" ? "بعتنالك لينك على إيميلك." : "Reset link sent to your email.";
     }).catch(function(){
@@ -812,12 +811,30 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
       resendBtn.textContent = t("resendIn") + left + t("sec");
     }, 1000);
   }
+
+  /* ---- Learning-only account: created on first code, no plan, never touches the main-site session ---- */
+  function ensureAccount(em){
+    var pw = "lrn-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    return fetch("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + CFG.apiKey, {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: em, password: pw, returnSecureToken: false })
+    }).then(function(r){ return r.json(); }).then(function(){ return null; }).catch(function(){ return null; });
+  }
+  function ensureLearnDoc(u){
+    if (!u) return Promise.resolve(null);
+    var ref = firebase.firestore(learnApp).collection("users").doc(u.uid);
+    return ref.get().then(function(snap){
+      if (snap.exists) return null;
+      return ref.set({ email: u.email || "", learnOnly: true, plan: null,
+        created: firebase.firestore.FieldValue.serverTimestamp() });
+    }).catch(function(){ return null; });
+  }
   function sendCode(){
     if (busy) return;
     var em = (elEmail.value || "").trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { show("err", t("badEmail")); elEmail.focus(); return; }
     clearMsg(); lock(true);
-    post("/otplogin/start", { email: em }).then(function(j){
+    ensureAccount(em).then(function(){ return post("/otplogin/start", { email: em }); }).then(function(j){
       lock(false);
       if (j && j.ok){
         email = em; stepEmail.classList.add("hidden"); stepCode.classList.remove("hidden");
@@ -830,11 +847,11 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   function verifyCode(){
     if (busy) return;
     var code = (elCode.value || "").replace(/\D/g, "");
-    if (code.length !== 6) { show("err", t("enter")); elCode.focus(); return; }
+    if (code.length < 5 || code.length > 6) { show("err", t("enter")); elCode.focus(); return; }
     clearMsg(); lock(true);
     post("/otplogin/check", { email: email, code: code }).then(function(j){
       if (j && j.ok && j.token){
-        auth.signInWithCustomToken(j.token).then(function(){ lock(false); })
+        auth.signInWithCustomToken(j.token).then(function(){ return ensureLearnDoc(auth.currentUser); }).then(function(){ lock(false); })
           .catch(function(){ lock(false); show("err", t("net")); });
       } else {
         lock(false);
@@ -860,7 +877,7 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   sendBtn.addEventListener("click", sendCode);
   elEmail.addEventListener("keydown", function(e){ if (e.key === "Enter") sendCode(); });
   verifyBtn.addEventListener("click", verifyCode);
-  elCode.addEventListener("input", function(){ elCode.value = elCode.value.replace(/\D/g, "").slice(0, 6); });
+  elCode.addEventListener("input", function(){ elCode.value = elCode.value.replace(/\D/g, "").slice(0, 8); });
   elCode.addEventListener("keydown", function(e){ if (e.key === "Enter") verifyCode(); });
   resendBtn.addEventListener("click", function(){ if (resendBtn.disabled) return; sendCode(); });
   $("backBtn").addEventListener("click", function(){ stepCode.classList.add("hidden"); stepEmail.classList.remove("hidden"); clearMsg(); });
@@ -910,7 +927,7 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   }
 
   function loadInner(u){
-    var db = firebase.firestore();
+    var db = firebase.firestore(learnApp);
     var uref = db.collection("users").doc(u.uid);
     Promise.all([
       uref.get().catch(function(){ return null; }),
@@ -1419,12 +1436,12 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
 
   /* ---- profile ---- */
   $("prSave").addEventListener("click", function(){
-    var u = firebase.auth().currentUser; if (!u) return;
+    var u = auth.currentUser; if (!u) return;
     var v = String($("prName").value || "").trim().slice(0, 60);
     var msg = $("prMsg"); msg.textContent = "";
     if (v.length < 2){ msg.style.color = "var(--red)"; msg.textContent = lang === "ar" ? "اكتب اسم من حرفين على الأقل." : "Use at least 2 characters."; return; }
     $("prSave").disabled = true;
-    firebase.firestore().collection("users").doc(u.uid).set({ name: v }, { merge: true }).then(function(){
+    firebase.firestore(learnApp).collection("users").doc(u.uid).set({ name: v }, { merge: true }).then(function(){
       $("prSave").disabled = false;
       if (DATA && DATA.d) DATA.d.name = v;
       $("dName").textContent = t("hi") + v;
@@ -1705,8 +1722,8 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
     if (ok) saveLab(x.id);
   });
   function saveLab(id){
-    var u = firebase.auth().currentUser; if (!u) return;
-    firebase.firestore().collection("users").doc(u.uid).collection("labs").doc(id)
+    var u = auth.currentUser; if (!u) return;
+    firebase.firestore(learnApp).collection("users").doc(u.uid).collection("labs").doc(id)
       .set({ done: true, at: Date.now() }, { merge: true }).then(function(){
         if (DATA && DATA.myLabs) DATA.myLabs[id] = Object.assign({}, DATA.myLabs[id] || {}, { done: true, at: Date.now() });
         if (DATA){ var n = 0; (DATA.labs || []).forEach(function(y){ if (DATA.myLabs[y.id] && DATA.myLabs[y.id].done) n++; }); DATA.labsDone = n; }
@@ -1781,9 +1798,9 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
     }
   });
   $("labNote").addEventListener("blur", function(){
-    var u = firebase.auth().currentUser, x = LAB.cur; if (!u || !x) return;
+    var u = auth.currentUser, x = LAB.cur; if (!u || !x) return;
     var v = String($("labNote").value || "").slice(0, 2000);
-    firebase.firestore().collection("users").doc(u.uid).collection("labs").doc(x.id).set({ note: v }, { merge: true }).catch(function(){});
+    firebase.firestore(learnApp).collection("users").doc(u.uid).collection("labs").doc(x.id).set({ note: v }, { merge: true }).catch(function(){});
     if (DATA && DATA.myLabs) DATA.myLabs[x.id] = Object.assign({}, DATA.myLabs[x.id] || {}, { note: v });
   });
 
@@ -1803,7 +1820,7 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   function loadDisc(id){
     DI.id = id; DI.loaded = true;
     var box = $("discList"); box.innerHTML = '<div class="empty">' + esc(lang === "ar" ? "جارٍ التحميل..." : "Loading...") + '</div>';
-    var u = firebase.auth().currentUser;
+    var u = auth.currentUser;
     if (!u){ box.innerHTML = '<div class="empty">' + esc(t("diSignin")) + '</div>'; return; }
     u.getIdToken().then(function(tk){
       return fetch(API + "/disc/list", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ t: tk, course: id }) });
@@ -1826,14 +1843,14 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   }
   $("diSel").addEventListener("change", function(){ loadDisc($("diSel").value); });
   $("diSend").addEventListener("click", function(){
-    var u = firebase.auth().currentUser;
+    var u = auth.currentUser;
     var msg = $("diMsg"); msg.className = "msg"; msg.textContent = "";
     if (!u){ msg.className = "msg err"; msg.textContent = t("diSignin"); return; }
     var v = ($("diText").value || "").trim();
     if (v.length < 3){ msg.className = "msg err"; msg.textContent = t("diShort"); return; }
     if (v.length > 600) v = v.slice(0, 600);
     var btn = $("diSend"); btn.disabled = true;
-    firebase.firestore().collection("comments").add({
+    firebase.firestore(learnApp).collection("comments").add({
       postId: DI.id, userId: u.uid, name: (DATA && DATA.d && DATA.d.name) || (u.email || "").split("@")[0],
       text: v, status: "pending", at: Date.now()
     }).then(function(){

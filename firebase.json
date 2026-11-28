@@ -51,6 +51,10 @@
       {
         "source": "/learn",
         "destination": "/learn.html"
+      },
+      {
+        "source": "/learn/**",
+        "destination": "/learn.html"
       }
     ]
   }
