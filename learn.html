@@ -220,6 +220,11 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   .lv-opts{display:grid;gap:10px}.lv-opt{text-align:start;font-family:inherit;font-size:15px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}.lv-opt.good{border-color:var(--green);background:var(--green3)}.lv-opt.bad{border-color:var(--red)}
   .lv-blank{font-family:inherit;font-size:15px;padding:4px 10px;border:1.5px solid var(--line);border-radius:10px;min-width:120px;background:var(--paper);color:var(--ink)}.lv-blank.good{border-color:var(--green)}.lv-blank.bad{border-color:var(--red)}
   .lv-media{position:relative}.lv-media video,.lv-media audio{width:100%;border-radius:14px;background:#000}.lv-media audio{background:none}.lv-pdf{width:100%;height:70vh;border:1px solid var(--line);border-radius:14px}.lv-pct{position:absolute;top:8px;inset-inline-start:10px;font-size:12px;color:var(--ink2)}
+
+  .pl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.pl-card{background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:10px;align-content:start}.pl-card.hl{border-color:var(--green)}.pl-price{font-size:32px;font-weight:800}.pl-price small{font-size:14px;font-weight:600;color:var(--ink2)}.pl-f{margin:0;padding-inline-start:18px;line-height:2;font-size:14px}
+  .pl-list{display:grid;gap:8px}.pl-row{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 14px}.pl-row span:first-child{flex:1}.pl-aid{margin-top:26px;background:var(--green3);border-radius:16px;padding:16px;display:grid;gap:8px;line-height:1.9}
+  .pl-back{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:90;display:grid;place-items:center;padding:14px}.pl-box{background:var(--paper);color:var(--ink);border-radius:20px;padding:18px;width:100%;max-width:460px;max-height:92vh;overflow:auto}.pl-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.pl-h button{border:0;background:none;font-size:26px;cursor:pointer;color:var(--ink)}
+  .pl-sum{display:flex;justify-content:space-between;background:var(--green3);border-radius:12px;padding:12px;margin-bottom:6px}.pl-box h4{margin:14px 0 6px}.pl-bk{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;word-break:break-all}.pl-drop{display:block;border:1.5px dashed var(--line);border-radius:14px;padding:16px;text-align:center;cursor:pointer;color:var(--ink2)}
   .lv-btn{font-family:inherit;font-size:14px;font-weight:600;padding:10px 18px;border-radius:999px;border:0;background:var(--green3);color:var(--green);cursor:pointer;text-decoration:none;display:inline-block}.lv-btn.pri,.lv-btn.acc{background:var(--green);color:#fff}.lv-btn:disabled{opacity:.45;cursor:not-allowed}
   .lv-btn.acc{margin-top:18px}.lv-tag{margin-top:16px;color:var(--green);font-weight:700}.lv-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);margin-top:26px;padding-top:18px;flex-wrap:wrap}
   .lv-nav .lv-row{margin:0}.lv-empty{text-align:center;padding:40px 10px}.lv-empty h2{margin:6px 0}
@@ -283,6 +288,7 @@ html,body{overflow-x:clip}
       <button data-v="labs" id="nvLabs">المعمل</button>
       <button data-v="ai" id="nvAi">الذكاء الاصطناعي</button>
       <button data-v="ach" id="nvAch">إنجازاتي</button>
+      <button data-v="plans" id="nvPlans">الباقات</button>
     </nav>
     <input class="qin hidden" id="q" type="search" placeholder="ابحث في كورساتك ومعملك" aria-label="بحث">
     <div class="lact hidden" id="lact">
@@ -472,6 +478,7 @@ html,body{overflow-x:clip}
   </div>
 
   <!-- achievements -->
+  <div id="v-plans" class="hidden"></div>
   <div id="v-ach" class="hidden">
     <div class="sec"><h2 id="acT">إنجازاتي</h2><div class="badges" id="badgeGrid"></div></div>
     <div class="sec"><h2 id="ceT">شهاداتي</h2><div id="certList"></div></div>
@@ -677,6 +684,7 @@ html,body{overflow-x:clip}
                     modules: (x.modules && x.modules.length) ? mapModules(x.modules) : ((fb && fb.modules) || []) };
     });
     COURSES = out; CDET = det;
+    try { if ($("v-plans") && !$("v-plans").classList.contains("hidden")) renderPlans(); } catch(e){}
     var hidT = {}, remT = {};
     (rt || []).forEach(function(x){ if (x.hidden) hidT[x.id] = 1; remT[x.id] = x; });
     var trs = [];
@@ -728,7 +736,7 @@ html,body{overflow-x:clip}
     $("tOr").textContent = t("or"); $("pwToggle").textContent = t("pwToggle");
     pwBtn.textContent = t("pwBtn"); $("tHelp").textContent = t("help");
     $("nvHome").textContent = t("nvHome"); $("nvCourses").textContent = t("nvCourses");
-    $("nvLabs").textContent = t("nvLabs"); $("nvAi").textContent = t("nvAi"); $("nvAch").textContent = t("nvAch");
+    $("nvLabs").textContent = t("nvLabs"); $("nvAi").textContent = t("nvAi"); $("nvAch").textContent = t("nvAch"); $("nvPlans").textContent = tt("الباقات", "Plans");
     $("outBtn").textContent = t("out");
     $("dSub").textContent = t("heroSub");
     $("lCourses").textContent = t("sCourses"); $("lLessons").textContent = t("sLessons");
@@ -753,7 +761,7 @@ html,body{overflow-x:clip}
     $("tH").textContent = t("nvAch"); $("tHd").textContent = t("tHd");
     $("cT").textContent = t("nvCourses"); $("lbT").textContent = t("nvLabs");
     $("aiT").textContent = t("nvAi"); $("acT").textContent = t("nvAch"); $("ceT").textContent = lang === "ar" ? "شهاداتي" : "My certificates";
-    if (DATA) render(); try { if (typeof renderLesson === "function" && DATA && !$("v-lesson").classList.contains("hidden")) renderLesson(); } catch(e){}
+    if (DATA) render(); try { if (typeof renderLesson === "function" && DATA && !$("v-lesson").classList.contains("hidden")) renderLesson(); if (!$("v-plans").classList.contains("hidden")) renderPlans(); } catch(e){}
   }
 
   function show(kind, text){ elMsg.className = "msg " + kind; elMsg.textContent = text; }
@@ -769,12 +777,13 @@ html,body{overflow-x:clip}
   function goTab(v){
     TAB = v;
     try { localStorage.setItem("sl_tab", v); } catch(e){}
-    ["home","cat","paths","disc","courses","labs","ai","ach","search","lesson"].forEach(function(k){
+    ["home","cat","paths","disc","courses","labs","ai","ach","search","lesson","plans"].forEach(function(k){
       $("v-" + k).classList.toggle("hidden", k !== v);
     });
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){
       b.classList.toggle("on", b.getAttribute("data-v") === v);
     });
+    if (v === "plans"){ plLoad(); renderPlans(); }
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (history.replaceState) history.replaceState(null, "", "/learn" + (v === "home" ? "" : "#" + v));
   }
@@ -788,6 +797,86 @@ html,body{overflow-x:clip}
     lang = lang === "ar" ? "en" : "ar"; applyLang();
     try { localStorage.setItem("sl_lang", lang); } catch(e){}
   });
+
+  /* ---- plans + checkout (bank transfer + receipt, order pending until admin marks paid) ---- */
+  var PL_U = function(s){ return decodeURIComponent(escape(atob(s))).split("").reverse().join(""); };
+  var PL_PAY = 'fSI2MTAwOTY4NzAwMDEwMDAwMDUxMDAwMTAwNzZHRSIgOiJuYWJpIiAsIkFGQVRTVU9NIERFTUhBIEtJWkFSTEVEQkEgREVNSEEgREVMQUhLIiA6ImVtYW4iICwiQklDIiA6ImtuYWIiew==', PL_IK = 'YjkzNTFmMjQ0MTgwODRhYzJkYWY2ZGU4NTYyZTBiNjM=';
+  var PLANS = [
+    { id:"plus", price:800, months:3, ar:"باقة Plus", en:"Plus plan", per:["٣ أشهر","3 months"], f:[["كل الدورات المفتوحة","Every open course"],["الاختبارات وتتبع التقدم","Tests and progress tracking"],["مدة ٣ أشهر","3 months of access"]] },
+    { id:"pro", price:1200, months:6, ar:"باقة Pro", en:"Pro plan", per:["٦ أشهر","6 months"], f:[["كل الدورات المفتوحة","Every open course"],["الاختبارات وتتبع التقدم","Tests and progress tracking"],["مدة ٦ أشهر، وفّر ٤٠٠ جنيه مقارنة بباقتين Plus","6 months, save EGP 400 versus two Plus plans"]] }
+  ];
+  var PL_LOADED = false;
+  function plLoad(){
+    if (PL_LOADED) return; PL_LOADED = true;
+    firebase.firestore(learnApp).collection("settings").doc("site").get().then(function(s){
+      var d = s.exists ? s.data() : {};
+      if (d.plans) PLANS.forEach(function(p){ var o = d.plans[p.id]; if (o && +o.price > 0) p.price = +o.price; });
+      renderPlans();
+    }).catch(function(){});
+  }
+  function plCur(){ return lang === "ar" ? "ج.م" : "EGP"; }
+  function renderPlans(){
+    var v = $("v-plans"); if (!v) return;
+    var sub = DATA && DATA.sub, pend = {};
+    ((DATA && DATA.orders) || []).forEach(function(o){ if (o.status === "pending" && o.plan) pend[o.plan] = 1; });
+    var h = '<div class="lv-wrap" style="display:block;max-width:980px"><h2 style="margin:0 0 6px">' + tt("الباقات", "Plans") + '</h2><p style="color:var(--ink2);margin:0 0 18px;line-height:1.9">' + tt("اشترِ باقة وافتح كل الدورات المفتوحة. بتحوّل المبلغ وترفع صورة الإيصال، ويتفعّل الاشتراك بعد ما الفريق يتأكد من الدفع.", "Buy a plan to open every open course. You transfer the amount and upload the receipt, and the plan activates once the team confirms the payment.") + '</p><div class="pl-grid">';
+    PLANS.forEach(function(p, i){
+      var act = sub && sub.plan === p.id;
+      h += '<div class="pl-card' + (i === 1 ? " hl" : "") + '"><span class="chip2' + (i === 1 ? "" : " grey") + '">' + esc(tt(p.ar, p.en)) + '</span><div class="pl-price">' + p.price + ' <small>' + plCur() + '</small></div><div style="color:var(--ink2);font-size:13px">' + esc(tt(p.per[0], p.per[1])) + '</div><ul class="pl-f">'
+        + p.f.map(function(x){ return "<li>" + esc(tt(x[0], x[1])) + "</li>"; }).join("") + "</ul>"
+        + (act ? '<div class="lv-tag" style="margin:0">' + tt("فعّالة حتى ", "Active until ") + esc(new Date(sub.until).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB")) + "</div>"
+          : pend[p.id] ? '<div style="color:var(--gold);font-weight:600">' + tt("طلبك قيد المراجعة", "Your order is under review") + "</div>"
+          : '<button class="lv-btn pri" data-pl="plan" data-p="' + p.id + '" type="button">' + tt("اشترك الآن", "Subscribe") + "</button>") + "</div>";
+    });
+    h += "</div>";
+    var paid = Object.keys(COURSES).filter(function(id){ return COURSES[id].price > 0 && COURSES[id].status !== "soon"; });
+    if (paid.length){
+      h += '<h3 style="margin:26px 0 10px">' + tt("كورسات بالسعر", "Courses by price") + '</h3><div class="pl-list">' + paid.map(function(id){
+        var c = COURSES[id], own = DATA && DATA.enr && DATA.enr[id];
+        return '<div class="pl-row"><span>' + esc(lang === "ar" ? c.ar : c.en) + "</span><b>" + c.price + " " + plCur() + "</b>" + (own ? '<span class="chip2">' + tt("مسجل", "Joined") + "</span>" : '<button class="lv-btn" data-pl="course" data-c="' + esc(id) + '" type="button">' + tt("اشترِ", "Buy") + "</button>") + "</div>";
+      }).join("") + "</div>";
+    }
+    h += '<div class="pl-aid"><b>' + tt("نساعد بعض", "We help each other") + "</b><span>" + tt("لو ظروفك المادية لا تسمح بدفع الرسوم، قدّم طلب دعم ويراجعه فريق سرمد.", "If you cannot afford the fees, send a support request and the Sarmad team reviews it.") + '</span><a class="lv-btn" href="/#aid">' + tt("قدّم طلب دعم", "Request support") + "</a></div></div>";
+    v.innerHTML = h;
+  }
+  function plBank(){ try { return JSON.parse(PL_U(PL_PAY)); } catch(e){ return {}; } }
+  function plClose(){ var m = $("plModal"); if (m) m.remove(); }
+  function plCheckout(o){
+    plClose();
+    var bk = plBank(), cur = plCur();
+    var m = el("div", "pl-back"); m.id = "plModal";
+    var row = function(k, v){ return '<div class="pl-bk"><span>' + esc(k) + '</span><b dir="ltr">' + esc(v || "") + '</b></div>'; };
+    m.innerHTML = '<div class="pl-box" role="dialog"><div class="pl-h"><b>' + tt("الدفع بالتحويل", "Pay by transfer") + '</b><button type="button" data-pl="close" aria-label="close">×</button></div>'
+      + '<div class="pl-sum"><span>' + esc(o.title) + "</span><b>" + o.amount + " " + cur + "</b></div>"
+      + "<h4>" + tt("١) حوّل المبلغ", "1) Transfer the amount") + "</h4>" + row(tt("البنك", "Bank"), bk.bank) + row(tt("اسم المستفيد", "Beneficiary"), bk.name) + row("IBAN", bk.iban)
+      + "<h4>" + tt("٢) ارفع صورة الإيصال", "2) Upload the receipt") + '</h4><label class="pl-drop" for="plFile"><span id="plFname">' + tt("اختر صورة الإيصال", "Choose the receipt image") + '</span></label><input id="plFile" type="file" accept="image/*" hidden>'
+      + '<div id="plErr" style="color:var(--red);font-size:13px;min-height:18px;margin-top:6px"></div><button class="lv-btn pri" id="plSend" type="button" disabled style="width:100%">' + tt("إرسال الإيصال وتأكيد الطلب", "Send receipt and place order") + "</button></div>";
+    m._o = o; document.body.appendChild(m);
+    $("plFile").addEventListener("change", function(){ var f = this.files[0]; $("plFname").textContent = f ? f.name : tt("اختر صورة الإيصال", "Choose the receipt image"); $("plSend").disabled = !f; });
+  }
+  function plSend(){
+    var m = $("plModal"), o = m && m._o, f = $("plFile").files[0], err = $("plErr"), btn = $("plSend");
+    if (!f){ err.textContent = tt("ارفع صورة الإيصال أولًا.", "Upload the receipt image first."); return; }
+    if (!/^image\//.test(f.type) || f.size > 8 * 1024 * 1024){ err.textContent = tt("الملف لازم يكون صورة أقل من 8 ميجا.", "The file must be an image under 8 MB."); return; }
+    btn.disabled = true; btn.textContent = tt("جارٍ الرفع…", "Uploading…"); err.textContent = "";
+    var fd = new FormData(); fd.append("image", f);
+    fetch("https://api.imgbb.com/1/upload?key=" + PL_U(PL_IK), { method:"POST", body:fd }).then(function(r){ return r.json(); }).then(function(j){
+      if (!j.success) throw new Error("up");
+      var db = firebase.firestore(learnApp), ref = db.collection("orders").doc();
+      var data = { userId:uid, ref:"TAM-" + Date.now().toString(36).toUpperCase(), coupon:null, payLink:null, discount:0, baseAmount:o.amount, title:o.title, courseId:o.courseId || null, plan:o.plan || null, receipt:j.data.url, amount:o.amount, currency:"EGP", status:"pending", at:firebase.firestore.FieldValue.serverTimestamp() };
+      return ref.set(data).then(function(){ window.__plLastOrder = ref.id; if (DATA){ DATA.orders.push(Object.assign({ id:ref.id }, data)); } m.querySelector(".pl-box").innerHTML = '<div style="text-align:center;padding:18px 6px"><div style="font-size:34px;color:var(--green)">✓</div><h3>' + tt("تم استلام طلبك", "Order received") + '</h3><p style="color:var(--ink2);line-height:1.9">' + tt("رقم المرجع: ", "Reference: ") + "<b dir=ltr>" + esc(data.ref) + "</b><br>" + tt("هنفعّل الاشتراك بعد ما الفريق يتأكد من الدفع.", "We will activate it once the team confirms the payment.") + '</p><button class="lv-btn pri" data-pl="close" type="button">' + tt("تمام", "Done") + "</button></div>"; renderPlans(); });
+    }).catch(function(){ btn.disabled = false; btn.textContent = tt("إرسال الإيصال وتأكيد الطلب", "Send receipt and place order"); err.textContent = tt("تعذر الإرسال، جرّب تاني.", "Could not send. Try again."); });
+  }
+  document.addEventListener("click", function(e){
+    var b = e.target.closest("[data-pl]"); if (!b) return;
+    var a = b.getAttribute("data-pl");
+    if (a === "close"){ plClose(); return; }
+    if (a === "send"){ plSend(); return; }
+    if (a === "plan"){ var p = PLANS.filter(function(x){ return x.id === b.getAttribute("data-p"); })[0]; if (p) plCheckout({ title:tt(p.ar, p.en), amount:p.price, plan:p.id }); return; }
+    if (a === "course"){ var cid = b.getAttribute("data-c"), c = COURSES[cid]; if (c) plCheckout({ title:(lang === "ar" ? c.ar : c.en), amount:c.price, courseId:cid }); return; }
+  });
+  document.addEventListener("click", function(e){ if (e.target && e.target.id === "plSend") plSend(); var q = e.target.closest && e.target.closest("[data-v2]"); if (q) goTab(q.getAttribute("data-v2")); });
+  document.addEventListener("click", function(e){ if (e.target && e.target.classList && e.target.classList.contains("pl-back")) plClose(); });
 
   /* ---- text size ---- */
   var ZOOMS = [1, 1.08, 1.16];
@@ -963,8 +1052,8 @@ html,body{overflow-x:clip}
     var hh = hash.indexOf("lab-") === 0 ? "labs" : (hash.indexOf("track-") === 0 ? "paths" : hash);
     var savedTab = "";
     try { savedTab = localStorage.getItem("sl_tab") || ""; } catch(e){}
-    var fallback = (["home","cat","paths","disc","courses","labs","ai","ach"].indexOf(savedTab) >= 0) ? savedTab : "home";
-    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : fallback);
+    var fallback = (["home","cat","paths","disc","courses","labs","ai","ach","plans"].indexOf(savedTab) >= 0) ? savedTab : "home";
+    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search","plans"].indexOf(hh) >= 0 ? hh : fallback);
     if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
     var llD = lessonFromHash(hash);
     if (llD){ var tries = 0, iv = setInterval(function(){ tries++; if (DATA || tries > 40){ clearInterval(iv); openLesson(llD.cid, llD.lid, llD.step); } }, 250); }
@@ -1578,7 +1667,7 @@ html,body{overflow-x:clip}
     return left > 0 ? '<button class="lv-btn" style="margin-top:12px" data-lv="retry">' + tt("أعد المحاولة", "Try again") + " (" + left + ")</button>" : '<p class="lv-mut">' + tt("استُنفدت محاولات هذا السؤال.", "No attempts left for this question.") + "</p>";
   }
   function showLessonView(){
-    ["home","cat","paths","disc","courses","labs","ai","ach","search"].forEach(function(k){ $("v-" + k).classList.add("hidden"); });
+    ["home","cat","paths","disc","courses","labs","ai","ach","search","plans"].forEach(function(k){ $("v-" + k).classList.add("hidden"); });
     $("v-lesson").classList.remove("hidden");
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){ b.classList.remove("on"); });
   }
@@ -1619,7 +1708,7 @@ html,body{overflow-x:clip}
       var free0 = !(Number(c.price) > 0), lockedSeq = seqLocked(cid, l);
       main = '<div class="lv-empty"><div style="font-size:30px">🔒</div><h2>' + (lockedSeq ? tt("هذه المحاضرة مقفلة", "This lecture is locked") : tt("هذه المحاضرة للمسجلين في الكورس", "This lecture is for enrolled learners")) + "</h2><p>" +
         (lockedSeq ? tt("حقّق النسبة المطلوبة في اختبار المحاضرة السابقة لفتحها.", "Reach the required score in the previous lecture quiz to unlock it.") : (free0 ? tt("الكورس مجاني. سجّل فيه وابدأ الآن.", "The course is free. Enroll and start now.") : tt("الكورس مدفوع. تقدر تشترك من صفحة الأسعار في الموقع الرئيسي.", "This course is paid. You can subscribe from the pricing page on the main site."))) + "</p>" +
-        (!lockedSeq && free0 ? '<button class="lv-btn pri" data-lv="enroll">' + tt("سجّلني في الكورس", "Enroll me") + "</button>" : "") + (!lockedSeq && !free0 ? '<a class="lv-btn pri" href="/#pricing">' + tt("الأسعار", "Pricing") + "</a>" : "") + "</div>";
+        (!lockedSeq && free0 ? '<button class="lv-btn pri" data-lv="enroll">' + tt("سجّلني في الكورس", "Enroll me") + "</button>" : "") + (!lockedSeq && !free0 ? '<button class="lv-btn pri" data-pl="course" data-c="' + esc(cid) + '" type="button">' + tt("اشترِ الكورس", "Buy this course") + "</button> <button class=\"lv-btn\" data-v2=\"plans\" type=\"button\">" + tt("الباقات", "Plans") + "</button>" : "") + "</div>";
     } else if (!l.steps || !l.steps.length){
       main = '<div class="lv-empty"><h2>' + esc(Lx(l.t)) + "</h2><p>" + tt("محتوى هذه المحاضرة قيد الإعداد.", "This lecture's content is being prepared.") + "</p></div>";
     } else {
