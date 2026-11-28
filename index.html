@@ -4322,11 +4322,10 @@ function vLegal(kind) {
   const body = data.map(([h, items], i) => `<h2 id="${pre}${i + 1}" style="scroll-margin-top:90px">${i + 1}. ${L(h)}</h2>` + items.map(b => b.p ? `<p>${L(b.p)}</p>` : b.n ? `<h3 style="margin-top:14px">${L(b.n)}</h3>` : `<ul>${b.ul.map(x => `<li>${L(x)}</li>`).join('')}</ul>`).join('')).join('');
   const toc = data.map(([h], i) => `<li><button type="button" class="linkbtn" data-act="legalGo" data-v="${pre}${i + 1}">${L(h)}</button></li>`).join('');
   return pageHead(priv ? T('الخصوصية', 'Privacy') : T('الشروط', 'Terms'), priv ? T('سياسة الخصوصية', 'Privacy policy') : T('شروط الاستخدام', 'Terms of use'), T('آخر تحديث: ', 'Last updated: ') + L(LEGAL_DATE))
-    + `<section class="sec" style="padding-top:0"><div class="wrap"><div class="prose">
+    + `<section class="sec" style="padding-top:0"><div class="wrap"><div class="prose legal-nocopy">
       <div class="callout"><b>${T('ملخص سريع', 'Quick summary')}</b><p style="margin-top:6px">${priv ? T('نجمع الحد الأدنى من بياناتك لتشغيل حسابك ودوراتك ودفعاتك، لا نبيع بياناتك ولا نعرض إعلانات مستهدفة، والتحليلات لا تعمل إلا بموافقتك، ولك حق الاطلاع والتصحيح والحذف.', 'We collect the minimum data to run your account, courses and payments. We never sell your data or show targeted ads, analytics run only with your consent, and you can access, correct and delete your data.') : T('استخدم المنصة بشكل قانوني وشخصي، المحتوى محمي ولا يُنسخ أو يُشارك، الدفع بالتحويل ويُفتح الوصول بعد مراجعة الإيصال، الاسترداد خلال 7 أيام بشروط، والشهادات شهادات إتمام من سرمد.', 'Use the platform lawfully and personally; content is protected and may not be copied or shared; payment is by transfer and access opens after receipt review; refunds within 7 days under conditions; certificates are Sarmad completion certificates.')}</p></div>
       <h2>${T('المحتويات', 'Contents')}</h2><ol class="legal-toc" style="columns:2;column-gap:28px">${toc}</ol>
       ${body}
-      <div class="callout">${T('هذه الوثيقة صيغت بحسن نية لتعكس عمل الخدمات الحالي، وينبغي أن يراجعها محامٍ مرخّص قبل الإطلاق الرسمي، خاصة بنود الاسترداد والمدد والمسؤولية.', 'This document was drafted in good faith to reflect how the services currently work, and should be reviewed by a licensed lawyer before the official launch, especially the refund, retention-period and liability clauses.')}</div>
     </div></div></section>`;
 }
 ROUTE.privacy = () => vLegal('privacy'); ROUTE.terms = () => vLegal('terms');
@@ -4541,5 +4540,7 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   new MutationObserver(function(){ var s2=document.getElementById('luxsec'); if(s2 && !s2.dataset.luxInit) boot(s2); }).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+<style id="legal-sel-css">.legal-nocopy ::selection,.legal-nocopy::selection{background:#0f6b56;color:#fff}.legal-nocopy,.legal-nocopy *{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:none}html[data-theme=dark] .legal-nocopy ::selection{background:#d9ae55;color:#1d1604}</style>
+<script id="legal-nocopy-js">(function(){function inl(e){var n=e.target;if(n&&n.nodeType===3)n=n.parentNode;var sel=window.getSelection&&window.getSelection(),a=sel&&sel.anchorNode;if(a&&a.nodeType===3)a=a.parentNode;return !!((n&&n.closest&&n.closest(".legal-nocopy"))||(a&&a.closest&&a.closest(".legal-nocopy")))}["copy","cut","contextmenu","dragstart"].forEach(function(t){document.addEventListener(t,function(e){if(inl(e)){e.preventDefault();if(e.clipboardData&&e.clipboardData.setData){try{e.clipboardData.setData("text/plain","")}catch(x){}}}},true)});document.addEventListener("keydown",function(e){if((e.ctrlKey||e.metaKey)&&(e.key==="c"||e.key==="x"||e.key==="C"||e.key==="X")){var sel=window.getSelection&&window.getSelection(),a=sel&&sel.anchorNode;if(a&&a.nodeType===3)a=a.parentNode;if(a&&a.closest&&a.closest(".legal-nocopy"))e.preventDefault()}},true)})();</script>
 </body>
 </html>
