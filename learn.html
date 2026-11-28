@@ -225,6 +225,9 @@ body{font-family:'Alexandria','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-a
   .pl-list{display:grid;gap:8px}.pl-row{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 14px}.pl-row span:first-child{flex:1}.pl-aid{margin-top:26px;background:var(--green3);border-radius:16px;padding:16px;display:grid;gap:8px;line-height:1.9}
   .pl-back{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:90;display:grid;place-items:center;padding:14px}.pl-box{background:var(--paper);color:var(--ink);border-radius:20px;padding:18px;width:100%;max-width:460px;max-height:92vh;overflow:auto}.pl-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.pl-h button{border:0;background:none;font-size:26px;cursor:pointer;color:var(--ink)}
   .pl-sum{display:flex;justify-content:space-between;background:var(--green3);border-radius:12px;padding:12px;margin-bottom:6px}.pl-box h4{margin:14px 0 6px}.pl-bk{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;word-break:break-all}.pl-drop{display:block;border:1.5px dashed var(--line);border-radius:14px;padding:16px;text-align:center;cursor:pointer;color:var(--ink2)}
+  .aid-sec{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;display:grid;gap:12px}.aid-sec h3{margin:0;font-size:16px}.aid-n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:13px;margin-inline-end:6px}
+  #aidForm .field{display:grid;gap:5px}#aidForm label{font-size:13.5px;color:var(--ink2)}#aidForm input[type=text],#aidForm input[type=email],#aidForm input[type=number],#aidForm input:not([type]),#aidForm select,#aidForm textarea{font-family:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);width:100%;box-sizing:border-box}.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.f2{grid-template-columns:1fr}}
+  .aid-chips{display:flex;flex-wrap:wrap;gap:8px}.aid-chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;color:var(--ink)!important;font-size:14px!important}.aid-chip:has(input:checked){border-color:var(--green);background:var(--green3)}.aid-ck{display:flex;gap:10px;align-items:flex-start;line-height:1.8;color:var(--ink)!important}
   .lv-btn{font-family:inherit;font-size:14px;font-weight:600;padding:10px 18px;border-radius:999px;border:0;background:var(--green3);color:var(--green);cursor:pointer;text-decoration:none;display:inline-block}.lv-btn.pri,.lv-btn.acc{background:var(--green);color:#fff}.lv-btn:disabled{opacity:.45;cursor:not-allowed}
   .lv-btn.acc{margin-top:18px}.lv-tag{margin-top:16px;color:var(--green);font-weight:700}.lv-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);margin-top:26px;padding-top:18px;flex-wrap:wrap}
   .lv-nav .lv-row{margin:0}.lv-empty{text-align:center;padding:40px 10px}.lv-empty h2{margin:6px 0}
@@ -289,6 +292,7 @@ html,body{overflow-x:clip}
       <button data-v="ai" id="nvAi">الذكاء الاصطناعي</button>
       <button data-v="ach" id="nvAch">إنجازاتي</button>
       <button data-v="plans" id="nvPlans">الباقات</button>
+      <button data-v="aid" id="nvAid">نساعد بعض</button>
     </nav>
     <input class="qin hidden" id="q" type="search" placeholder="ابحث في كورساتك ومعملك" aria-label="بحث">
     <div class="lact hidden" id="lact">
@@ -479,6 +483,7 @@ html,body{overflow-x:clip}
 
   <!-- achievements -->
   <div id="v-plans" class="hidden"></div>
+  <div id="v-aid" class="hidden"></div>
   <div id="v-ach" class="hidden">
     <div class="sec"><h2 id="acT">إنجازاتي</h2><div class="badges" id="badgeGrid"></div></div>
     <div class="sec"><h2 id="ceT">شهاداتي</h2><div id="certList"></div></div>
@@ -684,6 +689,7 @@ html,body{overflow-x:clip}
                     modules: (x.modules && x.modules.length) ? mapModules(x.modules) : ((fb && fb.modules) || []) };
     });
     COURSES = out; CDET = det;
+    try { applySubEnr(); } catch(e){}
     try { if ($("v-plans") && !$("v-plans").classList.contains("hidden")) renderPlans(); } catch(e){}
     var hidT = {}, remT = {};
     (rt || []).forEach(function(x){ if (x.hidden) hidT[x.id] = 1; remT[x.id] = x; });
@@ -736,7 +742,7 @@ html,body{overflow-x:clip}
     $("tOr").textContent = t("or"); $("pwToggle").textContent = t("pwToggle");
     pwBtn.textContent = t("pwBtn"); $("tHelp").textContent = t("help");
     $("nvHome").textContent = t("nvHome"); $("nvCourses").textContent = t("nvCourses");
-    $("nvLabs").textContent = t("nvLabs"); $("nvAi").textContent = t("nvAi"); $("nvAch").textContent = t("nvAch"); $("nvPlans").textContent = tt("الباقات", "Plans");
+    $("nvLabs").textContent = t("nvLabs"); $("nvAi").textContent = t("nvAi"); $("nvAch").textContent = t("nvAch"); $("nvPlans").textContent = tt("الباقات", "Plans"); $("nvAid").textContent = tt("نساعد بعض", "We help each other");
     $("outBtn").textContent = t("out");
     $("dSub").textContent = t("heroSub");
     $("lCourses").textContent = t("sCourses"); $("lLessons").textContent = t("sLessons");
@@ -761,7 +767,7 @@ html,body{overflow-x:clip}
     $("tH").textContent = t("nvAch"); $("tHd").textContent = t("tHd");
     $("cT").textContent = t("nvCourses"); $("lbT").textContent = t("nvLabs");
     $("aiT").textContent = t("nvAi"); $("acT").textContent = t("nvAch"); $("ceT").textContent = lang === "ar" ? "شهاداتي" : "My certificates";
-    if (DATA) render(); try { if (typeof renderLesson === "function" && DATA && !$("v-lesson").classList.contains("hidden")) renderLesson(); if (!$("v-plans").classList.contains("hidden")) renderPlans(); } catch(e){}
+    if (DATA) render(); try { if (typeof renderLesson === "function" && DATA && !$("v-lesson").classList.contains("hidden")) renderLesson(); if (!$("v-plans").classList.contains("hidden")) renderPlans(); if (!$("v-aid").classList.contains("hidden")) renderAid(); } catch(e){}
   }
 
   function show(kind, text){ elMsg.className = "msg " + kind; elMsg.textContent = text; }
@@ -777,13 +783,14 @@ html,body{overflow-x:clip}
   function goTab(v){
     TAB = v;
     try { localStorage.setItem("sl_tab", v); } catch(e){}
-    ["home","cat","paths","disc","courses","labs","ai","ach","search","lesson","plans"].forEach(function(k){
+    ["home","cat","paths","disc","courses","labs","ai","ach","search","lesson","plans","aid"].forEach(function(k){
       $("v-" + k).classList.toggle("hidden", k !== v);
     });
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){
       b.classList.toggle("on", b.getAttribute("data-v") === v);
     });
     if (v === "plans"){ plLoad(); renderPlans(); }
+    if (v === "aid"){ plLoad(); aidLoad(); }
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (history.replaceState) history.replaceState(null, "", "/learn" + (v === "home" ? "" : "#" + v));
   }
@@ -836,7 +843,7 @@ html,body{overflow-x:clip}
         return '<div class="pl-row"><span>' + esc(lang === "ar" ? c.ar : c.en) + "</span><b>" + c.price + " " + plCur() + "</b>" + (own ? '<span class="chip2">' + tt("مسجل", "Joined") + "</span>" : '<button class="lv-btn" data-pl="course" data-c="' + esc(id) + '" type="button">' + tt("اشترِ", "Buy") + "</button>") + "</div>";
       }).join("") + "</div>";
     }
-    h += '<div class="pl-aid"><b>' + tt("نساعد بعض", "We help each other") + "</b><span>" + tt("لو ظروفك المادية لا تسمح بدفع الرسوم، قدّم طلب دعم ويراجعه فريق سرمد.", "If you cannot afford the fees, send a support request and the Sarmad team reviews it.") + '</span><a class="lv-btn" href="/#aid">' + tt("قدّم طلب دعم", "Request support") + "</a></div></div>";
+    h += '<div class="pl-aid"><b>' + tt("نساعد بعض", "We help each other") + "</b><span>" + tt("لو ظروفك المادية لا تسمح بدفع الرسوم، قدّم طلب دعم ويراجعه فريق سرمد.", "If you cannot afford the fees, send a support request and the Sarmad team reviews it.") + '</span><button class="lv-btn" data-v2="aid" type="button">' + tt("قدّم طلب دعم", "Request support") + "</button></div></div>";
     v.innerHTML = h;
   }
   function plBank(){ try { return JSON.parse(PL_U(PL_PAY)); } catch(e){ return {}; } }
@@ -878,6 +885,132 @@ html,body{overflow-x:clip}
   document.addEventListener("click", function(e){ if (e.target && e.target.id === "plSend") plSend(); var q = e.target.closest && e.target.closest("[data-v2]"); if (q) goTab(q.getAttribute("data-v2")); });
   document.addEventListener("click", function(e){ if (e.target && e.target.classList && e.target.classList.contains("pl-back")) plClose(); });
 
+
+  /* ---- نساعد بعض: support request (same aid/{uid} shape as the main site, email OTP gate) ---- */
+  var OTPW = "https://sarmad-bot.khaledahmedelbrbary80.workers.dev";
+  var GOV_AR = ['القاهرة', 'الجيزة', 'الإسكندرية', 'القليوبية', 'الشرقية', 'الدقهلية', 'الغربية', 'المنوفية', 'البحيرة', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'شمال سيناء', 'جنوب سيناء', 'الفيوم', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'الوادي الجديد', 'مطروح', 'خارج مصر'], GOV_EN = ['Cairo', 'Giza', 'Alexandria', 'Qalyubia', 'Sharqia', 'Dakahlia', 'Gharbia', 'Monufia', 'Beheira', 'Kafr El Sheikh', 'Damietta', 'Port Said', 'Ismailia', 'Suez', 'North Sinai', 'South Sinai', 'Fayoum', 'Beni Suef', 'Minya', 'Assiut', 'Sohag', 'Qena', 'Luxor', 'Aswan', 'Red Sea', 'New Valley', 'Matrouh', 'Outside Egypt'];
+  var AIDIMG = {}, AIDSTATE = null;
+  function aidNid(raw){
+    var n = String(raw || "").replace(/[٠-٩]/g, function(c){ return "٠١٢٣٤٥٦٧٨٩".indexOf(c); }).replace(/\D/g, "");
+    if (n.length !== 14 || "23".indexOf(n[0]) < 0) return null;
+    var y = (n[0] === "2" ? 1900 : 2000) + +n.slice(1,3), m = +n.slice(3,5), d = +n.slice(5,7), dt = new Date(y, m - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d || dt > new Date()) return null;
+    var g = +n.slice(7,9); if (!((g >= 1 && g <= 4) || (g >= 11 && g <= 19) || (g >= 21 && g <= 29) || (g >= 31 && g <= 35) || g === 88)) return null;
+    return { n:n, birth:y + "-" + ("0" + m).slice(-2) + "-" + ("0" + d).slice(-2), gender:(+n[12]) % 2 ? "m" : "f" };
+  }
+  function aidPhone(raw){
+    var d = String(raw || "").replace(/[\s\-().]/g, "").replace(/[٠-٩]/g, function(c){ return "٠١٢٣٤٥٦٧٨٩".indexOf(c); });
+    d = d.replace(/^\+/, "").replace(/^0020/, "").replace(/^0?20(?=1[0125]\d{8}$)/, "");
+    if (/^01[0125]\d{8}$/.test(d)) d = d.slice(1);
+    return /^1[0125]\d{8}$/.test(d) ? "+20" + d : null;
+  }
+  function aidField(id, name, label, extra, type){ return '<div class="field"><label for="' + id + '">' + label + '</label><input id="' + id + '" name="' + name + '" type="' + (type || "text") + '" ' + (extra || "") + "></div>"; }
+  function aidSel(id, name, label, opts){ return '<div class="field"><label for="' + id + '">' + label + '</label><select id="' + id + '" name="' + name + '">' + opts.map(function(o){ return "<option>" + esc(o) + "</option>"; }).join("") + "</select></div>"; }
+  function aidSec(n, h, body){ return '<div class="aid-sec"><h3><span class="aid-n">' + n + "</span> " + h + "</h3>" + body + "</div>"; }
+  function aidStatusHtml(r){
+    var st = String(r.status || "new");
+    var msg = (st === "accepted" || st === "approved") ? tt("تم قبول طلبك، وتفاصيل الدعم وصلتك على بريدك.", "Your request was accepted and the support details were sent to your email.")
+      : st === "rejected" ? tt("راجعنا طلبك ولم يُقبل هذه المرة. لو ظروفك اتغيرت، كلّم فريق الدعم.", "We reviewed your request and it was not accepted this time. If your situation changes, contact support.")
+      : tt("طلبك وصلنا وهو قيد المراجعة. مش محتاج تبعت تاني، وهنبلغك على بريدك أول ما يتراجع.", "We received your request and it is under review. You do not need to send it again; we will email you once it is reviewed.");
+    return '<div class="lv-empty"><div style="font-size:34px;color:var(--green)">✓</div><h2>' + tt("طلبك مسجّل عندنا", "Your request is already with us") + "</h2><p style=\"color:var(--ink2);line-height:1.9;max-width:520px;margin:8px auto\">" + msg + "</p></div>";
+  }
+  function renderAid(){
+    var v = $("v-aid"); if (!v) return;
+    if (AIDSTATE && AIDSTATE.exists){ v.innerHTML = '<div class="lv-wrap" style="display:block;max-width:860px">' + aidStatusHtml(AIDSTATE) + "</div>"; return; }
+    var gov = lang === "ar" ? GOV_AR : GOV_EN;
+    var want = Object.keys(COURSES).filter(function(id){ return COURSES[id].price > 0 && COURSES[id].status !== "soon"; }).map(function(id){ return [id, lang === "ar" ? COURSES[id].ar : COURSES[id].en]; }).concat(PLANS.map(function(p){ return [p.id, tt(p.ar, p.en)]; }));
+    var stages = [["primary", tt("ابتدائي","Primary school")], ["prep", tt("إعدادي","Preparatory school")], ["secondary", tt("ثانوي","Secondary school")], ["university", tt("جامعي","University")], ["graduate", tt("خريج","Graduate")], ["other", tt("آخر","Other")]];
+    var h = '<div class="lv-wrap" style="display:block;max-width:860px"><h2 style="margin:0 0 6px">' + tt("نساعد بعض", "We help each other") + '</h2><p style="color:var(--ink2);margin:0 0 16px;line-height:1.9">' + tt("لو ظروفك المادية لا تسمح بدفع رسوم الكورسات، قدّم طلب دعم ويراجعه فريق سرمد. بياناتك ومستنداتك سرّية، ورقمك القومي بيتخفي بعد التسجيل.", "If your finances do not allow paying course fees, send a support request and the Sarmad team reviews it. Your data and documents are kept confidential, and your national ID is masked after submission.") + '</p><form id="aidForm" novalidate autocomplete="off"><input name="website" tabindex="-1" autocomplete="off" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px" aria-hidden="true">';
+    h += aidSec(1, tt("البيانات الشخصية","Personal details"), aidField("ad-name","name",tt("الاسم الرباعي","Full name (four parts)") + " *",'required') + '<div class="f2">' + aidField("ad-nid","nid",tt("الرقم القومي (14 رقمًا)","National ID (14 digits)") + " *",'required inputmode="numeric" maxlength="14" dir="ltr"') + aidField("ad-birth","birth",tt("تاريخ الميلاد (يتعبّى تلقائيًا)","Birth date (auto-filled)"),'readonly dir="ltr"') + '</div><div class="f2">' + aidField("ad-phone","phone",tt("رقم الهاتف","Phone number") + " *",'required inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx"') + aidField("ad-wa","whatsapp",tt("واتساب (إن اختلف)","WhatsApp (if different)"),'inputmode="tel" dir="ltr"') + "</div>" + aidField("ad-mail","email",tt("البريد الإلكتروني (للرد وتفعيل الحساب)","Email (for the reply and account activation)") + " *",'required dir="ltr" value="' + esc((auth.currentUser && auth.currentUser.email) || "") + '"',"email") + '<div class="f2">' + aidSel("ad-city","city",tt("المحافظة","Governorate"),gov) + aidField("ad-addr","address",tt("العنوان","Address") + " *",'required') + "</div>");
+    h += aidSec(2, tt("بيانات الدراسة","Study details"), '<div class="f2"><div class="field"><label for="ad-stage">' + tt("المرحلة الدراسية","Education stage") + ' *</label><select id="ad-stage" name="stage">' + stages.map(function(s){ return '<option value="' + s[0] + '"' + (s[0] === "university" ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") + "</select></div>" + aidField("ad-inst","institution",tt("اسم الجامعة أو المدرسة","University or school name") + " *",'required') + '</div><div class="f2">' + aidField("ad-fac","faculty",tt("الكلية","Faculty"),"") + aidField("ad-gpa","gpa",tt("التقدير أو المجموع (اختياري)","Grade or score (optional)"),"") + "</div>");
+    h += aidSec(3, tt("الحالة الأسرية والمادية","Family and financial situation"), '<div class="f2">' + aidField("ad-fam","famsize",tt("عدد أفراد الأسرة","Family size") + " *",'required type="number" min="1" max="30" inputmode="numeric"',"number") + aidSel("ad-inc","income",tt("دخل الأسرة الشهري","Monthly family income"),[tt("أقل من 2000 جنيه","Under EGP 2,000"), tt("2000 إلى 4000","EGP 2,000 - 4,000"), tt("4000 إلى 7000","EGP 4,000 - 7,000"), tt("أكثر من 7000","Over EGP 7,000")]) + '</div><div class="f2">' + aidSel("ad-fs","famstatus",tt("الحالة الأسرية","Family status"),[tt("الوالدان على قيد الحياة","Both parents alive"), tt("يتيم الأب","Father deceased"), tt("يتيم الأم","Mother deceased"), tt("يتيم الأبوين","Both parents deceased"), tt("آخر","Other")]) + aidField("ad-pj","parentjob",tt("مهنة ولي الأمر أو مصدر الدخل","Guardian job or income source") + " *",'required') + '</div><div class="f2">' + aidSel("ad-dev","device",tt("الجهاز المتاح للتعلّم","Available device"),[tt("هاتف ذكي","Smartphone"), tt("لابتوب أو حاسوب","Laptop or PC"), tt("الاثنان","Both"), tt("لا يوجد","None")]) + aidSel("ad-net","internet",tt("الإنترنت","Internet"),[tt("باقة شهرية","Monthly plan"), tt("واي فاي","Wi-Fi"), tt("ضعيف أو متقطع","Weak or unstable"), tt("لا يوجد","None")]) + "</div>");
+    h += aidSec(4, tt("ما الذي تحتاجه؟","What do you need?"), '<div class="field"><label>' + tt("اختر الكورسات أو الباقة","Choose the courses or plan") + ' *</label><div class="aid-chips">' + want.map(function(w){ return '<label class="aid-chip"><input type="checkbox" name="want" value="' + esc(w[0]) + '"><span>' + esc(w[1]) + "</span></label>"; }).join("") + '</div></div><div class="field"><label for="ad-why">' + tt("لماذا تحتاج الدعم؟ وماذا تخطط أن تفعل بما ستتعلمه؟ (50 حرفًا على الأقل)","Why do you need support, and what will you do with what you learn? (at least 50 characters)") + ' *</label><textarea id="ad-why" name="reason" rows="5" required></textarea></div>');
+    h += aidSec(5, tt("المستندات","Documents"), '<div class="field"><label>' + tt("نوع المستند","Document type") + '</label><div class="aid-chips"><label class="aid-chip"><input type="radio" name="dockind" value="univ" checked><span>' + tt("كارنيه الجامعة","University ID") + '</span></label><label class="aid-chip"><input type="radio" name="dockind" value="nid"><span>' + tt("بطاقة الرقم القومي","National ID card") + '</span></label></div></div><div class="f2"><div class="field"><label>' + tt("الوجه","Front") + ' *</label><label class="pl-drop" for="ad-front"><span id="ad-front-n">' + tt("اختر صورة","Choose an image") + '</span></label><input id="ad-front" type="file" accept="image/*" hidden></div><div class="field"><label>' + tt("الظهر","Back") + ' *</label><label class="pl-drop" for="ad-back"><span id="ad-back-n">' + tt("اختر صورة","Choose an image") + '</span></label><input id="ad-back" type="file" accept="image/*" hidden></div></div>');
+    h += '<div class="aid-sec"><label class="aid-ck"><input type="checkbox" name="truth"><span>' + tt("أقر بأن كل البيانات والمستندات صحيحة، وأن تقديم بيانات مضللة يلغي الطلب.","I confirm all data and documents are true; false information voids the request.") + '</span></label><label class="aid-ck"><input type="checkbox" name="consent"><span>' + tt("أوافق على معالجة بياناتي ومستنداتي لدى سرمد لغرض دراسة الطلب.","I consent to Sarmad processing my data and documents to review this request.") + '</span></label><label class="aid-ck"><input type="checkbox" name="commit"><span>' + tt("أتعهد بالالتزام بإتمام الكورسات وبمساعدة غيري مستقبلًا بما أستطيع.","I commit to finishing the courses and to helping others in the future as I can.") + '</span></label><div id="aid-err" style="color:var(--red);font-size:13.5px;min-height:20px" role="alert"></div><button class="lv-btn pri" id="aid-go" type="submit" style="width:100%">' + tt("إرسال الطلب","Submit request") + "</button></div></form></div>";
+    v.innerHTML = h;
+    var f = $("aidForm");
+    f.querySelector("#ad-nid").addEventListener("input", function(){ var r = aidNid(this.value); $("ad-birth").value = r ? r.birth : ""; });
+    ["front","back"].forEach(function(s){ $("ad-" + s).addEventListener("change", function(){ var fl = this.files[0]; if (!fl) return; aidResize(fl, function(d){ if (!d){ aidErr(tt("الملف ليس صورة صالحة.","Not a valid image.")); return; } AIDIMG[s] = d; $("ad-" + s + "-n").textContent = "✓ " + fl.name; }); }); });
+    f.addEventListener("submit", function(e){ e.preventDefault(); aidSubmit(f); });
+  }
+  function aidErr(m){ var e = $("aid-err"); if (e){ e.textContent = m; e.scrollIntoView({ block:"center", behavior:"smooth" }); } }
+  function aidResize(file, cb){
+    if (!/^image\//.test(file.type)) return cb(null);
+    var im = new Image(), url = URL.createObjectURL(file);
+    im.onload = function(){ var k = Math.min(1, 1200 / Math.max(im.width, im.height)), c = document.createElement("canvas"); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url); cb(c.toDataURL("image/jpeg", 0.72)); };
+    im.onerror = function(){ cb(null); }; im.src = url;
+  }
+  function aidOtp(act){
+    return new Promise(function(resolve){
+      var u = auth.currentUser; if (!u) return resolve(false);
+      var m = el("div", "pl-back"); m.id = "aidOtp";
+      m.innerHTML = '<div class="pl-box"><div class="pl-h"><b>' + tt("تأكيد مطلوب","Confirmation required") + '</b><button type="button" id="otpX" aria-label="close">×</button></div><p style="color:var(--ink2);line-height:1.9;font-size:14px">' + tt("لأمان حسابك، هنبعتلك كود على بريدك قبل إرسال الطلب.","For your security we send a code to your email before the request is sent.") + '</p><input id="otpC" class="lv-blank" style="width:100%;text-align:center;font-size:22px;letter-spacing:6px;padding:10px" inputmode="numeric" maxlength="6" dir="ltr" autocomplete="one-time-code"><div id="otpM" style="font-size:13px;min-height:20px;margin:8px 0;color:var(--ink2)"></div><button class="lv-btn pri" id="otpGo" type="button" style="width:100%">' + tt("تأكيد","Confirm") + '</button> <button class="lv-btn" id="otpRe" type="button" style="width:100%;margin-top:8px">' + tt("أعد إرسال الكود","Resend code") + "</button></div>";
+      document.body.appendChild(m);
+      var msg = function(t){ $("otpM").textContent = t; }, done = false;
+      var fin = function(ok){ if (done) return; done = true; m.remove(); resolve(ok); };
+      var start = function(){ u.getIdToken().then(function(t){ return fetch(OTPW + "/actstart", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify({ t:t, act:act, ref:"" }) }); }).then(function(r){ return r.json(); }).then(function(j){ if (j && j.ok) msg(tt("بعتنالك الكود على بريدك، وممكن ياخد دقيقتين.","Code sent to your email; it may take a couple of minutes.")); else if (j && j.why === "limit") msg(tt("وصلت للحد. استنى شوية.","Limit reached. Wait a bit.")); else msg(tt("تعذر إرسال الكود. حاول تاني.","Could not send the code. Try again.")); }).catch(function(){ msg(tt("تعذر إرسال الكود. حاول تاني.","Could not send the code. Try again.")); }); };
+      var go = function(){
+        var code = ($("otpC").value || "").replace(/\D/g, ""); if (code.length < 5 || code.length > 6) return msg(tt("اكتب الكود المكوّن من 5 أو 6 أرقام.","Enter the 5 or 6-digit code."));
+        $("otpGo").disabled = true;
+        u.getIdToken().then(function(t){ return fetch(OTPW + "/actcheck", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify({ t:t, act:act, code:code, ref:"" }) }); }).then(function(r){ return r.json(); }).then(function(j){
+          $("otpGo").disabled = false;
+          if (j && j.ok && j.done) return fin(true);
+          if (j && j.ok && !j.done){ $("otpC").value = ""; start(); return; }
+          if (j && j.why === "wrong") msg(tt("الكود غلط. المحاولات الباقية: ","Wrong code. Attempts left: ") + (j.left || 0));
+          else if (j && j.why === "expired") msg(tt("الكود انتهت صلاحيته. اطلب كود جديد.","The code expired. Request a new one."));
+          else if (j && j.why === "locked") msg(tt("محاولات كتير. اطلب كود جديد.","Too many attempts. Request a new one."));
+          else msg(tt("تعذر التأكيد. حاول تاني.","Could not verify. Try again."));
+        }).catch(function(){ $("otpGo").disabled = false; msg(tt("تعذر التأكيد. حاول تاني.","Could not verify. Try again.")); });
+      };
+      $("otpGo").addEventListener("click", go); $("otpRe").addEventListener("click", start); $("otpX").addEventListener("click", function(){ fin(false); });
+      $("otpC").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); go(); } });
+      start();
+    });
+  }
+  function aidSubmit(f){
+    var d = new FormData(f), bad = aidErr, btn = $("aid-go");
+    if (d.get("website")) return;
+    try { var last = +localStorage.getItem("sl_aidSent") || 0; if (Date.now() - last < 600000) return bad(tt("أرسلت طلبًا للتو. انتظر قليلًا.","You just submitted a request. Please wait a little.")); } catch(e){}
+    var name = (d.get("name") || "").trim().split(/\s+/); if (name.length < 4) return bad(tt("اكتب الاسم الرباعي كاملًا.","Enter the full four-part name."));
+    var nid = aidNid(d.get("nid")); if (!nid) return bad(tt("الرقم القومي غير صحيح.","Invalid national ID number."));
+    var ph = aidPhone(d.get("phone")); if (!ph) return bad(tt("رقم الهاتف غير صحيح. يبدأ بـ 010 أو 011 أو 012 أو 015.","Invalid phone number. It must start with 010, 011, 012 or 015."));
+    var wa = ""; if ((d.get("whatsapp") || "").trim()){ wa = aidPhone(d.get("whatsapp")); if (!wa) return bad(tt("رقم الواتساب غير صحيح.","Invalid WhatsApp number.")); }
+    var em = (d.get("email") || "").trim().toLowerCase(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) return bad(tt("البريد الإلكتروني غير صحيح.","Invalid email."));
+    if (!(d.get("address") || "").trim()) return bad(tt("اكتب العنوان.","Enter your address."));
+    if (!(d.get("institution") || "").trim() && d.get("stage") !== "other") return bad(tt("اكتب اسم المدرسة أو الجامعة.","Enter your school or university name."));
+    var fam = +String(d.get("famsize") || "").replace(/[٠-٩]/g, function(c){ return "٠١٢٣٤٥٦٧٨٩".indexOf(c); }); if (!(fam >= 1 && fam <= 30)) return bad(tt("عدد أفراد الأسرة غير صحيح.","Invalid family size."));
+    if (!(d.get("parentjob") || "").trim()) return bad(tt("اكتب مهنة ولي الأمر أو مصدر الدخل.","Enter the guardian job or income source."));
+    var want = d.getAll("want"); if (!want.length) return bad(tt("اختر كورسًا أو باقة واحدة على الأقل.","Choose at least one course or plan."));
+    var why = (d.get("reason") || "").trim(); if (why.length < 50) return bad(tt("اشرح حالتك في 50 حرفًا على الأقل.","Explain your situation in at least 50 characters."));
+    if (!AIDIMG.front || !AIDIMG.back) return bad(tt("ارفع وجه وظهر المستند.","Upload both sides of the document."));
+    if (!d.get("truth") || !d.get("consent") || !d.get("commit")) return bad(tt("وافق على الإقرارات الثلاثة.","Accept the three declarations."));
+    bad(""); btn.disabled = true;
+    aidOtp("support").then(function(ok){
+      if (!ok){ btn.disabled = false; return bad(tt("لازم تأكيد الكود قبل إرسال الطلب.","Confirm the code before sending the request.")); }
+      var db = firebase.firestore(learnApp), ref = db.collection("aid").doc(uid), b = db.batch();
+      var main = { name:name.join(" "), natId:nid.n, birth:nid.birth, gender:nid.gender, phone:ph, whatsapp:wa, email:em, city:d.get("city"), address:d.get("address").trim(), study:{ stage:d.get("stage"), institution:(d.get("institution") || "").trim(), faculty:(d.get("faculty") || "").trim() }, gpa:(d.get("gpa") || "").trim(), famSize:fam, income:d.get("income"), famStatus:d.get("famstatus"), parentJob:d.get("parentjob").trim(), device:d.get("device"), internet:d.get("internet"), want:want, reason:why, docKind:d.get("dockind"), docFields:null, source:"learning" };
+      window.__aidPayload = main;
+      var payload = Object.assign({}, main, { status:"new", userId:uid, at:firebase.firestore.FieldValue.serverTimestamp() });
+      b.set(ref, payload); b.set(ref.collection("docs").doc("front"), { d:AIDIMG.front }); b.set(ref.collection("docs").doc("back"), { d:AIDIMG.back });
+      var commit = window.__AID_DRYRUN ? Promise.resolve() : b.commit();
+      commit.then(function(){
+        try { localStorage.setItem("sl_aidSent", String(Date.now())); } catch(e){}
+        auth.currentUser.getIdToken().then(function(t){ return fetch(OTPW + "/receipt", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify({ t:t, kind:"aid" }) }); }).catch(function(){});
+        AIDIMG = {}; AIDSTATE = { exists:true, status:"new" };
+        $("v-aid").innerHTML = '<div class="lv-wrap" style="display:block;max-width:860px"><div class="lv-empty"><div style="font-size:34px;color:var(--green)">✓</div><h2>' + tt("وصلنا طلبك","We received your request") + '</h2><p style="color:var(--ink2);line-height:1.9;max-width:560px;margin:8px auto">' + tt("الرقم القومي المسجّل: ","Registered national ID: ") + "<b dir=ltr>" + "•".repeat(11) + esc(nid.n.slice(-3)) + "</b> " + tt("(أُخفي لحمايتك)","(masked for your protection)") + "<br>" + tt("تابع بريدك الإلكتروني ","Watch your email ") + "<b dir=ltr>" + esc(em) + "</b><br>" + tt("هيراجع الفريق طلبك، وعند القبول يوصلك رابط تفعيل على بريدك.","The team will review your request; on acceptance an activation link reaches your email.") + "</p></div></div>";
+        window.scrollTo(0, 0);
+      }).catch(function(e){
+        btn.disabled = false;
+        if (String((e && e.code) || "") === "permission-denied"){ AIDSTATE = { exists:true, status:"new" }; renderAid(); return; }
+        bad(tt("تعذر إرسال الطلب. جرّب تاني، ولو كنت بعت طلب قبل كده مش هينفع تبعت تاني.","Could not send the request. Try again; if you already sent one, it cannot be sent again."));
+      });
+    });
+  }
+  function aidLoad(){
+    if (AIDSTATE) return renderAid();
+    renderAid();
+    firebase.firestore(learnApp).collection("aid").where("userId","==",uid).limit(1).get().then(function(q){ var r = null; q.forEach(function(d){ r = Object.assign({ id:d.id, exists:true }, d.data()); }); AIDSTATE = r || { exists:false }; if (r) renderAid(); }).catch(function(){});
+  }
   /* ---- text size ---- */
   var ZOOMS = [1, 1.08, 1.16];
   function zoomIdx(){
@@ -1052,8 +1185,8 @@ html,body{overflow-x:clip}
     var hh = hash.indexOf("lab-") === 0 ? "labs" : (hash.indexOf("track-") === 0 ? "paths" : hash);
     var savedTab = "";
     try { savedTab = localStorage.getItem("sl_tab") || ""; } catch(e){}
-    var fallback = (["home","cat","paths","disc","courses","labs","ai","ach","plans"].indexOf(savedTab) >= 0) ? savedTab : "home";
-    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search","plans"].indexOf(hh) >= 0 ? hh : fallback);
+    var fallback = (["home","cat","paths","disc","courses","labs","ai","ach","plans","aid"].indexOf(savedTab) >= 0) ? savedTab : "home";
+    goTab(["home","cat","paths","disc","courses","labs","ai","ach","search","plans","aid"].indexOf(hh) >= 0 ? hh : fallback);
     if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
     var llD = lessonFromHash(hash);
     if (llD){ var tries = 0, iv = setInterval(function(){ tries++; if (DATA || tries > 40){ clearInterval(iv); openLesson(llD.cid, llD.lid, llD.step); } }, 250); }
@@ -1109,6 +1242,7 @@ html,body{overflow-x:clip}
 
       DATA = { d:d, enr:enr, prog:prog, orders:orders, certs:certs, labs:labs, myLabs:myLabs, tasks:tasks, myTasks:myTasks,
                ids:ids, lessons:lessons, labsDone:labsDone, aiDone:aiDone, sub:sub };
+      /*TESTHOOK*/ applySubEnr();
       render();
       fillDiscSelect(); loadDisc($("diSel").value);
     }).catch(function(){
@@ -1585,6 +1719,7 @@ html,body{overflow-x:clip}
   function hasQuiz(l){ return !!(l.steps && l.steps.some(isQ)); }
   function lvLessons(cid){ return courseLessons(cid); }
   function seqLocked(cid, l){ var ls = lvLessons(cid), i = ls.indexOf(l); if (i <= 0) return false; var pv = ls[i - 1]; return hasQuiz(pv) && !lp(cid, pv.id).done; }
+  function applySubEnr(){ if (!DATA || !DATA.sub || !(DATA.sub.until > Date.now())) return; Object.keys(COURSES).forEach(function(id){ if (COURSES[id].status !== "soon" && !DATA.enr[id]) DATA.enr[id] = 1; }); }
   function canAcc(cid, l){ return !!(l.free || (DATA && DATA.enr && DATA.enr[cid])) && !seqLocked(cid, l); }
   function lvToast(m){ var d = $("lvToast"); if (!d){ d = el("div"); d.id = "lvToast"; document.body.appendChild(d); } d.textContent = m; d.className = "on"; clearTimeout(d._t); d._t = setTimeout(function(){ d.className = ""; }, 2200); }
   function loadPrg(cid){
@@ -1667,7 +1802,7 @@ html,body{overflow-x:clip}
     return left > 0 ? '<button class="lv-btn" style="margin-top:12px" data-lv="retry">' + tt("أعد المحاولة", "Try again") + " (" + left + ")</button>" : '<p class="lv-mut">' + tt("استُنفدت محاولات هذا السؤال.", "No attempts left for this question.") + "</p>";
   }
   function showLessonView(){
-    ["home","cat","paths","disc","courses","labs","ai","ach","search","plans"].forEach(function(k){ $("v-" + k).classList.add("hidden"); });
+    ["home","cat","paths","disc","courses","labs","ai","ach","search","plans","aid"].forEach(function(k){ $("v-" + k).classList.add("hidden"); });
     $("v-lesson").classList.remove("hidden");
     Array.prototype.forEach.call(document.querySelectorAll("#lnav button"), function(b){ b.classList.remove("on"); });
   }
