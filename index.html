@@ -1365,9 +1365,27 @@ async function otpSend(ch) {
     return (await r.json()) || {};
   } catch (e) { return {}; }
 }
+/* tg-gate-v1: show "code on Telegram" only when the account has Telegram linked */
+let _tgLk = { uid: '', v: null };
+async function tgLinkedNow() {
+  try {
+    const u = fbAuth && fbAuth.currentUser; if (!u) return false;
+    if (_tgLk.uid === u.uid && _tgLk.v !== null) return _tgLk.v;
+    const t = await u.getIdToken();
+    const r = await fetch(WKR + '/tglinkstatus', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t }) });
+    const j = await r.json(); const v = !!(j && j.linked); _tgLk = { uid: u.uid, v }; return v;
+  } catch (e) { return false; }
+}
+async function tgRevealBtn(root, sel) {
+  const bt = root.querySelector(sel); if (!bt) return;
+  if (await tgLinkedNow()) { bt.style.display = ''; return; }
+  if (root.querySelector('.tg-nolink')) return;
+  bt.insertAdjacentHTML('afterend', '<span class="muted sm tg-nolink" style="flex-basis:100%">' + T('لو عايز الكود على تيليجرام، اربط حسابك من البوت الأول (الأمر /link).', 'To get codes on Telegram, link your account from the bot first (/link command).') + '</span>');
+}
 function gateModal(msg) {
-  const b = openModal(`<div class="modal-h"><b>${T('تفعيل الحساب مطلوب', 'Activation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${msg}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-otp="tg">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-otp="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="otp-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="otp-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" dir="ltr" autocomplete="one-time-code" autocapitalize="off" spellcheck="false"></div><div class="err" id="otp-err"></div><button class="btn primary block" id="otp-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px">${T('الكود صالح 10 دقائق، وبحد أقصى 3 رسائل في الساعة.', 'The code is valid for 10 minutes, at most 3 per hour.')}</p></div>`);
+  const b = openModal(`<div class="modal-h"><b>${T('تفعيل الحساب مطلوب', 'Activation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${msg}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-otp="tg" style="display:none">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-otp="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="otp-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="otp-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" dir="ltr" autocomplete="one-time-code" autocapitalize="off" spellcheck="false"></div><div class="err" id="otp-err"></div><button class="btn primary block" id="otp-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px">${T('الكود صالح 10 دقائق، وبحد أقصى 3 رسائل في الساعة.', 'The code is valid for 10 minutes, at most 3 per hour.')}</p></div>`);
   const err = m => { const e = $('#otp-err'); if (e) e.textContent = m; };
+  tgRevealBtn(b, '[data-otp="tg"]');
   b.querySelectorAll('[data-otp]').forEach(btn => btn.addEventListener('click', async () => {
     const ch = btn.dataset.otp; btn.disabled = true; err(T('جارٍ الإرسال...', 'Sending...'));
     try {
@@ -1413,9 +1431,10 @@ async function actOtp(act, ref) {
   const lb = AL[act] || '';
   return await new Promise(resolve => {
     let need = 1, finished = false;
-    const b = openModal(`<div class="modal-h"><b>${T('تأكيد مطلوب', 'Confirmation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${T('لأمان حسابك، أكّد ' + lb + ' بكود نبعته لك.', 'To secure your account, confirm ' + lb + ' with a code we send you.')}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-ach="tg">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-ach="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="act-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="act-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" dir="ltr" autocomplete="one-time-code" autocapitalize="off" spellcheck="false"></div><div class="err" id="act-err"></div><button class="btn primary block" id="act-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px" id="act-hint"></p></div>`);
+    const b = openModal(`<div class="modal-h"><b>${T('تأكيد مطلوب', 'Confirmation required')}</b><button class="ib" data-act="closeModal" aria-label="close">${icon('x')}</button></div><div class="modal-b"><p class="muted sm">${T('لأمان حسابك، أكّد ' + lb + ' بكود نبعته لك.', 'To secure your account, confirm ' + lb + ' with a code we send you.')}</p><div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" data-ach="tg" style="display:none">${T('كود على تيليجرام', 'Code on Telegram')}</button><button class="btn ghost" data-ach="email">${T('كود على البريد', 'Code by email')}</button></div><div class="field"><label for="act-code">${T('الكود (6 أرقام)', 'Code (6 digits)')}</label><input id="act-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" dir="ltr" autocomplete="one-time-code" autocapitalize="off" spellcheck="false"></div><div class="err" id="act-err"></div><button class="btn primary block" id="act-go">${T('تأكيد الكود', 'Verify code')}</button><p class="muted sm" style="margin-top:10px" id="act-hint"></p></div>`);
     const err = m => { const e = b.querySelector('#act-err'); if (e) e.textContent = m; };
     const hint = m => { const e = b.querySelector('#act-hint'); if (e) e.textContent = m; };
+    tgRevealBtn(b, '[data-ach="tg"]');
     const close = ok => { if (finished) return; finished = true; try { closeModal(); } catch (e) { } resolve(ok); };
     const start = async want => {
       try {
