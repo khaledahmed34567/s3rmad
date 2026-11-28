@@ -411,6 +411,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
           <button class="ghost" id="labCheck">تحقّق</button>
           <button class="ghost" id="labReset">الكود الأصلي</button>
           <button class="ghost" id="labCopy">نسخ الرابط</button>
+          <button class="ghost" id="labCodeCopy">نسخ الكود</button>
+          <button class="ghost" id="labDl">تحميل الكود</button>
+          <button class="ghost" id="labBig">تكبير المحرر</button>
         </div>
         <div class="labres" id="labRes"></div>
         <iframe class="labframe" id="labFrame" sandbox="allow-scripts" style="margin-top:10px"></iframe>
@@ -514,6 +517,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       dlSummary:"تحميل الملخص", catDone:"المكتملة", nearDone:"قربت تخلص", badgesN:"شارة مفتوحة من",
       myNotes:"ملاحظاتي على الدورة", notePh:"اكتب ملاحظاتك هنا…", saveNote:"حفظ الملاحظة", noteSaved:"اتحفظت ✓",
       planT:"خطتك النهاردة", nearBadge:"أقرب شارة", needL:"فاضلك", estTime:"وقت تعلمك التقديري", hrU:"ساعة",
+      labCodeCopy:"نسخ الكود", labDl:"تحميل الكود", labBig:"تكبير المحرر", labSmall:"تصغير المحرر",
+      attemptN:"محاولة", labTryAgain:"جرّب تاني، إنت قريب", labCopiedCode:"الكود اتنسخ ✓",
       b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
@@ -568,6 +573,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       dlSummary:"Download summary", catDone:"Completed", nearDone:"Almost done", badgesN:"badges unlocked of",
       myNotes:"My notes on this course", notePh:"Write your notes here…", saveNote:"Save note", noteSaved:"Saved ✓",
       planT:"Today's plan", nearBadge:"Closest badge", needL:"left", estTime:"Estimated learning time", hrU:"h",
+      labCodeCopy:"Copy code", labDl:"Download code", labBig:"Expand editor", labSmall:"Shrink editor",
+      attemptN:"attempt", labTryAgain:"Try again, you're close", labCopiedCode:"Code copied ✓",
       b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
@@ -1526,6 +1533,15 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       + '<div style="margin-top:6px">' + res.map(function(r){
           return '<div class="' + (r.ok ? "ok" : "no") + '">' + (r.ok ? "✓" : "✗") + " " + esc(r.name) + (r.ok ? "" : (r.err ? " — " + esc(r.err) : "")) + '</div>';
         }).join("") + '</div>';
+    if (!ok){
+      var ak = "sl_att_" + x.id, att = 0;
+      try { att = parseInt(localStorage.getItem(ak) || "0", 10) || 0; } catch(e){}
+      att++;
+      try { localStorage.setItem(ak, String(att)); } catch(e){}
+      box.innerHTML += '<div style="margin-top:6px;font-size:12.5px;color:var(--ink2)">' + esc(t("attemptN")) + " " + att + (att >= 2 ? " · " + esc(t("labTryAgain")) : "") + '</div>';
+    } else {
+      try { localStorage.removeItem("sl_att_" + x.id); } catch(e){}
+    }
     if (ok) saveLab(x.id);
   });
   function saveLab(id){
@@ -1570,6 +1586,39 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("labList").classList.remove("hidden");
     $("labProgress").classList.remove("hidden");
     if (history.replaceState) history.replaceState(null, "", "/learn#labs");
+  });
+  $("labCodeCopy").addEventListener("click", function(){
+    var x = LAB.cur; if (!x) return;
+    var btn = $("labCodeCopy");
+    var dn = function(){ btn.textContent = t("labCopiedCode"); setTimeout(function(){ btn.textContent = t("labCodeCopy"); }, 1600); };
+    try { navigator.clipboard.writeText(String($("labCode").value || "")).then(dn, dn); } catch(e){ dn(); }
+  });
+  $("labDl").addEventListener("click", function(){
+    var x = LAB.cur; if (!x) return;
+    try {
+      var blob = new Blob([String($("labCode").value || "")], { type: "text/plain;charset=utf-8" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "sarmad-lab-" + x.id + ".js";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+    } catch(e){}
+  });
+  $("labBig").addEventListener("click", function(){
+    var card = $("labPanel").querySelector(".card2");
+    if (!card) return;
+    var on = card.getAttribute("data-big") === "1";
+    if (on){
+      card.removeAttribute("data-big");
+      card.style.position = ""; card.style.inset = ""; card.style.zIndex = ""; card.style.overflow = ""; card.style.background = "";
+      $("labCode").style.minHeight = "";
+      $("labBig").textContent = t("labBig");
+    } else {
+      card.setAttribute("data-big", "1");
+      card.style.position = "fixed"; card.style.inset = "12px"; card.style.zIndex = "9999"; card.style.overflow = "auto"; card.style.background = "var(--paper)";
+      $("labCode").style.minHeight = "45vh";
+      $("labBig").textContent = t("labSmall");
+    }
   });
   $("labNote").addEventListener("blur", function(){
     var u = firebase.auth().currentUser, x = LAB.cur; if (!u || !x) return;
