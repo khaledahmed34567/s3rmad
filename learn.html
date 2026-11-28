@@ -846,6 +846,7 @@ html,body{overflow-x:clip}
     h += '<div class="pl-aid"><b>' + tt("نساعد بعض", "We help each other") + "</b><span>" + tt("لو ظروفك المادية لا تسمح بدفع الرسوم، قدّم طلب دعم ويراجعه فريق سرمد.", "If you cannot afford the fees, send a support request and the Sarmad team reviews it.") + '</span><button class="lv-btn" data-v2="aid" type="button">' + tt("قدّم طلب دعم", "Request support") + "</button></div></div>";
     v.innerHTML = h;
   }
+  function plNotify(kind, orderId, extra){ try { auth.currentUser.getIdToken().then(function(t){ return fetch(OTPW + "/receipt", { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify(Object.assign({ t:t, kind:kind, orderId:orderId || undefined }, extra || {})) }); }).catch(function(){}); } catch(e){} }
   function plBank(){ try { return JSON.parse(PL_U(PL_PAY)); } catch(e){ return {}; } }
   function plClose(){ var m = $("plModal"); if (m) m.remove(); }
   function plCheckout(o){
@@ -857,6 +858,7 @@ html,body{overflow-x:clip}
       + '<div class="pl-sum"><span>' + esc(o.title) + "</span><b>" + o.amount + " " + cur + "</b></div>"
       + "<h4>" + tt("١) حوّل المبلغ", "1) Transfer the amount") + "</h4>" + row(tt("البنك", "Bank"), bk.bank) + row(tt("اسم المستفيد", "Beneficiary"), bk.name) + row("IBAN", bk.iban)
       + "<h4>" + tt("٢) ارفع صورة الإيصال", "2) Upload the receipt") + '</h4><label class="pl-drop" for="plFile"><span id="plFname">' + tt("اختر صورة الإيصال", "Choose the receipt image") + '</span></label><input id="plFile" type="file" accept="image/*" hidden>'
+      + '<button class="lv-btn" id="plMail" type="button" style="width:100%;margin-top:10px">' + tt("ابعتلي تعليمات الدفع على الإيميل", "Email me the payment instructions") + '</button>'
       + '<div id="plErr" style="color:var(--red);font-size:13px;min-height:18px;margin-top:6px"></div><button class="lv-btn pri" id="plSend" type="button" disabled style="width:100%">' + tt("إرسال الإيصال وتأكيد الطلب", "Send receipt and place order") + "</button></div>";
     m._o = o; document.body.appendChild(m);
     $("plFile").addEventListener("change", function(){ var f = this.files[0]; $("plFname").textContent = f ? f.name : tt("اختر صورة الإيصال", "Choose the receipt image"); $("plSend").disabled = !f; });
@@ -871,7 +873,7 @@ html,body{overflow-x:clip}
       if (!j.success) throw new Error("up");
       var db = firebase.firestore(learnApp), ref = db.collection("orders").doc();
       var data = { userId:uid, ref:"TAM-" + Date.now().toString(36).toUpperCase(), coupon:null, payLink:null, discount:0, baseAmount:o.amount, title:o.title, courseId:o.courseId || null, plan:o.plan || null, receipt:j.data.url, amount:o.amount, currency:"EGP", status:"pending", at:firebase.firestore.FieldValue.serverTimestamp() };
-      return ref.set(data).then(function(){ window.__plLastOrder = ref.id; if (DATA){ DATA.orders.push(Object.assign({ id:ref.id }, data)); } m.querySelector(".pl-box").innerHTML = '<div style="text-align:center;padding:18px 6px"><div style="font-size:34px;color:var(--green)">✓</div><h3>' + tt("تم استلام طلبك", "Order received") + '</h3><p style="color:var(--ink2);line-height:1.9">' + tt("رقم المرجع: ", "Reference: ") + "<b dir=ltr>" + esc(data.ref) + "</b><br>" + tt("هنفعّل الاشتراك بعد ما الفريق يتأكد من الدفع.", "We will activate it once the team confirms the payment.") + '</p><button class="lv-btn pri" data-pl="close" type="button">' + tt("تمام", "Done") + "</button></div>"; renderPlans(); });
+      return ref.set(data).then(function(){ window.__plLastOrder = ref.id; plNotify("sub_requested", ref.id); if (DATA){ DATA.orders.push(Object.assign({ id:ref.id }, data)); } m.querySelector(".pl-box").innerHTML = '<div style="text-align:center;padding:18px 6px"><div style="font-size:34px;color:var(--green)">✓</div><h3>' + tt("تم استلام طلبك", "Order received") + '</h3><p style="color:var(--ink2);line-height:1.9">' + tt("رقم المرجع: ", "Reference: ") + "<b dir=ltr>" + esc(data.ref) + "</b><br>" + tt("هنفعّل الاشتراك بعد ما الفريق يتأكد من الدفع.", "We will activate it once the team confirms the payment.") + '</p><button class="lv-btn pri" data-pl="close" type="button">' + tt("تمام", "Done") + "</button></div>"; renderPlans(); });
     }).catch(function(){ btn.disabled = false; btn.textContent = tt("إرسال الإيصال وتأكيد الطلب", "Send receipt and place order"); err.textContent = tt("تعذر الإرسال، جرّب تاني.", "Could not send. Try again."); });
   }
   document.addEventListener("click", function(e){
@@ -882,7 +884,7 @@ html,body{overflow-x:clip}
     if (a === "plan"){ var p = PLANS.filter(function(x){ return x.id === b.getAttribute("data-p"); })[0]; if (p) plCheckout({ title:tt(p.ar, p.en), amount:p.price, plan:p.id }); return; }
     if (a === "course"){ var cid = b.getAttribute("data-c"), c = COURSES[cid]; if (c) plCheckout({ title:(lang === "ar" ? c.ar : c.en), amount:c.price, courseId:cid }); return; }
   });
-  document.addEventListener("click", function(e){ if (e.target && e.target.id === "plSend") plSend(); var q = e.target.closest && e.target.closest("[data-v2]"); if (q) goTab(q.getAttribute("data-v2")); });
+  document.addEventListener("click", function(e){ if (e.target && e.target.id === "plMail"){ var mo = $("plModal") && $("plModal")._o; if (mo){ plNotify("sub_payment_request", null, { plan:mo.plan || undefined, courseId:mo.courseId || undefined }); e.target.disabled = true; lvToast(tt("بعتنا التعليمات على بريدك", "Sent to your email")); } } if (e.target && e.target.id === "plSend") plSend(); var q = e.target.closest && e.target.closest("[data-v2]"); if (q) goTab(q.getAttribute("data-v2")); });
   document.addEventListener("click", function(e){ if (e.target && e.target.classList && e.target.classList.contains("pl-back")) plClose(); });
 
 
