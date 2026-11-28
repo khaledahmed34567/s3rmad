@@ -4371,5 +4371,65 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
   mo.observe(doc.body,{childList:true,subtree:true});
 })();
+</script><style id="ui-polish3">#skipLink{box-shadow:0 12px 28px rgba(0,0,0,.22);border-radius:0 0 12px 12px;z-index:130;letter-spacing:.2px}#kbdHelp{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(8,20,14,.45);z-index:140;padding:20px}#kbdHelp.on{display:flex}#kbdHelp .kbdcard{background:var(--bg,#fff);color:var(--fg,#16281c);border-radius:18px;padding:20px 22px;width:min(420px,92vw);box-shadow:0 26px 70px rgba(0,0,0,.30);font:14px/1.5 inherit}#kbdHelp .kbdt{font-weight:700;font-size:16px;margin-bottom:10px}#kbdHelp .kbdrow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:7px 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 8%,transparent)}#kbdHelp .kbdrow:last-of-type{border-bottom:0}#kbdHelp kbd{background:color-mix(in srgb,var(--fg) 9%,transparent);border-radius:7px;padding:2px 9px;font:600 12.5px/1.6 ui-monospace,SFMono-Regular,monospace;direction:ltr}#kbdHelp .kbdh{margin-top:12px;font-size:12.5px;opacity:.65}</style><script id="ui-polish3-js">(function(){
+  var doc=document;
+  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
+  // 1. mobile browser chrome tint + native colour scheme
+  var meta=doc.querySelector('meta[name="theme-color"]');
+  if(!meta){ meta=doc.createElement('meta'); meta.setAttribute('name','theme-color'); doc.head.appendChild(meta); }
+  var cs=doc.querySelector('meta[name="color-scheme"]');
+  if(!cs){ cs=doc.createElement('meta'); cs.setAttribute('name','color-scheme'); cs.setAttribute('content','light dark'); doc.head.appendChild(cs); }
+  function tint(){
+    var r=getComputedStyle(doc.documentElement);
+    var c=(r.getPropertyValue('--accent')||'').trim();
+    if(!c){ c=getComputedStyle(doc.querySelector('.hdr')||doc.body).backgroundColor||''; }
+    if(c && c!=='rgba(0, 0, 0, 0)' && c!=='transparent') meta.setAttribute('content', c);
+  }
+  tint();
+  // 2. keyboard shortcuts help
+  if(!doc.getElementById('kbdHelp')){
+    var ov=doc.createElement('div'); ov.id='kbdHelp';
+    var rows = isAr()
+      ? [['Ctrl / \u2318 + K','\u0628\u062d\u062b \u0633\u0631\u064a\u0639'],['Tab','\u0627\u0644\u062a\u0646\u0642\u0644 \u0628\u064a\u0646 \u0627\u0644\u0639\u0646\u0627\u0635\u0631'],['Home / End','\u0623\u0648\u0644 \u0627\u0644\u0635\u0641\u062d\u0629 / \u0622\u062e\u0631\u0647\u0627'],['Esc','\u0625\u063a\u0644\u0627\u0642'],['?','\u0647\u0630\u0647 \u0627\u0644\u0642\u0627\u0626\u0645\u0629']]
+      : [['Ctrl / \u2318 + K','Quick search'],['Tab','Move between elements'],['Home / End','Top / bottom of page'],['Esc','Close'],['?','This list']];
+    var html='<div class="kbdcard" role="dialog" aria-modal="true" aria-label="'+(isAr()?'\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a':'\u0627\u0644\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a')+'">'
+      + '<div class="kbdt">'+(isAr()?'\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a \u0627\u0644\u0643\u064a\u0628\u0648\u0631\u062f':'\u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a \u0627\u0644\u0643\u064a\u0628\u0648\u0631\u062f')+'</div>';
+    for(var i=0;i<rows.length;i++){ html+='<div class="kbdrow"><span>'+rows[i][1]+'</span><kbd>'+rows[i][0]+'</kbd></div>'; }
+    html+='<div class="kbdh">'+(isAr()?'\u062f\u0648\u0633 ? \u0641\u064a \u0623\u064a \u0648\u0642\u062a \u0644\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629':'\u062f\u0648\u0633 ? \u0641\u064a \u0623\u064a \u0648\u0642\u062a \u0644\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629')+'</div></div>';
+    ov.innerHTML=html;
+    doc.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if(e.target===ov || (e.target.closest && e.target.closest('.kbdcard') && e.target.tagName!=='KBD' && false)) ov.classList.remove('on'); if(e.target===ov) ov.classList.remove('on'); });
+  }
+  var ovl=doc.getElementById('kbdHelp');
+  function toggleKbd(force){
+    if(!ovl) return;
+    var show = force===true ? true : (force===false ? false : !ovl.classList.contains('on'));
+    ovl.classList.toggle('on', show);
+  }
+  doc.addEventListener('keydown', function(e){
+    var t=e.target||{};
+    var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName||'') || t.isContentEditable;
+    if(e.key==='Escape'){ toggleKbd(false); return; }
+    if(typing) return;
+    if(e.key==='?' || (e.key==='/' && e.shiftKey)){ e.preventDefault(); toggleKbd(true); }
+  });
+  // 3. better mobile keyboards on email/phone fields
+  function fields(){
+    var list=doc.querySelectorAll('input[type="email"]:not([autocomplete]),input[type="tel"]:not([autocomplete])');
+    for(var i=0;i<list.length;i++){
+      var el=list[i];
+      if(el.type==='email'){ el.setAttribute('autocomplete','email'); el.setAttribute('inputmode','email'); }
+      else { el.setAttribute('autocomplete','tel'); el.setAttribute('inputmode','tel'); }
+    }
+  }
+  fields();
+  var t=null;
+  var mo=new MutationObserver(function(){
+    if(t) return;
+    t=setTimeout(function(){ t=null; fields(); tint(); },300);
+  });
+  mo.observe(doc.body,{childList:true,subtree:true});
+  window.addEventListener('scroll',function(){ },{passive:true});
+})();
 </script></body>
 </html>
