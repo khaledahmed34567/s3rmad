@@ -505,6 +505,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       goalL:"هدف الأسبوع", goalHint:"اختار هدفك", labNext:"التجربة التالية", labAllDone:"خلصت كل التجارب 👏",
       sortL:"ترتيب", sortDef:"الافتراضي", sortShort:"الأقصر أولًا", sortCheap:"الأرخص أولًا", trkNext:"الخطوة الجاية",
       labAll:"الكل", labTodo:"لسه", labDoneF:"خلصت", goalDone:"خلصت هدف الأسبوع 👏", goalLeft:"فاضلك", goalDays:"أيام على هدفك",
+      lessonsAll:"درس في الدورة", nextUp:"الجاي",
       b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
@@ -551,6 +552,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       goalL:"Weekly goal", goalHint:"Pick your goal", labNext:"Next lab", labAllDone:"All labs finished 👏",
       sortL:"Sort", sortDef:"Default", sortShort:"Shortest first", sortCheap:"Cheapest first", trkNext:"Next step",
       labAll:"All", labTodo:"To do", labDoneF:"Done", goalDone:"Weekly goal reached 👏", goalLeft:"", goalDays:"days to go",
+      lessonsAll:"lessons in course", nextUp:"Next up",
       b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
@@ -1033,6 +1035,12 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
 
   function closeCert(){ $("certModal").classList.add("hidden"); }
 
+  function courseLessons(cid){
+    var det = (typeof CDET !== "undefined" && CDET[cid]) || null, out = [];
+    if (det && det.modules) det.modules.forEach(function(m){ (m.lessons || []).forEach(function(l){ out.push(l); }); });
+    return out;
+  }
+
   function openCourse(cid, hl){
     var c = COURSES[cid]; if (!c) return;
     var det = (typeof CDET !== "undefined" && CDET[cid]) || null;
@@ -1078,12 +1086,22 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   function closeCourse(){ $("courseModal").classList.add("hidden"); }
 
   function courseRow(id){
+    var D = DATA || { prog: {} }, n = D.prog[id] || 0, total = courseLessons(id).length;
     var row = el("div","item");
     row.appendChild(el("div","ic","▶"));
     var tt = el("div","tt");
     tt.appendChild(el("b", null, esc(courseTitle(id))));
-    tt.appendChild(el("span", null, (DATA.prog[id] || 0) + " " + esc(t("lessonsDone"))));
+    tt.appendChild(el("span", null, n + " " + esc(t("lessonsDone")) + (total ? " · " + total + " " + esc(t("lessonsAll")) : "")));
+    if (total){
+      var bar = el("div","bar", '<i style="width:' + Math.min(100, Math.round(n / total * 100)) + '%"></i>');
+      bar.style.marginTop = "8px";
+      tt.appendChild(bar);
+    }
     row.appendChild(tt);
+    var dt = el("button","pact done", esc(t("cmDetails"))); dt.type = "button";
+    dt.style.marginInlineEnd = "8px";
+    dt.addEventListener("click", function(){ openCourse(id); });
+    row.appendChild(dt);
     var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id;
     row.appendChild(a);
     return row;
@@ -1121,7 +1139,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     if (!id){ $("contCard").classList.add("hidden"); return; }
     $("contCard").classList.remove("hidden");
     $("contTitle").textContent = courseTitle(id);
-    $("contSub").textContent = (D.prog[id] || 0) + " " + t("lessonsDone");
+    var ls = courseLessons(id), nx = ls[D.prog[id] || 0];
+    var sub = (D.prog[id] || 0) + " " + t("lessonsDone");
+    if (nx) sub += " · " + t("nextUp") + ": " + (L(nx.t) || "");
+    $("contSub").textContent = sub;
     $("contBtn").href = "/#course-" + id;
   }
 
