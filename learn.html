@@ -909,6 +909,10 @@ html,body{overflow-x:clip}
     $("q").value = "";
     DATA = null;
   }
+  addEventListener("hashchange", function(){
+    var h = (location.hash || "").replace("#", "");
+    if (h.indexOf("course-") === 0 && !$("app").classList.contains("hidden")) openCourse(h.slice(7));
+  });
   function showApp(u){
     uid = u.uid;
     $("loginWrap").classList.add("hidden");
@@ -925,6 +929,7 @@ html,body{overflow-x:clip}
     var fallback = (["home","cat","paths","disc","courses","labs","ai","ach"].indexOf(savedTab) >= 0) ? savedTab : "home";
     goTab(["home","cat","paths","disc","courses","labs","ai","ach","search"].indexOf(hh) >= 0 ? hh : fallback);
     if (hash.indexOf("lab-") === 0){ var lid = hash.slice(4); setTimeout(function(){ if (DATA && DATA.labs && DATA.labs.length) openLabPanel(lid); }, 900); }
+    if (hash.indexOf("course-") === 0){ var dlCid = hash.slice(7); setTimeout(function(){ openCourse(dlCid); }, 700); }
     if (hash.indexOf("track-") === 0){ var trid = hash.slice(6); setTimeout(function(){
       var cards = document.querySelectorAll("#pathList .pathcard");
       if (DATA && DATA.ids && DATA.ids.length === 0) return;
@@ -1070,7 +1075,7 @@ html,body{overflow-x:clip}
       ltt.appendChild(el("b", null, esc(t("lastOpen"))));
       ltt.appendChild(el("span", null, esc(courseTitle(lc))));
       lrow.appendChild(ltt);
-      var la = el("a", null, esc(t("resume"))); la.href = "/#course-" + lc;
+      var la = el("a", null, esc(t("resume"))); la.href = "/learn#course-" + lc;
       lrow.appendChild(la);
       cl.appendChild(lrow);
     }
@@ -1088,7 +1093,7 @@ html,body{overflow-x:clip}
       var fv = el("button", "btn done", favHas(id) ? t("favSaved") : t("favSave")); fv.type = "button";
       fv.addEventListener("click", function(){ var now = favToggle(id); fv.textContent = now ? t("favSaved") : t("favSave"); });
       acts.appendChild(fv);
-      var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id;
+      var a = el("a", null, esc(t("open"))); a.href = "/learn#course-" + id;
       acts.appendChild(a);
       row.appendChild(acts);
       cl.appendChild(row);
@@ -1169,12 +1174,12 @@ html,body{overflow-x:clip}
         var sh = el("button", "btn done", esc(t("share")));
         sh.style.marginInlineEnd = "8px";
         sh.addEventListener("click", function(){
-          var u = location.origin + "/#course-" + id;
+          var u = location.origin + "/learn#course-" + id;
           var done = function(){ sh.textContent = t("shared"); setTimeout(function(){ sh.textContent = t("share"); }, 1500); };
           try { navigator.clipboard.writeText(u).then(done, done); } catch(e){ done(); }
         });
         row.appendChild(sh);
-        var a = el("a", null, esc(mine ? t("open") : t("startC"))); a.href = "/#course-" + id; row.appendChild(a);
+        var a = el("a", null, esc(mine ? t("open") : t("startC"))); a.href = "/learn#course-" + id; row.appendChild(a);
       }
       cl2.appendChild(row);
     });
@@ -1194,7 +1199,7 @@ html,body{overflow-x:clip}
       var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px";
       var nxt = null; tr.courses.forEach(function(cid){ if (!nxt && !D.enr[cid]) nxt = cid; });
       var st2 = el("a", nxt ? "pact" : "pact done", esc(nxt ? t("trackStart") : t("trackReview")));
-      st2.href = "/#course-" + (nxt || tr.courses[0]);
+      st2.href = "/learn#course-" + (nxt || tr.courses[0]);
       acts.appendChild(st2);
       var trHrs = 0; tr.courses.forEach(function(cid){ if (COURSES[cid]) trHrs += (COURSES[cid].hours || 0); });
       acts.appendChild(el("span", "chip2 grey", esc(trHrs + " " + t("hoursU"))));
@@ -1228,7 +1233,7 @@ html,body{overflow-x:clip}
         tt.appendChild(el("span", null, esc((D.prog[cid] || 0) + " " + t("lessonsDone"))));
         row.appendChild(tt);
         var a = el("a", D.enr[cid] ? "" : "done", esc(D.enr[cid] ? t("open") : t("startC")));
-        a.href = "/#course-" + cid;
+        a.href = "/learn#course-" + cid;
         row.appendChild(a);
         list.appendChild(row);
       });
@@ -1373,7 +1378,7 @@ html,body{overflow-x:clip}
     }
     h += '<div style="margin-top:10px"><button class="btn done" id="cmFav" type="button">' + esc(favHas(cid) ? t("favSaved") : t("favSave")) + '</button>'
       + ' <button class="btn done" id="cmCopy" type="button">' + esc(t("share")) + '</button>'
-      + ' <a href="/#course-' + esc(cid) + '" style="display:inline-block;margin-inline-start:8px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">' + esc(t("open")) + '</a></div>';
+      + ' <a href="/learn#course-' + esc(cid) + '" style="display:inline-block;margin-inline-start:8px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">' + esc(t("open")) + '</a></div>';
     var nv = "";
     try { nv = localStorage.getItem("sl_note_" + cid) || ""; } catch(e){}
     h += '<div class="csec">' + esc(t("myNotes")) + '</div>'
@@ -1401,7 +1406,7 @@ html,body{overflow-x:clip}
     if (cmf) cmf.addEventListener("click", function(){ var nw = favToggle(cid); cmf.textContent = nw ? t("favSaved") : t("favSave"); });
     var cmc = $("cmCopy");
     if (cmc) cmc.addEventListener("click", function(){
-      var u = location.origin + "/#course-" + cid;
+      var u = location.origin + "/learn#course-" + cid;
       var dn = function(){ cmc.textContent = t("shared"); setTimeout(function(){ cmc.textContent = t("share"); }, 1600); };
       try { navigator.clipboard.writeText(u).then(dn, dn); } catch(e){ dn(); }
     });
@@ -1417,7 +1422,7 @@ html,body{overflow-x:clip}
       });
     }
     var o = $("cmOpen");
-    o.href = "/#course-" + cid;
+    o.href = "/learn#course-" + cid;
     o.textContent = t(c.status === "soon" ? "view" : (D.enr && D.enr[cid] ? "open" : "startC"));
     $("courseModal").classList.remove("hidden");
   }
@@ -1441,7 +1446,7 @@ html,body{overflow-x:clip}
     dt.style.marginInlineEnd = "8px";
     dt.addEventListener("click", function(){ openCourse(id); });
     row.appendChild(dt);
-    var a = el("a", null, esc(t("open"))); a.href = "/#course-" + id;
+    var a = el("a", null, esc(t("open"))); a.href = "/learn#course-" + id;
     row.appendChild(a);
     return row;
   }
@@ -1484,7 +1489,7 @@ html,body{overflow-x:clip}
       pc.style.marginBottom = "10px";
       pc.appendChild(el("b", null, esc(t("planT"))));
       pc.appendChild(el("div", "", '<div style="font-size:13px;color:var(--ink2);margin-top:6px">' + esc(courseTitle(id)) + (nx0 ? " · " + esc(L(nx0.t)) + (nx0.min ? " · " + nx0.min + " " + esc(t("minU")) : "") : "") + '</div>'));
-      var pa = el("a", null, esc(t("resume"))); pa.href = "/#course-" + id;
+      var pa = el("a", null, esc(t("resume"))); pa.href = "/learn#course-" + id;
       pa.style.cssText = "display:inline-block;margin-top:10px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600";
       pc.appendChild(pa);
       $("contCard").parentNode.insertBefore(pc, $("contCard"));
@@ -1496,7 +1501,7 @@ html,body{overflow-x:clip}
     var sub = (D.prog[id] || 0) + " " + t("lessonsDone");
     if (nx) sub += " · " + t("nextUp") + ": " + (L(nx.t) || "");
     $("contSub").textContent = sub;
-    $("contBtn").href = "/#course-" + id;
+    $("contBtn").href = "/learn#course-" + id;
   }
 
   /* ---- activity strip ---- */
@@ -1902,7 +1907,7 @@ html,body{overflow-x:clip}
     var D = DATA || { ids:[], labs:[], tasks:[], myLabs:{}, myTasks:{}, prog:{} };
     Object.keys(COURSES).forEach(function(id){
       var c = COURSES[id], ti = (lang === "ar" ? c.ar : c.en);
-      if ((String(c.ar || "") + " " + String(c.en || "")).toLowerCase().indexOf(q) >= 0) out.push({ k:"c", title:ti, sub:(D.enr[id] ? t("joinedB") : t("startC")) + (D.prog[id] ? " · " + D.prog[id] + " " + t("lessonsDone") : ""), href:"/#course-" + id });
+      if ((String(c.ar || "") + " " + String(c.en || "")).toLowerCase().indexOf(q) >= 0) out.push({ k:"c", title:ti, sub:(D.enr[id] ? t("joinedB") : t("startC")) + (D.prog[id] ? " · " + D.prog[id] + " " + t("lessonsDone") : ""), href:"/learn#course-" + id });
     });
     if (typeof CDET !== "undefined"){
       Object.keys(CDET).forEach(function(cid){
@@ -1988,5 +1993,6 @@ html,body{overflow-x:clip}
   });
 })();
 </script>
+<script>(function(){var V='2026-11-28-sep1';function chk(){try{fetch('/__version.txt',{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){if(t&&t.trim()&&t.trim()!==V)location.reload();}).catch(function(){})}catch(e){}}addEventListener('pageshow',function(e){if(e.persisted)chk()});document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()});})();</script>
 </body>
 </html>

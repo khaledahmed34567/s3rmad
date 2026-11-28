@@ -1605,7 +1605,7 @@ function parse() {
 }
 const portalOf = n => ({ app: 'main', platform: 'platform', post: 'platform', learning: 'learning', course: 'learning', learn: 'learning', track: 'learning', test: 'learning', lxlogin: 'learning', lxsignup: 'learning', lxcomplete: 'learning', aid: 'learning', pay: 'tam', cert: 'learning', invoice: 'tam', verify: 'tam', tam: 'tam' }[n] || 'main');
 const go = h => { if (location.hash === '#' + h) render(); else location.hash = h; };
-const needAuth = () => { S.next = location.hash.slice(1) || 'home'; toast(T('سجّل دخولك أولًا', 'Please sign in first')); go(portalOf(parse().name) === 'learning' ? 'lx-login' : 'login'); };
+const needAuth = () => { S.next = location.hash.slice(1) || 'home'; toast(T('سجّل دخولك أولًا', 'Please sign in first')); go('login'); };
 
 /* ---------- chrome ---------- */
 const getTheme = () => ls.get('theme', '');
@@ -1626,7 +1626,7 @@ function renderHeader() {
     ? `<a class="ib" href="#account" aria-label="${T('حسابي', 'My account')}" style="background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700">${esc(S.user.name.trim().charAt(0).toUpperCase())}</a>`
     : `<a class="btn ghost sm hide-m" href="#login">${T('دخول', 'Sign in')}</a><a class="btn primary sm hide-m" href="#signup">${T('إنشاء حساب', 'Sign up')}</a>`;
   $('#hdr').innerHTML = `
-  <div class="strip"><div class="wrap">${portals().map(([h, k, n]) => `<a href="#${h}" class="${portal === k ? 'on' : ''}">${n}</a>`).join('')}<span class="sp"></span>${S.user ? `<a href="#dashboard" class="hide-m">${T('لوحتي', 'My dashboard')}</a>` : ''}<a href="#whatsnew" class="hide-m">${T('الجديد', "What's new")}${(+ls.get('newsSeen', 0) < NEWS.length) ? ' <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:#d9ae55;vertical-align:middle"></span>' : ''}</a><a href="#contact" class="hide-m">${T('تواصل معنا', 'Contact')}</a></div></div>
+  <div class="strip"><div class="wrap">${portals().map(([h, k, n]) => `<a href="${h === 'learning' ? '/learn' : '#' + h}" class="${portal === k ? 'on' : ''}">${n}</a>`).join('')}<span class="sp"></span>${S.user ? `<a href="#dashboard" class="hide-m">${T('لوحتي', 'My dashboard')}</a>` : ''}<a href="#whatsnew" class="hide-m">${T('الجديد', "What's new")}${(+ls.get('newsSeen', 0) < NEWS.length) ? ' <span style="display:inline-block;width:7px;height:7px;border-radius:99px;background:#d9ae55;vertical-align:middle"></span>' : ''}</a><a href="#contact" class="hide-m">${T('تواصل معنا', 'Contact')}</a></div></div>
   <div class="hdr"><div class="wrap">
     <a href="#home" class="logo" aria-label="${T('سرمد - الرئيسية', 'Sarmad - Home')}"></a>
     <nav class="nav" aria-label="main">
@@ -2282,7 +2282,7 @@ function vAccount() {
   if (tab === 'payments') body = `<div class="row" style="justify-content:space-between;margin-bottom:22px"><h2 class="h2" style="font-size:1.6rem;margin:0">${T('المدفوعات', 'Payments')}</h2>${S.orders.length ? `<button class="btn sm" data-act="exportOrders">${icon('file')} ${T('تصدير CSV', 'Export CSV')}</button>` : ''}</div>` + (S.orders.length ? `<div class="tbl"><table><thead><tr><th>${T('المرجع', 'Reference')}</th><th>${T('البند', 'Item')}</th><th>${T('المبلغ', 'Amount')}</th><th>${T('التاريخ', 'Date')}</th><th>${T('الحالة', 'Status')}</th><th></th></tr></thead><tbody>${S.orders.map(o => `<tr><td class="mono" data-keep>${o.ref}</td><td>${esc(typeof o.title === 'object' ? L(o.title) : o.title)}</td><td>${fmtMoney(o.amount)}</td><td>${fmtDate(o.at)}</td><td>${o.status === 'paid' ? `<span class="tag ok">${T('مدفوع', 'Paid')}</span>` : o.status === 'rejected' ? `<span class="tag bad">${T('مرفوض', 'Rejected')}</span>` : `<span class="tag">${T('قيد التأكيد', 'Awaiting confirmation')}</span>`}</td><td>${o.status === 'paid' ? `<a class="chip" href="#invoice-${o.id}">${T('الفاتورة', 'Invoice')}</a>` : ''}${o.status === 'rejected' ? `<button class="chip" data-act="reReceipt" data-id="${o.id}">${T('إعادة رفع الإيصال', 'Re-upload receipt')}</button>` : ''}<a class="chip" href="${tgLink(o.ref)}" target="_blank" rel="noopener">${T('الدعم', 'Support')}</a></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty">${T('لا توجد عمليات دفع بعد.', 'No payments yet.')}</div>`) + (S.sub ? `<div class="note" style="margin-top:16px">${icon('check')}<span>${T('اشتراكك ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' ساري حتى ', 'Your ' + (S.sub.plan === 'pro' ? 'Pro' : 'Plus') + ' plan is active until ') + fmtDate(S.sub.until)}</span></div>` : '');
   if (tab === 'requests') body = `<h2 class="h2" style="font-size:1.6rem;margin-bottom:22px">${T('طلباتي', 'My requests')}</h2>` + (S.msgs.length ? `<div class="list">${S.msgs.map(m => `<div><div><b>${m.type === 'career' ? T('طلب انضمام', 'Join request') : T('طلب عرض سعر', 'Quote request')}</b><p class="sm muted" style="max-width:60ch">${esc((m.message || m.link || '').slice(0, 140))}</p>${m.reply ? `<p class="sm" style="margin-top:6px"><b>${T('رد الفريق', 'Team reply')}:</b> ${esc(m.reply)}</p>` : ''}</div><span class="xs muted" style="text-align:end"><span class="tag ${m.handled ? 'ok' : 'gold'}">${m.handled ? T('تمت المعالجة', 'Handled') : T('قيد المراجعة', 'In review')}</span><br>${fmtDate(m.at)}</span></div>`).join('')}</div>` : `<div class="empty">${T('لم ترسل أي طلب بعد.', 'You have not sent any request yet.')}<a class="btn primary sm" href="#contact">${T('اطلب عرض سعر', 'Request a quote')}</a></div>`);
   return `<section class="sec" style="padding-top:clamp(32px,5vw,56px)"><div class="wrap acc-grid"><aside class="stack" style="align-content:start"><div class="avatar">${esc(u.name.trim().charAt(0).toUpperCase())}</div><div><b style="font-size:1.2rem">${esc(u.name)}</b><p class="sm muted" style="word-break:break-all">${esc(u.email)}</p><span class="mono muted" data-keep>${u.sid}</span> <button class="chip" data-act="copy" data-v="${u.sid}" aria-label="copy">${icon('copy')}</button></div>
-    <div class="stack" style="gap:4px">${tabs.map(([k, i, n]) => `<button class="les ${tab === k ? 'on' : ''}" data-act="tab" data-v="${k}" style="padding:12px">${icon(i)} <span>${n}</span></button>`).join('')}</div><button class="btn ghost sm" data-act="logout">${icon('logout', 'flip')} ${T('تسجيل الخروج', 'Sign out')}</button></aside><div style="min-width:0">${body}</div></div></section>`;
+    <div class="stack" style="gap:4px">${tabs.map(([k, i, n]) => k === 'learning' ? `<a class="les" href="/learn" style="padding:12px;text-decoration:none;color:inherit">${icon(i)} <span>${n}</span></a>` : `<button class="les ${tab === k ? 'on' : ''}" data-act="tab" data-v="${k}" style="padding:12px">${icon(i)} <span>${n}</span></button>`).join('')}</div><button class="btn ghost sm" data-act="logout">${icon('logout', 'flip')} ${T('تسجيل الخروج', 'Sign out')}</button></aside><div style="min-width:0">${body}</div></div></section>`;
 }
 
 /* ---------- Tam checkout ---------- */
@@ -2372,10 +2372,17 @@ function routeTitle(r) {
 }
 ROUTE.resetpw = vResetPw;
 let lastKey = null;
-function render() {   const r = parse(); if (r.name === 'learning' || r.name === 'course' || r.name === 'learn') { location.replace('/learn'); return; }   const fn = ROUTE[r.name] || v404;
+const LEARN_URL = r => r.name === 'learning' ? '/learn'
+  : r.name === 'course' ? (r.id ? '/learn#course-' + r.id : '/learn#cat')
+  : r.name === 'learn' ? (r.cid ? '/learn#course-' + r.cid : '/learn')
+  : r.name === 'track' ? '/learn#paths'
+  : r.name === 'test' ? '/learn#cat'
+  : (r.name === 'lxlogin' || r.name === 'lxsignup' || r.name === 'lxcomplete') ? '/learn'
+  : null;
+function render() {   const r = parse(); const _lu = LEARN_URL(r); if (_lu) { location.replace(_lu); return; }   const fn = ROUTE[r.name] || v404;
   closeModal(); closeDrawer();
   if (S.user && S.user.mustChange && !['setup', 'privacy', 'terms'].includes(r.name)) { go('setup'); return; }
-  if (S.user && !S.user.phone && !['complete', 'lxcomplete', 'privacy', 'terms'].includes(r.name)) { S.next = S.next || location.hash.slice(1) || 'home'; go(portalOf(r.name) === 'learning' ? 'lx-complete' : 'complete'); return; }
+  if (S.user && !S.user.phone && !['complete', 'lxcomplete', 'privacy', 'terms'].includes(r.name)) { S.next = S.next || location.hash.slice(1) || 'home'; go('complete'); return; }
   if (r.name === 'learn' && r.step != null && lastKey !== r.key) STEPI[r.cid + '.' + r.lid] = r.step;
   $('#main').innerHTML = `<div class="view">${fn(r)}</div>`;
   fixDigits($('#main')); renderHeader();
@@ -4387,5 +4394,6 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
 })();
 </script>
+<script>(function(){var V='2026-11-28-sep1';function chk(){try{fetch('/__version.txt',{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){if(t&&t.trim()&&t.trim()!==V)location.reload();}).catch(function(){})}catch(e){}}addEventListener('pageshow',function(e){if(e.persisted)chk()});document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()});})();</script>
 </body>
 </html>
