@@ -321,6 +321,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
         <div class="goal">
           <div class="goaltop"><b id="goalN">0 / 5</b><span id="goalL">هدف الأسبوع</span></div>
           <div class="bar"><i id="goalBar" style="width:0%"></i></div>
+          <div id="goalHint" style="font-size:12.5px;color:var(--ink2);margin-top:8px"></div>
           <div class="goalchips" id="goalChips"></div>
         </div>
       </div>
@@ -394,6 +395,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   <div id="v-labs" class="hidden">
     <div class="sec"><h2 id="lbT">المعمل</h2>
       <div id="labProgress" style="margin-bottom:12px"></div>
+      <div id="labFilters" class="chipsrow"></div>
       <div id="labList"></div>
     </div>
     <div class="sec hidden" id="labPanel">
@@ -502,6 +504,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       paidB:"مدفوع", minU:"دقيقة",
       goalL:"هدف الأسبوع", goalHint:"اختار هدفك", labNext:"التجربة التالية", labAllDone:"خلصت كل التجارب 👏",
       sortL:"ترتيب", sortDef:"الافتراضي", sortShort:"الأقصر أولًا", sortCheap:"الأرخص أولًا", trkNext:"الخطوة الجاية",
+      labAll:"الكل", labTodo:"لسه", labDoneF:"خلصت", goalDone:"خلصت هدف الأسبوع 👏", goalLeft:"فاضلك أيام على هدفك:",
+      b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
       out:"خروج", hi:"أهلًا، ", heroSub:"مساحتك في سرمد ليرننج: كورساتك، معملك، ومهامك.",
@@ -546,6 +550,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       paidB:"Paid", minU:"min",
       goalL:"Weekly goal", goalHint:"Pick your goal", labNext:"Next lab", labAllDone:"All labs finished 👏",
       sortL:"Sort", sortDef:"Default", sortShort:"Shortest first", sortCheap:"Cheapest first", trkNext:"Next step",
+      labAll:"All", labTodo:"To do", labDoneF:"Done", goalDone:"Weekly goal reached 👏", goalLeft:"Days left to your goal:",
+      b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
       out:"Sign out", hi:"Hi, ", heroSub:"Your space in Sarmad Learning: courses, lab and tasks.",
@@ -564,6 +570,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   function t(k){ return (TXT[lang] && TXT[lang][k]) || TXT.ar[k] || k; }
   var CATF = "all";
   var CATS = "def";
+  var LABF = "all";
 
   var COURSES = {"cyber1": {"ar": "أساسيات الأمن السيبراني للمطورين", "en": "Cybersecurity Essentials for Developers", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "front1": {"ar": "واجهات سريعة ومتجاوبة بالعربية والإنجليزية", "en": "Fast Bilingual Responsive Interfaces", "level": "intermediate", "hours": 5, "price": 199, "status": "open"}, "pay1": {"ar": "ربط بوابات الدفع بأمان", "en": "Integrating Payment Gateways Safely", "level": "intermediate", "hours": 4, "price": 249, "status": "soon"}, "html1": {"ar": "أساسيات HTML وCSS", "en": "HTML & CSS Fundamentals", "level": "beginner", "hours": 4, "price": 0, "status": "open"}, "js1": {"ar": "JavaScript من الصفر", "en": "JavaScript from Scratch", "level": "beginner", "hours": 6, "price": 149, "status": "open"}, "net1": {"ar": "أساسيات الشبكات", "en": "Networking Fundamentals", "level": "beginner", "hours": 3, "price": 0, "status": "open"}, "ai1": {"ar": "مدخل إلى الذكاء الاصطناعي", "en": "Introduction to Artificial Intelligence", "level": "beginner", "hours": 4, "price": 249, "status": "open"}, "ml1": {"ar": "تعلّم الآلة من الصفر", "en": "Machine Learning from Scratch", "level": "intermediate", "hours": 5, "price": 299, "status": "open"}};
   var TRACKS = [{"id": "web", "level": "beginner", "courses": ["html1", "js1", "front1"], "ar": "مسار تطوير الويب", "en": "Web Development Track"}, {"id": "cyber", "level": "beginner", "courses": ["net1", "cyber1"], "ar": "مسار الأمن السيبراني والشبكات", "en": "Cybersecurity & Networking Track"}, {"id": "pay", "level": "intermediate", "courses": ["pay1"], "ar": "مسار الخلفية والمدفوعات", "en": "Backend & Payments Track"}, {"id": "ai", "level": "beginner", "courses": ["ai1"], "ar": "مسار الذكاء الاصطناعي", "en": "Artificial Intelligence Track"}, {"id": "ml", "level": "intermediate", "courses": ["ml1"], "ar": "مسار تعلّم الآلة", "en": "Machine Learning Track"}];
@@ -954,7 +961,10 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       ["⚗", t("b3"), t("b3d"), D.labsDone >= 1],
       ["⚗", t("b4"), t("b4d"), D.labsDone >= 3],
       ["✦", t("b5"), t("b5d"), D.aiDone >= 1],
-      ["❖", t("b6"), t("b6d"), D.certs.length >= 1]
+      ["❖", t("b6"), t("b6d"), D.certs.length >= 1],
+      ["✦", t("b7"), t("b7d"), (function(){ var days = activityDays(), cur = new Date(), st = 0; if (!days[dayKeyOf(cur)]) cur.setDate(cur.getDate() - 1); while (days[dayKeyOf(cur)]) { st++; cur.setDate(cur.getDate() - 1); } return st >= 7; })()],
+      ["⚗", t("b8"), t("b8d"), D.labsDone >= 5],
+      ["◆", t("b9"), t("b9d"), D.ids.length >= 3]
     ];
     B.forEach(function(b){
       var d = el("div","badge" + (b[3] ? "" : " off"));
@@ -1155,6 +1165,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var box = $("goalN"), bar = $("goalBar"), chips = $("goalChips");
     if (!box) return;
     box.textContent = lang === "ar" ? (week + " من " + g) : (week + " of " + g);
+    var hint = $("goalHint");
+    if (hint) hint.textContent = week >= g ? t("goalDone") : (t("goalLeft") + " " + (g - week));
     if (bar) bar.style.width = Math.min(100, Math.round(week / g * 100)) + "%";
     if (chips && !chips.getAttribute("data-built")){
       chips.setAttribute("data-built", "1");
@@ -1207,7 +1219,25 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var pg = $("labProgress");
     pg.innerHTML = tot ? '<div style="display:flex;align-items:center;gap:10px"><div class="bar" style="flex:1;margin:0"><i style="width:' + Math.round(fin / tot * 100) + '%"></i></div><span style="font-size:12.5px;color:var(--ink2)">' + (lang === "ar" ? "خلصت " + fin + " من " + tot : fin + " of " + tot + " done") + '</span></div>' : "";
     if (!D.labs.length){ ll.appendChild(el("div","empty", esc(t("noLab")))); return; }
+    var lf = $("labFilters");
+    if (lf && !lf.getAttribute("data-built")){
+      lf.setAttribute("data-built", "1");
+      [["all","labAll"],["todo","labTodo"],["done","labDoneF"]].forEach(function(pp){
+        var fb = el("button", "fchip", esc(t(pp[1]))); fb.type = "button";
+        fb.setAttribute("data-lf", pp[0]);
+        fb.addEventListener("click", function(){ LABF = pp[0]; renderLabs(); });
+        lf.appendChild(fb);
+      });
+    }
+    if (lf){
+      Array.prototype.forEach.call(lf.querySelectorAll("button"), function(b){
+        b.classList.toggle("on", b.getAttribute("data-lf") === LABF);
+      });
+    }
     D.labs.forEach(function(x){
+      var isDone = !!(D.myLabs[x.id] && D.myLabs[x.id].done);
+      if (LABF === "todo" && isDone) return;
+      if (LABF === "done" && !isDone) return;
       var done = !!(D.myLabs[x.id] && D.myLabs[x.id].done);
       var row = el("div","item");
       row.appendChild(el("div","ic","⚗"));
