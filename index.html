@@ -4479,5 +4479,39 @@ html[data-theme="dark"] #lab-frame,html.dark #lab-frame{background:#fff}
   });
   mo.observe(doc.body,{childList:true,subtree:true});
 })();
+</script><style id="ui-polish7">#fszBox{display:inline-flex;align-items:center;gap:6px;font-size:.85em}#fszBox #fszVal{min-width:42px;text-align:center;opacity:.8}#fszBox .chip{cursor:pointer}</style><script id="ui-polish7-js">(function(){
+  var doc=document, KEY='sarmad_fsz';
+  function isAr(){ return (doc.documentElement.lang||'ar').indexOf('en')!==0; }
+  function get(){ var v=parseFloat(localStorage.getItem(KEY)||'100'); if(!(v>=85&&v<=125)) v=100; return v; }
+  function apply(v){
+    v=Math.round(Math.max(85,Math.min(125,v))/5)*5;
+    doc.documentElement.style.fontSize=(v/100*100)+'%';
+    try{ localStorage.setItem(KEY,String(v)); }catch(_){}
+    var lab=doc.getElementById('fszVal'); if(lab) lab.textContent=v+'%';
+  }
+  function bar(){
+    var row=doc.querySelector('#ftr .ftr-bottom .row');
+    if(!row || doc.getElementById('fszBox')) return;
+    var box=doc.createElement('span');
+    box.id='fszBox'; box.className='fszbox';
+    box.innerHTML='<button type="button" class="chip" data-fsz="-5" aria-label="'+(isAr()?'\u062a\u0635\u063a\u064a\u0631 \u0627\u0644\u062e\u0637':'\u062a\u0635\u063a\u064a\u0631 \u0627\u0644\u062e\u0637')+'">A\u2212</button>'
+      + '<span id="fszVal">'+get()+'%</span>'
+      + '<button type="button" class="chip" data-fsz="5" aria-label="'+(isAr()?'\u062a\u0643\u0628\u064a\u0631 \u0627\u0644\u062e\u0637':'\u062a\u0643\u0628\u064a\u0631 \u0627\u0644\u062e\u0637')+'">A+</button>';
+    row.appendChild(box);
+    box.addEventListener('click', function(e){
+      var b=e.target.closest && e.target.closest('[data-fsz]');
+      if(!b) return;
+      apply(get()+parseInt(b.getAttribute('data-fsz'),10));
+    });
+  }
+  apply(get());
+  bar();
+  var t=null;
+  var mo=new MutationObserver(function(){
+    if(t) return;
+    t=setTimeout(function(){ t=null; bar(); },300);
+  });
+  mo.observe(doc.body,{childList:true,subtree:true});
+})();
 </script></body>
 </html>
