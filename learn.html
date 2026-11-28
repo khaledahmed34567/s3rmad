@@ -249,7 +249,8 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       <span class="chip" id="dEmail2"></span>
       <button class="ghost" id="outBtn">خروج</button>
     </div>
-    <button class="ghost" id="langBtn" style="margin-inline-start:auto">EN</button>
+    <button class="ghost" id="fsBtn" title="حجم الخط" style="margin-inline-start:auto">A+</button>
+    <button class="ghost" id="langBtn">EN</button>
   </div>
 </header>
 
@@ -508,6 +509,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       lessonsAll:"درس في الدورة", nextUp:"الجاي",
       catFav:"المحفوظات", favSave:"حفظ", favSaved:"محفوظ ✓", lastOpen:"آخر كورس فتحته", resume:"كمّل",
       leftL:"باقي", courseDone:"خلصت الدورة ✓", modalProg:"تقدمك في الدورة", favNone:"مفيش كورسات محفوظة. اضغط «حفظ» على أي دورة.",
+      totalProg:"إجمالي تقدمك", totalU:"درس", copySummary:"نسخ ملخص تقدمي", copied:"اتنسخ ✓", fsTitle:"حجم الخط",
       b7:"تحدي الأسبوع", b7d:"7 أيام نشاط متتالية", b8:"معملي", b8d:"5 تجارب مكتملة", b9:"على المسار", b9d:"مسجل في 3 كورسات",
       trackStart:"ابدأ المسار", trackReview:"راجع المسار",
       certTitle:"شهادة إتمام", certCode:"كود الشهادة", certView:"الشهادة", certPrint:"طباعة / حفظ PDF", certClose:"إغلاق",
@@ -557,6 +559,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       lessonsAll:"lessons in course", nextUp:"Next up",
       catFav:"Saved", favSave:"Save", favSaved:"Saved ✓", lastOpen:"Last opened", resume:"Resume",
       leftL:"left", courseDone:"Course complete ✓", modalProg:"Your progress", favNone:"No saved courses yet. Tap Save on any course.",
+      totalProg:"Your overall progress", totalU:"lessons", copySummary:"Copy progress summary", copied:"Copied ✓", fsTitle:"Text size",
       b7:"Week streak", b7d:"7 active days in a row", b8:"Lab worker", b8d:"5 labs finished", b9:"On track", b9d:"Joined 3 courses",
       trackStart:"Start path", trackReview:"Review path",
       certTitle:"Certificate of completion", certCode:"Certificate code", certView:"Certificate", certPrint:"Print / Save PDF", certClose:"Close",
@@ -659,6 +662,27 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     lang = lang === "ar" ? "en" : "ar"; applyLang();
     try { localStorage.setItem("sl_lang", lang); } catch(e){}
   });
+
+  /* ---- text size ---- */
+  var ZOOMS = [1, 1.08, 1.16];
+  function zoomIdx(){
+    var v = 1;
+    try { v = parseFloat(localStorage.getItem("sl_zoom") || "1") || 1; } catch(e){}
+    var i = ZOOMS.indexOf(v);
+    return i < 0 ? 0 : i;
+  }
+  function applyZoom(){
+    var i = zoomIdx();
+    document.body.style.zoom = String(ZOOMS[i]);
+    var b = $("fsBtn");
+    if (b){ b.textContent = i === 0 ? "A+" : (i === 1 ? "A++" : "A"); b.title = t("fsTitle"); }
+  }
+  $("fsBtn").addEventListener("click", function(){
+    var i = (zoomIdx() + 1) % ZOOMS.length;
+    try { localStorage.setItem("sl_zoom", String(ZOOMS[i])); } catch(e){}
+    applyZoom();
+  });
+  applyZoom();
 
   /* ---- login flow ---- */
   function startResend(){
@@ -826,6 +850,24 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     /* courses */
     var cl = $("courseList"); cl.innerHTML = "";
     if (!D.ids.length){ cl.appendChild(el("div","empty", esc(t("noCourse")))); }
+    var tDone = 0, tAll = 0;
+    D.ids.forEach(function(id){ tDone += (D.prog[id] || 0); tAll += courseLessons(id).length; });
+    if (tAll){
+      var tpct = Math.min(100, Math.round(tDone / tAll * 100));
+      var tcard = el("div","card2"); tcard.style.marginBottom = "10px";
+      tcard.appendChild(el("b", null, esc(t("totalProg"))));
+      tcard.appendChild(el("div","", '<span style="font-size:12.5px;color:var(--ink2)">' + tDone + " / " + tAll + " " + esc(t("totalU")) + " · " + tpct + '%</span>'));
+      tcard.appendChild(el("div","bar", '<i style="width:' + tpct + '%"></i>'));
+      var cbtn = el("button","btn done", esc(t("copySummary"))); cbtn.type = "button"; cbtn.style.marginTop = "10px";
+      cbtn.addEventListener("click", function(){
+        var lines = D.ids.map(function(id){ var n = D.prog[id] || 0, tot = courseLessons(id).length; return courseTitle(id) + ": " + n + "/" + tot + (tot ? " (" + Math.round(n / tot * 100) + "%)" : ""); });
+        var txt = "Sarmad Learning\n" + lines.join("\n") + "\n" + tDone + "/" + tAll + " (" + tpct + "%)";
+        var dn = function(){ cbtn.textContent = t("copied"); setTimeout(function(){ cbtn.textContent = t("copySummary"); }, 1600); };
+        try { navigator.clipboard.writeText(txt).then(dn, dn); } catch(e){ dn(); }
+      });
+      tcard.appendChild(cbtn);
+      cl.appendChild(tcard);
+    }
     var lc = lastCourse();
     if (lc && COURSES[lc] && D.ids.indexOf(lc) >= 0){
       var lrow = el("div","item");
@@ -939,15 +981,15 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     /* paths */
     var pl = $("pathList"); pl.innerHTML = "";
     TRACKS.forEach(function(tr){
-      var joined = 0, done = 0;
-      tr.courses.forEach(function(cid){ if (D.enr[cid]) joined++; done += (D.prog[cid] || 0); });
+      var joined = 0, done = 0, trAll = 0;
+      tr.courses.forEach(function(cid){ if (D.enr[cid]) joined++; done += (D.prog[cid] || 0); trAll += courseLessons(cid).length; });
       var card = el("div","pathcard");
       var head = el("div","pathhead");
       head.appendChild(el("b", null, esc(lang === "ar" ? tr.ar : tr.en)));
       head.appendChild(el("span", null, '<span class="chip2' + (tr.level === "intermediate" ? " gold" : "") + '">' + esc(t(tr.level === "intermediate" ? "inter" : "beginner")) + '</span><span class="chip2 grey">' + tr.courses.length + " " + esc(t("trackCourses")) + '</span>'));
       card.appendChild(head);
-      card.appendChild(el("div", "", '<div style="font-size:12.5px;color:var(--ink2);margin-top:4px">' + esc(t("trackProg")) + " " + joined + "/" + tr.courses.length + '</div>'));
-      card.appendChild(el("div","bar", '<i style="width:' + Math.round(joined / Math.max(1, tr.courses.length) * 100) + '%"></i>'));
+      card.appendChild(el("div", "", '<div style="font-size:12.5px;color:var(--ink2);margin-top:4px">' + esc(t("trackProg")) + " " + joined + "/" + tr.courses.length + (trAll ? " · " + done + "/" + trAll + " " + esc(t("totalU")) : "") + '</div>'));
+      card.appendChild(el("div","bar", '<i style="width:' + (trAll ? Math.min(100, Math.round(done / trAll * 100)) : Math.round(joined / Math.max(1, tr.courses.length) * 100)) + '%"></i>'));
       var acts = el("div"); acts.style.cssText = "display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px";
       var nxt = null; tr.courses.forEach(function(cid){ if (!nxt && !D.enr[cid]) nxt = cid; });
       var st2 = el("a", nxt ? "pact" : "pact done", esc(nxt ? t("trackStart") : t("trackReview")));
