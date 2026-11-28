@@ -981,6 +981,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
       tt.appendChild(el("b", null, esc(lang === "ar" ? c.ar : c.en)));
       var chips = '<span class="chip2' + (c.level === "intermediate" ? " gold" : "") + '">' + esc(t(c.level === "intermediate" ? "inter" : "beginner")) + '</span>'
         + '<span class="chip2 grey">' + c.hours + " " + esc(t("hoursU")) + '</span>'
+        + (function(){ var L2 = courseLessons(id).length; return L2 ? '<span class="chip2 grey">' + L2 + " " + esc(t("lessonsAll")) + '</span>' : ''; })()
         + (c.status === "soon" ? '<span class="chip2 grey">' + esc(t("soon")) + '</span>' : '')
         + (mine ? '<span class="chip2">' + esc(t("joinedB")) + (n ? " · " + n + " " + esc(t("lessonsDone")) : "") + '</span>' : '');
       tt.appendChild(el("span", null, chips));
@@ -1175,7 +1176,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
         + '<div class="bar"><i style="width:' + pp + '%"></i></div>';
       if (np < tp && rem > 0) h += '<div style="font-size:12.5px;color:var(--ink2);margin-top:6px">' + esc(t("remL")) + ' ' + rem + ' ' + esc(t("minU")) + '</div>';
     }
-    h += '<div style="margin-top:10px"><button class="btn done" id="cmFav" type="button">' + esc(favHas(cid) ? t("favSaved") : t("favSave")) + '</button></div>';
+    h += '<div style="margin-top:10px"><button class="btn done" id="cmFav" type="button">' + esc(favHas(cid) ? t("favSaved") : t("favSave")) + '</button>'
+      + ' <button class="btn done" id="cmCopy" type="button">' + esc(t("share")) + '</button>'
+      + ' <a href="/#course-' + esc(cid) + '" style="display:inline-block;margin-inline-start:8px;background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">' + esc(t("open")) + '</a></div>';
     if (det && det.outcomes && det.outcomes[lang]){
       h += '<div class="csec">' + esc(t("cmLearn")) + '</div><ul class="co">'
         + det.outcomes[lang].map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
@@ -1196,6 +1199,12 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     $("courseBody").innerHTML = h;
     var cmf = $("cmFav");
     if (cmf) cmf.addEventListener("click", function(){ var nw = favToggle(cid); cmf.textContent = nw ? t("favSaved") : t("favSave"); });
+    var cmc = $("cmCopy");
+    if (cmc) cmc.addEventListener("click", function(){
+      var u = location.origin + "/#course-" + cid;
+      var dn = function(){ cmc.textContent = t("shared"); setTimeout(function(){ cmc.textContent = t("share"); }, 1600); };
+      try { navigator.clipboard.writeText(u).then(dn, dn); } catch(e){ dn(); }
+    });
     if (hl){
       var rows = $("courseBody").querySelectorAll(".cles");
       Array.prototype.forEach.call(rows, function(r){
