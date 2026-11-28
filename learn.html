@@ -2549,5 +2549,33 @@ html,body{overflow-x:clip}
   setTimeout(ph,300);setInterval(ph,2000);
 })();
 </script>
+<style id="learn-palette-depth">
+:root{--p-blue:#1f6f8b;--p-blue-s:#dcebf1;--p-clay:#b4553a;--p-clay-s:#f5e2da;--p-plum:#7a4a86;--p-plum-s:#eadff0;--p-olive:#6b7a2a;--p-olive-s:#e8ecd3}
+body.dark{--p-blue:#7cc4de;--p-blue-s:#14303a;--p-clay:#ec9272;--p-clay-s:#36231c;--p-plum:#cfa3dc;--p-plum-s:#2a1f31;--p-olive:#c3d173;--p-olive-s:#262b15}
+.stat:nth-child(4n+1) .n{color:var(--p-blue)}.stat:nth-child(4n+2) .n{color:var(--p-olive)}.stat:nth-child(4n+3) .n{color:var(--p-plum)}.stat:nth-child(4n+4) .n{color:var(--p-clay)}
+.stat{border-top:3px solid transparent}.stat:nth-child(4n+1){border-top-color:var(--p-blue)}.stat:nth-child(4n+2){border-top-color:var(--p-olive)}.stat:nth-child(4n+3){border-top-color:var(--p-plum)}.stat:nth-child(4n+4){border-top-color:var(--p-clay)}
+.card2,.stat,.pl-card{box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 1px 2px rgba(22,40,28,.07),0 14px 28px -16px rgba(22,40,28,.3);transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s}
+body.dark .stat,body.dark .card2,body.dark .pl-card{box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 14px 28px -16px rgba(0,0,0,.7)}
+.tilt-on{transition:transform .08s linear,box-shadow .25s!important;box-shadow:0 2px 4px rgba(22,40,28,.08),0 26px 44px -18px rgba(22,40,28,.38)!important}
+@media (prefers-reduced-motion:reduce){.card2,.stat,.pl-card,.tilt-on{transition:none!important;transform:none!important}}
+</style>
+<script id="learn-tilt-js">(function(){var fine=window.matchMedia&&matchMedia('(hover:hover) and (pointer:fine)').matches,rm=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;if(!fine||rm)return;var cur=null,raf=0;
+function off(){if(cur){cur.style.transform='';cur.classList.remove('tilt-on');cur=null}}
+document.addEventListener('pointermove',function(e){if(e.pointerType&&e.pointerType!=='mouse')return;var c=e.target.closest&&e.target.closest('.card2,.pl-card,.stat');if(c&&(c.closest('.modal,form,.cnm-box')||c.offsetWidth>560||c.offsetHeight>520||c.querySelector('input,textarea,select')))c=null;if(cur&&cur!==c)off();if(!c)return;cur=c;var x=e.clientX,y=e.clientY;cancelAnimationFrame(raf);raf=requestAnimationFrame(function(){var r=c.getBoundingClientRect(),px=(x-r.left)/r.width-.5,py=(y-r.top)/r.height-.5;c.classList.add('tilt-on');c.style.transform='perspective(900px) rotateX('+(-py*3.5).toFixed(2)+'deg) rotateY('+(px*3.5).toFixed(2)+'deg) translateY(-3px)'})},{passive:true});
+document.addEventListener('pointerleave',off,true)})();</script>
+<style id="learn-motion">
+.rv{opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.2,.7,.2,1),transform .5s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--rvd,0)*60ms)}
+.rv.rv-in{opacity:1;transform:none}
+.btn:active,.lv-btn:active,.chip:active,.pact:active{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1!important;transform:none!important;transition:none!important}}
+</style>
+<script id="learn-motion-js">(function(){
+if((window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)||!('IntersectionObserver' in window))return;
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);e.target.classList.add('rv-in')}})},{rootMargin:'0px 0px -8% 0px',threshold:.05});
+function scan(){var n=0;document.querySelectorAll('.card2,.pl-card,.pathcard,.item,.pl-row').forEach(function(el){if(el.__m)return;if(el.closest('.hidden'))return;el.__m=1;if(el.closest('.modal,.cnm-box'))return;var r=el.getBoundingClientRect();if(r.top<innerHeight*.95)return;el.classList.add('rv');el.style.setProperty('--rvd',String(n++%4));io.observe(el)})}
+var tm=0;function sched(){clearTimeout(tm);tm=setTimeout(scan,150)}
+new MutationObserver(sched).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});sched();
+setInterval(function(){document.querySelectorAll('.rv:not(.rv-in)').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)el.classList.add('rv-in')})},1500);
+})();</script>
 </body>
 </html>
