@@ -217,6 +217,9 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
   .goaltop{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink2)}
   .goaltop b{color:var(--ink);font-size:15px}
   .goalchips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  /* global fallback so buttons outside the app shell are not browser-default */
+  .btn{background:var(--green);color:#fff;border:0;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center}
+  .btn.done{background:var(--green3);color:var(--green)}
 </style>
 </head>
 <body>
@@ -1131,7 +1134,7 @@ body{font-family:'SL','Segoe UI',Tahoma,'Noto Naskh Arabic',system-ui,-apple-sys
     var g = goalTarget();
     var box = $("goalN"), bar = $("goalBar"), chips = $("goalChips");
     if (!box) return;
-    box.textContent = week + " / " + g;
+    box.textContent = lang === "ar" ? (week + " من " + g) : (week + " of " + g);
     if (bar) bar.style.width = Math.min(100, Math.round(week / g * 100)) + "%";
     if (chips && !chips.getAttribute("data-built")){
       chips.setAttribute("data-built", "1");
